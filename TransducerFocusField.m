@@ -60,6 +60,13 @@ end
 cdis = 0.0035;
 rm = [ [cdis -cdis focal_point(3)]; [0 .005 focal_point(3)];  [-cdis -cdis focal_point(3)];  ];
 
+model_translate = [0.0075 0.0075 0];
+
+for k=1:3
+    
+    rm(k,:) = (rm(k,:) + model_translate);
+end
+
 
 %% equilateral triangle in XY plane
 % nfoci=3;
@@ -240,11 +247,11 @@ T0=37;
 Cp = 3700;
 
 ktherm = 0.5;
-alpha = 1.0;
+alpha = 0.5;
 
 simDur=Nt*tstep;
 
-totDur=10;  %total time to "sonicate" in seconds
+totDur=5;  %total time to "sonicate" in seconds
 time=0;
 
 [Ton pixMult newDx tdotsrc Iregrid] = homogenousePBHE( T0, alpha, ktherm, rho, Cp, c, I, Nx, Ny, Nz, dSvox, nnx, nny, nnz, Nt, tstep, 1 );
