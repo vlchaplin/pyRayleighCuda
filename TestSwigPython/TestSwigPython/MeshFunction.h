@@ -3,9 +3,7 @@
 #define MESHFUNC_H
 
 #include "stdlib.h"
-#include <iostream>
 
-using namespace std;
 
 
 template<typename mesh_t>
@@ -16,9 +14,7 @@ public:
     long * d;
     mesh_t * ds;
     mesh_t * data;
-    mesh_t scalar;
 
-private:
     
 public:
     long ndims;
@@ -41,9 +37,6 @@ public:
         this->setndims(n);
     };
     ~MeshFunction() {
-
-        this->clear();
-
         if ( d!=NULL ) {
             delete [] d;
             delete [] ds;
@@ -74,8 +67,6 @@ public:
         
     };
 	
-public:
-
     bool isRowMaj;
 
     long getndims() {
@@ -133,7 +124,7 @@ public:
         usesSharedData=true;
     };
 
-    virtual mesh_t& val(long *idx) {return scalar;};
+    //virtual mesh_t& val(long *idx)=0;
 
 };
 

@@ -40,7 +40,7 @@ public:
 	};
 	~MeshFunction4D()
 	{
-
+        this->clear();
 	};
 
     virtual long index(long& i0, long& i1, long& i2, long& i3)
@@ -59,19 +59,26 @@ public:
     };
 
 	virtual mesh_t& val(long * idx) {
-		return this->data[index(idx)];
+		return this->data[this->index(idx)];
 	};
 	mesh_t& val(long i0, long i1, long i2, long i3) {
-		return this->data[index(i0,i1,i2,i3)];
+		return this->data[this->index(i0,i1,i2,i3)];
 	};
     mesh_t& operator()(long i0, long i1, long i2, long i3) {
-		return this->data[index(i0,i1,i2,i3)];
+		return this->data[this->index(i0,i1,i2,i3)];
+	};
+
+    mesh_t getval(long i0, long i1, long i2, long i3) {
+		return this->data[this->index(i0,i1,i2,i3)];
+	};
+    void setval(mesh_t val, long i0, long i1, long i2, long i3) {
+		this->data[this->index(i0,i1,i2,i3)] = val;
 	};
 
     //remember to delete the page in the caller after using it
     MeshFunction3D<mesh_t> * getpage(long i0) {
         static long zero=0;
-        mesh_t * pageaddr = this->data + index(i0,zero,zero,zero);
+        mesh_t * pageaddr = this->data + this->index(i0,zero,zero,zero);
 
         MeshFunction3D<mesh_t> * newpage = new MeshFunction3D<mesh_t> ;
 
@@ -82,7 +89,7 @@ public:
 
 };
 
-
+ 
 
 
 
@@ -114,7 +121,7 @@ public:
 	};
 	~MeshFunctionPseudo4D()
 	{
-
+        this->clear();
 	};
 
     virtual long index(long& i0, long& i1, long& i2, long& i3)
@@ -126,11 +133,19 @@ public:
     };
     virtual long index(long *& idx)
     {
-        if (this->isRowMaj) 
-            return idx[1]*this->d[2]*this->d[3] + idx[2]*this->d[3] + idx[3];
+        
+        if (this->isRowMaj) {
+            //long l=idx[1]*this->d[2]*this->d[3] + idx[2]*this->d[3] + idx[3];
+            //cout << "Pseudo4D::index(long *): " << l << "=" << idx[0] << ", " <<idx[1] << ", " <<idx[2] << ", " <<idx[3] << " = " << this->data[l] << endl;
+            
+            return idx[1]*this->d[2]*this->d[3] + idx[2]*this->d[3] + idx[3];;
+        }
         else
             return idx[3]*this->d[1]*this->d[2] + idx[2]*this->d[1] + idx[1];
     };
+    virtual mesh_t& val(long * idx) {
+		return this->data[this->index(idx)];
+	};
 
 };
 

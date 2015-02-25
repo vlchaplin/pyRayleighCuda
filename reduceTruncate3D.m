@@ -10,10 +10,24 @@ function [ initI DXmultiplier newdims ] = reduceTruncate3D( I, Nx, Ny, Nz, nnx, 
 %   
 %   
 
+if nnx>=Nx
+    kNx=1; overshootX=0; nnx=Nx;
+else
+    kNx = ceil(Nx/nnx); overshootX = mod( nnx - rem(Nx,nnx), nnx ); 
+end
 
-kNx = ceil(Nx/nnx); overshootX = mod( nnx - rem(Nx,nnx), nnx ); %mod handles when rem()=0
-kNy = ceil(Ny/nny); overshootY = mod( nny - rem(Ny,nny), nny );
-kNz = ceil(Nz/nnz); overshootZ = mod( nnz - rem(Nz,nnz), nnz );
+if nny>=Ny
+    kNy=1; overshootY=0; nny=Ny;
+else
+    kNy = ceil(Ny/nny); overshootY = mod( nny - rem(Ny,nny), nny );
+end
+
+if nnz>=Nz
+    kNz=1; overshootZ=0; nnz=Nz;
+else 
+    kNz = ceil(Nz/nnz); overshootZ = mod( nnz - rem(Nz,nnz), nnz );
+end
+
 kNxNyNz = kNx*kNy*kNz;
 
 DXmultiplier = [kNx, kNy, kNz];

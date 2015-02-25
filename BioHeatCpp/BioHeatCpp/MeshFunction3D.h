@@ -29,6 +29,7 @@ public:
 	};
 	~MeshFunction3D()
 	{
+        this->clear();
 	};
     
     long index(long& i0, long& i1, long& i2)
@@ -47,13 +48,19 @@ public:
     };
 
 	virtual mesh_t& val(long * idx) {
-		return this->data[index(idx)];
+		return this->data[this->index(idx)];
 	};
 	mesh_t& val(long i0, long i1, long i2) {
-		return this->data[index(i0,i1,i2)];
+		return this->data[this->index(i0,i1,i2)];
 	};
     mesh_t& operator()(long i0, long i1, long i2) {
-		return this->data[index(i0,i1,i2)];
+		return this->data[this->index(i0,i1,i2)];
+	};
+    mesh_t getval(long i0, long i1, long i2) {
+		return this->data[this->index(i0,i1,i2)];
+	};
+    void setval(mesh_t val, long i0, long i1, long i2) {
+		this->data[this->index(i0,i1,i2)] = val;
 	};
 
 };

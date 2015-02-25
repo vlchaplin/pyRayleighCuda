@@ -1,4 +1,4 @@
-function [ T, pixMultiplier, newDx, tdotsrc, newI ] = homogenousePBHE( T0, alpha, ktherm, rho, cp, c_sound, I, Nx, Ny, Nz, Dx, nnx, nny, nnz, Nt, tstep, downsample )
+function [ T, pixMultiplier, newDx, tdotsrc, newI ] = homogenousPerfusedPBHE( T0, alpha, ktherm, rho, cp, c_sound, I, Nx, Ny, Nz, Dx, nnx, nny, nnz, Nt, tstep, downsample, bloodTemp, perfusionrate, freeOutBc )
 %homogenousePBHE Wrapper to call Penne's bioheat MEX function
 %   [ T, pixMultiplier, newDx, tdotsrc, newI ] = homogenousePBHE( T0, alpha, ktherm, rho, cp, I, Nx, Ny, Nz, Dx, nnx, nny, nnz, Nt, tstep, downsample )
 %   Inputs:
@@ -17,8 +17,13 @@ function [ T, pixMultiplier, newDx, tdotsrc, newI ] = homogenousePBHE( T0, alpha
 %       The size is the result of an integer number of pixels being averaged
 %       together.
 %   downsample - whether or not downsample I. 
+%
+%   %perfusionrate - units of 1/seconds.  Temp loss rate will be proportional to perf.rate * (T-Tblood)
+
 %   
 
+
+ %mex -outdir 'C:\Users\vchaplin\Documents\HiFU\mex\' 'C:\Users\vchaplin\Documents\HiFU\code\BioHeatCpp\BioHeatCpp\PBHE_Perfused_mex.cpp'
 
 if downsample
     
@@ -59,7 +64,10 @@ T(1,:,:,:) = T0;
 kt3d(:) = ktherm;
 rho_cp_3d(:) = rho*cp;
 
-PBHE_FDsolve_mex(T, tdotsrc, rho_cp_3d, kt3d, fdtdDX);
+% bloodFlowRate = 1; %kg / (m^3*s)
+% perfFraction = 1;
+
+PBHE_Perfused_mex(T, tdotsrc, rho_cp_3d, kt3d, fdtdDX, bloodTemp, perfusionrate, freeOutBc);
 %PBHE_FreeOutflow_FDsolve_mex(T, tdotsrc, rho_cp_3d, kt3d, fdtdDX);
 
 end

@@ -60,7 +60,7 @@ end
 cdis = 0.0035;
 rm = [ [cdis -cdis focal_point(3)]; [0 .005 focal_point(3)];  [-cdis -cdis focal_point(3)];  ];
 
-model_translate = [0.0075 0.0075 0];
+model_translate = [0.00 0.005 0];
 
 for k=1:3
     
@@ -69,28 +69,28 @@ end
 
 
 %% equilateral triangle in XY plane
-% nfoci=3;
-% triangle_height=0.01;
-% triangle_halfside = triangle_height/tan(pi/3);
-% modelframe_center = [0 triangle_halfside*tan(pi/6) 0];
-% 
-% rm = [ [ triangle_halfside 0 0]; [0 triangle_height 0]; [ -triangle_halfside 0 0]];
-% 
-% %R = rotmatZYZ(0, 0, pi/3);
-% R = rotmatZYZ(0, 0, 0);
-% for k=1:nfoci
-%     
-%     rm(k,:) = (rm(k,:) - modelframe_center)*R + focal_point + [ 0 modelframe_center(2)-triangle_height 0 ];
-% end
+nfoci=3;
+triangle_height=0.01;
+triangle_halfside = triangle_height/tan(pi/3);
+modelframe_center = [0 triangle_halfside*tan(pi/6) 0];
+
+rm = [ [ triangle_halfside 0 0]; [0 triangle_height 0]; [ -triangle_halfside 0 0]];
+
+%R = rotmatZYZ(0, 0, pi/3);
+R = rotmatZYZ(0, 0, 0);
+for k=1:nfoci
+    
+    rm(k,:) = (rm(k,:) - modelframe_center)*R + focal_point + 0*[ 0 modelframe_center(2)-triangle_height 0 ];
+end
 %% disk around focus in X-Y plane
-% nfoci=3;
-% radius=0.005;
-% rm = zeros(nfoci,3);
-% thetas = (0:(2*pi/(nfoci)):2*pi) - pi/2  ;
-% for k=1:nfoci
-%     rm(k,:) = [ radius*cos(thetas(k)), radius*sin(thetas(k)), 0 ];
-%     rm(k,:) = rm(k,:) + focal_point + [ 0.005 0 0 ];
-% end
+nfoci=4;
+radius=0.005;
+rm = zeros(nfoci,3);
+thetas = (0:(2*pi/(nfoci)):2*pi) - pi/2  ;
+for k=1:nfoci
+    rm(k,:) = [ radius*cos(thetas(k)), radius*sin(thetas(k)), 0 ];
+    rm(k,:) = rm(k,:) + focal_point + [ 0.00 0 0 ];
+end
 %%
 %rm = focal_point;
 p_control_xyz = rm';
@@ -119,13 +119,8 @@ xrange = [-1 1]*0.02 ;
 yrange = [-1 1]*0.02 ;
 zrange = r_foc + [-1 1]*0.03;
 
-% xrange = [-0.0125 -0.0075];
-% yrange = [0.00175 0.00245];
-
-
-
-Nx=256;
-Ny=256;
+Nx=128;
+Ny=128;
 Nz=50;
 
 xrp = linspace(xrange(1), xrange(2), Nx);
@@ -231,19 +226,24 @@ zlabel(' [cm]', 'Fontsize', 12);
 return;
 %% Bioheat
 
+freeOut=1;
+%Free field acoustic intensity max in W/m^2 
+%(i.e., amount of power absorbed if alpha=1.0/m)
+newMaxI = 5e7;
+
 maxI= max(I(:));
-newMaxI = 1e7;
 I = I.*(newMaxI/maxI);
 maxI = newMaxI;
 halfmaxI = 1.0*maxI;
 
 
-nnx = 100;
-nny = 100;
+nnx = 80;
+nny = 80;
 nnz = Nz;
 tstep = 0.1;
 Nt = 10;
 T0=37;
+Tb=37;
 Cp = 3700;
 
 ktherm = 0.5;
@@ -251,10 +251,20 @@ alpha = 0.5;
 
 simDur=Nt*tstep;
 
-totDur=5;  %total time to "sonicate" in seconds
+% Total Simulation Duration 
+totDur = 10;  %total time to "sonicate" in seconds
+
 time=0;
 
-[Ton pixMult newDx tdotsrc Iregrid] = homogenousePBHE( T0, alpha, ktherm, rho, Cp, c, I, Nx, Ny, Nz, dSvox, nnx, nny, nnz, Nt, tstep, 1 );
+perfusionrate = 0.01; %units of 1/seconds.  Temp loss rate will be proportional to perf.rate * (T-Tblood)
+
+%[Iregrid, pixMultiplier, newIdims] = reduceScalarGridFunc( I, [Nx,Ny,Nz], [nnx,nny,nnz]);
+[Iregrid, pixMultiplier, newIdims] = reduceTruncate3D( I, Nx, Ny, Nz, nnx, nny, nnz );
+[nnx nny nnz]=size(Iregrid);
+newDx = dSvox.*pixMultiplier;
+
+%[Ton pixMult newDx tdotsrc Iregrid] = homogenousePBHE( T0, alpha, ktherm, rho, Cp, c, I, Nx, Ny, Nz, dSvox, nnx, nny, nnz, Nt, tstep, 1 );
+[Ton pixMult newDx tdotsrc] = homogenousPerfusedPBHE( T0, alpha, ktherm, rho, Cp, c, Iregrid, nnx, nny, nnz, newDx, nnx, nny, nnz, Nt, tstep, 0, Tb, perfusionrate, freeOut );
 
 [Nt nnx nny nnz]=size(Ton);
 
@@ -272,10 +282,11 @@ zslice = round(nnz/2);
 
 %%
 time=simDur;
+%[Iregrid, pixMultiplier, newIdims] = reduceScalarGridFunc( I, [Nx,Ny,Nz], [nnx,nny,nnz]);
 [Iregrid, pixMultiplier, newIdims] = reduceTruncate3D( I, Nx, Ny, Nz, 100, 100, nnz );
 % %Iregrid=Iregrid1;
 % Tfinal=Tfinal1;
-[Ton pixMult newDx tdotsrc] = homogenousePBHE( Tfinal, alpha, ktherm, rho, Cp, c, Iregrid, nnx, nny, nnz, newDx, nnx, nny, nnz, Nt, tstep, 0 );
+[Ton pixMult newDx tdotsrc] = homogenousePBHE( Tfinal, alpha, ktherm, rho, Cp, c, Iregrid, nnx, nny, nnz, newDx, nnx, nny, nnz, Nt, tstep, 0, Tb, perfusionrate, freeOut );
 %%
 
 figure(2);
@@ -320,8 +331,12 @@ while( time < totDur )
     view([30 50]);
     caxis([0 240]);
 
-    [Ton pixMult newDx tdotsrc] = homogenousePBHE( Ton(Nt,:,:,:), alpha, ktherm, rho, Cp, c, Iregrid, nnx, nny, nnz, newDx, nnx, nny, nnz, Nt, tstep, 0 );
+    %[Ton pixMult newDx tdotsrc] = homogenousePBHE( Ton(Nt,:,:,:), alpha, ktherm, rho, Cp, c, Iregrid, nnx, nny, nnz, newDx, nnx, nny, nnz, Nt, tstep, 0 );
 
+    [Ton pixMult newDx tdotsrc] = homogenousPerfusedPBHE( Ton(Nt,:,:,:), alpha, ktherm, rho, Cp, c, Iregrid, nnx, nny, nnz, newDx, nnx, nny, nnz, Nt, tstep, 0, Tb, perfusionrate, freeOut );
+
+    
+    
     time = time + simDur;
 end
 

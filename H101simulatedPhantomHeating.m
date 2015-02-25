@@ -74,8 +74,8 @@ for y=1:Ny
     l = sub2ind([ Nx Ny Nz ],  x0 - mx(ok) + 1, ylist, z0 - mz(ok) + 1 );
     rotatedField(l) =  q;
      
-     l = sub2ind([ Nx Ny Nz ], mx(ok) + x0, ylist, z0 - mz(ok) + 1 );
-     rotatedField(l) =  q;
+    l = sub2ind([ Nx Ny Nz ], mx(ok) + x0, ylist, z0 - mz(ok) + 1 );
+    rotatedField(l) =  q;
     
 end
 
@@ -86,6 +86,8 @@ clf;
 hold on;
 
 %approx_focus = [80 Ny/2 80];
+
+rotatedField = load_h101_pressure_file();
 
 s=slice(gx,gy,gz, rotatedField, 1 ,[], [] );
 set(s,'EdgeColor','none');
@@ -112,12 +114,13 @@ view([45 10]);
 %% PID
 
 ppi.nom = 6; %deg C
-ppi.pgain = 0.001; 
+ppi.pgain = 0.005; 
 ppi.igain = 0.00001;
-ppi.dgain = 0.005;
+ppi.dgain = 0.001;
 ppi.cmin = 0;
 ppi.cmax = 0.5; 
 
+VinMax = 500e-3;
 
 %% heating simulation
 
@@ -128,7 +131,7 @@ Cp = 3700; %heat capacity J/(kg*C)
 rho = 1000; % density (kg/m^3)
 c = 1500; % sound speed m/s
 
-alpha = 1.0; %acoustic absorption (1/m)
+alpha = 0.5; %acoustic absorption (1/m)
 ktherm = 0.5;
 
 % agarose...
@@ -143,22 +146,21 @@ Iunscaled = normalizedPfield .* conj(normalizedPfield) * (1.0 / (2.0*rho*c));
 
 I = Iunscaled;
 
+perfusionrate = 0.002;
 
 %simulated time between MRI acquisitions (time interval at which the
 %controller is updated)
-
 acq_interval = 2.0; %seconds.
 
-total_time = 600; %seconds
-
+total_time = 60;
 %Upper limit of finite-difference computational grid size. Can't make it to large because
 %of memory constrains.  4D grid = Nt*nnx*nny*nnz size. After
 % homogenousPBHE() is run once, the grid size is trunctated to a more
 % convenient value an updated.
 %
-nnx = 80;
-nny = 80;
-nnz = 80;
+nnx = 41;
+nny = 41;
+nnz = 41;
 tstep = 0.1; %will be slightly changed if not a factor of acq_interval
 
 
@@ -168,7 +170,9 @@ tstep = acq_interval/Nt;
 
 sprintf('# Time steps = %d', Nt)
 
-T0=21; %initial ambient temperature of the object in C
+T0=37; %initial ambient temperature of the object in C
+
+TperfusionFluid=T0;
 
 time=0;
 
@@ -177,17 +181,28 @@ time=0;
 
 %run once with down-sampling
 downsamp=1;
-[T pixMult newDx tdotsrc Iregrid] = homogenousePBHE( T0, alpha, ktherm, rho, Cp, I, Nx, Ny, Nz, Dx, nnx, nny, nnz, Nt, tstep, downsamp );
+freeOut=0;
+
+%[T pixMult newDx tdotsrc Iregrid] = homogenousePBHE( T0, alpha, ktherm, rho, Cp, I, Nx, Ny, Nz, Dx, nnx, nny, nnz, Nt, tstep, downsamp );
+
+[T pixMult newDx tdotsrc Iregrid] = homogenousPerfusedPBHE( T0, alpha, ktherm, rho, Cp, c, I, Nx, Ny, Nz, Dx, nnx, nny, nnz, Nt, tstep, downsamp, TperfusionFluid, perfusionrate, freeOut );
+
+
 %uPDATE grid size.  Nt doesn't change
 [Nt, nnx, nny,nnz] = size(T);
 
 %Iunscaled = Iregrid / max(Iregrid(:) );
 Iunscaled = Iregrid;
 
-zslice = round(nnz/2);
+%now do the actual first simulation with the re-gridded itensity at the
+%starting voltage
+Iregrid = Iunscaled * ((pnp_pascals^2) );
 
-roi_x = 20:22;
-roi_y = 2:20;
+[T pixMult newDx tdotsrc Iregrid] = homogenousPerfusedPBHE( T0, alpha, ktherm, rho, Cp, c, Iregrid, nnx, nny, nnz, newDx, nnx, nny, nnz, Nt, tstep, downsamp, TperfusionFluid, perfusionrate, freeOut );
+
+zslice = round(nnz/2);
+roi_x = round(nnx/2)+1 + (-1:1);
+roi_y = 10:12;
 roi_z = zslice;
 
 Tslice = squeeze( T(Nt,:,:, zslice ) ) - T0;
@@ -196,10 +211,10 @@ roiTavg = sum(sum( Tslice(roi_x,roi_y), 1), 2) / ( length(roi_x)*length(roi_y) )
 
 roi_mask = zeros(nnx,nny);
 
-roi_mask(roi_x(1), roi_y) = 1;
-roi_mask(roi_x(end), roi_y) = 1;
-roi_mask(roi_x, roi_y(1)) = 1;
-roi_mask(roi_x, roi_y(end)) = 1;
+roi_mask(roi_x(1)-1, roi_y) = 1;
+roi_mask(roi_x(end)+1, roi_y) = 1;
+roi_mask(roi_x, roi_y(1)-1) = 1;
+roi_mask(roi_x, roi_y(end)+1) = 1;
 
 time = time + tstep*Nt;
 
@@ -224,10 +239,16 @@ tvals(1) = time;
 TempVals(1) = roiTavg;
 Volts(1)=Vin;
 
+%Volts(1)=max(Iregrid(:));
+
 while(time < total_time)
     
     [Vin, ppi] = piupdateMegan(Vin,roiTavg,ppi);
-    %Vin=0.05;
+    Vin=0.05;
+    
+    if ( Vin> VinMax)
+        Vin = VinMax;
+    end
     
     Vin_mV = 1000*Vin;
     pnp_pascals = 24.4237e3 * Vin_mV;
@@ -235,7 +256,10 @@ while(time < total_time)
     
     %run again using the previous final T map as the initial condition. In
     %thise case 
-    [T pixMult newDx tdotsrc] = homogenousePBHE( T(Nt,:,:,:), alpha, ktherm, rho, Cp, Iregrid, nnx, nny, nnz, newDx, nnx, nny, nnz, Nt, tstep, downsamp );
+    %[T pixMult newDx tdotsrc] = homogenousePBHE( T(Nt,:,:,:), alpha, ktherm, rho, Cp, Iregrid, nnx, nny, nnz, newDx, nnx, nny, nnz, Nt, tstep, downsamp );
+    
+    [T pixMult newDx tdotsrc] = homogenousPerfusedPBHE( T(Nt,:,:,:), alpha, ktherm, rho, Cp, c, Iregrid, nnx, nny, nnz, newDx, nnx, nny, nnz, Nt, tstep, downsamp, TperfusionFluid, perfusionrate, freeOut );
+
     
     Tslice = squeeze( T(Nt,:,:, zslice ) ) - T0;
     roiTavg = sum(sum( Tslice(roi_x,roi_y), 1), 2) / ( length(roi_x)*length(roi_y) );
@@ -246,6 +270,8 @@ while(time < total_time)
     tvals(end+1) = time;
     TempVals(end+1) = roiTavg;
     Volts(end+1)=Vin;
+    
+    %Volts(end+1)=max(Iregrid(:));
     
     figure(2);
     clf;
@@ -258,7 +284,7 @@ while(time < total_time)
     drawnow;
     
     figure(3);
-    clf;
+    %clf;
     plot( tvals, TempVals );
     figure(4);
     clf;
@@ -279,14 +305,14 @@ figure(2);
 
 %%
 
-break;
+
 
 xx = newDx(1)*((1:nnx)-nnx/2);
 yy = newDx(2)*((1:nny));
 zz = newDx(3)*((1:nnz)-nnz/2);
 [gx, gy, gz] = meshgrid( yy, xx, zz );
 
-figure (3);
+figure (1);
 clf;
 hold on;
 
