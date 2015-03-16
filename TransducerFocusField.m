@@ -60,9 +60,11 @@ end
 cdis = 0.0035;
 rm = [ [cdis -cdis focal_point(3)]; [0 .005 focal_point(3)];  [-cdis -cdis focal_point(3)];  ];
 
-model_translate = [0.00 0.005 0];
+rm = [ [0 0 0.12 ]; [0 0 0.16]; ];
 
-for k=1:3
+model_translate = [0.00 0.00 0];
+
+for k=1:2
     
     rm(k,:) = (rm(k,:) + model_translate);
 end
@@ -119,9 +121,9 @@ xrange = [-1 1]*0.02 ;
 yrange = [-1 1]*0.02 ;
 zrange = r_foc + [-1 1]*0.03;
 
-Nx=128;
-Ny=128;
-Nz=50;
+Nx=3;
+Ny=3;
+Nz=100;
 
 xrp = linspace(xrange(1), xrange(2), Nx);
 yrp = linspace(yrange(1), yrange(2), Ny);
@@ -158,7 +160,9 @@ for n=1:N
     
         thisSource = nth_integrand_coeff.*exp(-1i*kr.*(d))./d;
         
+        
         p(:,:,:) = thisSource + p;
+        
         
     end
     
