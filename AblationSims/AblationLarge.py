@@ -104,12 +104,12 @@ activeDwellTime_sec = 30
 # free parameter: Power  <--------------------
 # Spatial peak, temporal average intensity of desired focus in W/m^2
 # Multiply by 1e-4 to get W/cm^2 (ie it's smaller than W/m^2)
-Ispta = 1.7e7
+Ispta = 1.2e7
 
-## triangle template
+#### triangle template
 ### 
 # free parameter: spacing ('d')  <--------------------
-d=0.002;
+d=0.0025;
 h=d*sin(pi/3);
 
 triangle = np.array([[-d/2, -h/2, 0.0], [d/2, -h/2, 0.0], [0, h/2, 0] ])
