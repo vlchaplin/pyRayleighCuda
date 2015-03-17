@@ -18,13 +18,13 @@ import geom;
 
 
 # ------ Sim globals --------- #
-Nx = 60
-Ny = 60
+Nx = 80
+Ny = 80
 Nz = 40
 Nt = 6
 
-xrp = 1e-2*np.linspace(-2,2,Nx)
-yrp = 1e-2*np.linspace(-2,2,Ny)
+xrp = 1e-2*np.linspace(-3,3,Nx)
+yrp = 1e-2*np.linspace(-3,3,Ny)
 zrp = 1e-2*np.linspace(7,18,Nz)
 
 #for stability, dt ~ 0.1 sec and dx ~ 1mm (CFL criteria for drift-diffusion), Nt < ~20
@@ -96,11 +96,19 @@ vertImageBounds = [ xrp[0]*100, xrp[-1]*100, zrp[0]*100, zrp[-1]*100 ]
 #Whether or not to use a control cell
 doControl=True
 
+### 
+# free parameter: Active dwell time  <--------------------
+activeDwellTime_sec = 30
 
-# total number of sonications
-Nson = 1
+### 
+# free parameter: Power  <--------------------
+# Spatial peak, temporal average intensity of desired focus in W/m^2
+# Multiply by 1e-4 to get W/cm^2 (ie it's smaller than W/m^2)
+Ispta = 1.7e7
 
 ## triangle template
+### 
+# free parameter: spacing ('d')  <--------------------
 d=0.002;
 h=d*sin(pi/3);
 
@@ -120,11 +128,6 @@ ystart = -0.01+h/2
 
 x0 = np.array([xstart, ystart, 0 ])
 uxyz = geom.translate3vecs(uxyz, x0 )
-
-
-### 
-# free parameter: Active dwell time  <--------------------
-activeDwellTime_sec = 30
 
 # feed-back control time (must be >= dt for obvious reasons, and <= Nt*dt b.c. that's convenient programming for now)
 tempCheckInterval_sec = 0.5
@@ -165,11 +168,6 @@ Nj= round( 0.02 / (2.0*h))
 
 #Ni=2
 #Nj=1
-
-
-# Spatial peak, temporal average intensity of desired focus in W/m^2
-# Multiply by 1e-4 to get W/cm^2 (ie it's smaller than W/m^2)
-Ispta = 1.6e7
 
 # proportionality of acoustic absorption
 alpha_acc = 0.5
@@ -294,6 +292,11 @@ figName = "C:\\Users\\vchaplin\\Documents\\HiFU\code\\AblationSims\\simdata\\plo
 print("Writing ", h5name)
 f = h5py.File(h5name, "w")
 dset = f.create_dataset("CEM", data=CEMthis)
+
+f.flush()
+dset3 = f.create_dataset("Tfinal", data=T[0])
+f.flush()
+
 dset.attrs['Ispta_W_m2'] = Ispta
 dset.attrs['dwelltime_sec'] = activeDwellTime_sec
 dset.attrs['d_m'] = d
