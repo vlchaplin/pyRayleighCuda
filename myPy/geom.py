@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import numpy
-from math import sin,cos
+from math import sin,cos,pi
 
 
 def translate3vecs(inputVecs, delta, overwrite=False):
@@ -48,3 +48,8 @@ def rot(matrix,v):
     u=numpy.array(list(map ( lambda vec: matrix.dot(vec), v)))
     return u
     
+    
+def equilateral_tri(d, z=0.0):
+    h=d*sin(pi/3);
+    return numpy.array([[-d/2, -h/2, z], [d/2, -h/2, z], [0, h/2, z] ])
+

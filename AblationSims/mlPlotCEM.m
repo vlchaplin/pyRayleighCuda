@@ -1,4 +1,4 @@
-filename='C:\\Users\\vchaplin\\Documents\\HiFU\\code\\AblationSims\\simdata\\cem_2.5mm_30000ms_I=1600_RT.hdf5'
+filename='C:\\Users\\vchaplin\\Documents\\HiFU\\code\\AblationSims\\simdata\\cem_2.5mm_30000ms_I=1200_RT.hdf5'
 
 CEM = h5read(filename,'/CEM');
 
@@ -13,7 +13,7 @@ cemVal1 = 240;
 cemVal2 = 100;
 cemVal3 = 20;
 
-figure(1);
+figure(2);
 clf;
 hold on;
 

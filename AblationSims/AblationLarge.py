@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 import pylab
 from math import *;
 import h5py
-
 import sys;
 
 # add path to the C++ extension library (PBHEswig)
@@ -15,6 +14,57 @@ sys.path.append('C:\\Users\\vchaplin\\Documents\\HiFU\code\\myPy')
 import PBHEswig;
 import sonalleve;
 import geom;
+
+import argparse
+
+##defaults
+Ispta = 1500
+d=2.0
+T0=37
+a=1.0
+f0=1.2
+
+roiXwidth_cm=2.0
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-T0", help="Starting temp in C", type=float)
+parser.add_argument("-I", help="Peak intensity (Ispta) of the acoustic field in W/cm^2. Default = 1500 W/cm^2", type=float)
+parser.add_argument("-d", help="Triangle side in mm (2.0 by default)", type=float)
+parser.add_argument("-a", help="Dwell time (aka heating time per position) in seconds", type=float)
+parser.add_argument("-f0", help="Sonication frequencey in MHz (0.8, 1.2 or 1.45 are supported on the Sonalleve. F0=1.2 by default)", type=float)
+parser.add_argument("-DX", help="Width of the roi in x (about 0). Value in cm, default = 2", type=float)
+parser.add_argument("-DY", help="Width of the roi in y (about 0). Value in cm, default = 2", type=float)
+
+args = parser.parse_args()
+
+if args.a:
+    a = args.a
+if args.I:
+    Ispta=args.I
+if args.d:
+    d = args.d
+if args.T0:
+    T0 = args.T0
+if args.f0:
+    f0 = args.f0
+if args.DX:
+    roiXwidth_cm = args.DX
+    
+roiYwidth_cm = roiXwidth_cm
+if args.DY:
+    roiYwidth_cm = args.DY
+
+
+roiXmin = 0.01*-roiXwidth_cm/2.0
+roiXmax = 0.01*roiXwidth_cm/2.0
+roiYmin = -0.01*roiYwidth_cm/2.0
+roiYmax = 0.01*roiYwidth_cm/2.0
+
+d*=1e-3
+Ispta*=1e4
+f0*=1e6
+
+h = d*sin(pi/3)
 
 
 # ------ Sim globals --------- #
@@ -65,8 +115,8 @@ PBHEswig.ShareMemoryMesh3(rhoCp, res[1:4], rhoCpmesh)
 zplane=0.14
 focplaneZpix=np.where(np.logical_and( (zrp[1:-1]-zplane>0) , (zrp[0:-2]-zplane<0) ))[0][0]
 
-roiVolumeXPix = np.where(np.logical_and( (xrp>=-0.01) , (xrp<=0.01) ))[0]
-roiVolumeYPix = np.where(np.logical_and( (yrp>=-0.01) , (yrp<=0.01) ))[0]
+roiVolumeXPix = np.where(np.logical_and( (xrp>= roiXmin) , (xrp<= roiXmax) ))[0] 
+roiVolumeYPix = np.where(np.logical_and( (yrp>= roiYmin) , (yrp<= roiYmax) ))[0]
 roiVolumeZPix = np.where(np.logical_and( (zrp>=zplane-0.01) , (zrp<=zplane+0.01) ))[0]
 
 roiMask = np.zeros([Nx,Ny,Nz], dtype=np.bool)
@@ -78,15 +128,15 @@ roiNumVox = np.sum(roiMask)
 roiVolume = roiNumVox*voxVol
 
 #initial conditions
-rho=3700
-T[:] = 37.0
-Tdot[:] = 5;
-kdiff[:] = 0.5;
+rho=4100
+T[:] = T0
+Tdot[:] = 0;
+kdiff[:] = 0.6;
 rhoCp[:] = rho*1000;
 
 perfRate = 0.01;
 
-f0 = 1.2e6
+#f0 = 1.2e6
 c0 = 1540
 k0 = 2.0*pi*(f0/c0)
 
@@ -98,19 +148,20 @@ doControl=True
 
 ### 
 # free parameter: Active dwell time  <--------------------
-activeDwellTime_sec = 30
+activeDwellTime_sec = a
 
 ### 
 # free parameter: Power  <--------------------
 # Spatial peak, temporal average intensity of desired focus in W/m^2
 # Multiply by 1e-4 to get W/cm^2 (ie it's smaller than W/m^2)
-Ispta = 1.2e7
+#
+#Ispta = 1.8e7  ## Now set by argument
 
 #### triangle template
 ### 
 # free parameter: spacing ('d')  <--------------------
-d=0.0025;
-h=d*sin(pi/3);
+#d=0.0025;    ## Now set by argument
+#h=d*sin(pi/3);
 
 triangle = np.array([[-d/2, -h/2, 0.0], [d/2, -h/2, 0.0], [0, h/2, 0] ])
 pxyz=triangle
@@ -123,8 +174,8 @@ uamp = sonalleve.get_focused_element_vals(k0, uxyz, pxyz, p0 )
 
 #starting position
 
-xstart = -0.01+d/2
-ystart = -0.01+h/2
+xstart = roiXmin+d/2 
+ystart = roiYmin+h/2
 
 x0 = np.array([xstart, ystart, 0 ])
 uxyz = geom.translate3vecs(uxyz, x0 )
@@ -163,10 +214,10 @@ Rbase = 4*np.ones([nnt,Nx,Ny,Nz]);
 #plt.show()
 
 first=True
-Ni= round( 0.02 / (1.5*d))
-Nj= round( 0.02 / (2.0*h))
+Ni= round( 0.01*roiXwidth_cm / (1.5*d))
+Nj= round( 0.01*roiYwidth_cm / (2.0*h))
 
-#Ni=2
+#Ni=1
 #Nj=1
 
 # proportionality of acoustic absorption
@@ -180,6 +231,9 @@ cemNonROIavg = np.zeros(numTimes)
 
 cem240VolROI = np.zeros(numTimes)
 cem240VolNonROI = np.zeros(numTimes)
+
+ROIavgTemp = np.zeros_like(cemROIavg)
+ROIpeakTemp = np.zeros_like(cemROIavg)
 
 sonicationCoords = np.zeros([Ni,Nj,4])
 sonicationDwellTimes = np.zeros([Ni,Nj])
@@ -224,7 +278,7 @@ for i in range(0,Ni):
             Rbase[np.where(T[0:,nnt] > 43.0, True, False)] = 2
             
             #time integrate to get the thermal dose
-            CEMthis[:] += dt*np.sum( Rbase**(T[0:nnt]-43), 0  )
+            CEMthis[:] += (dt/60.0)*np.sum( Rbase**(T[0:nnt]-43), 0  )
             
             nnec = np.sum( np.where( CEMthis[controlCellij] >= 240.0, 1, 0 ) )
             
@@ -236,6 +290,9 @@ for i in range(0,Ni):
             
             cem240VolROI[t] = 1e+6*voxVol*np.sum( np.where( CEMthis[roiMask] >= 240.0, 1, 0 ) )
             cem240VolNonROI[t] = 1e6*voxVol*np.sum( np.where( CEMthis[~roiMask] >= 240.0, 1, 0 ) )
+            ROIavgTemp[t] = np.sum( T[nnt-1][roiMask] ) / roiNumVox
+            
+            ROIpeakTemp[t] = np.max( T[nnt-1][roiMask] )
             
             #cemVolume[t] = 1e6*voxArea*np.sum( np.where( CEMthis >= 240.0, 1, 0 ) )
             cemROIavg[t] = np.sum(CEMthis[roiMask])/roiNumVox
@@ -300,6 +357,7 @@ f.flush()
 dset.attrs['Ispta_W_m2'] = Ispta
 dset.attrs['dwelltime_sec'] = activeDwellTime_sec
 dset.attrs['d_m'] = d
+dset.attrs['T0'] = T0
 dset.attrs['Ntxyz'] = np.array([Nt, Nx, Ny, Nz])
 dset.attrs['restxyz'] = res
 dset.attrs['alpha'] = alpha_acc
@@ -330,33 +388,49 @@ fig2=plt.figure(2, figsize=(10,7), dpi=72)
 plt.subplot(221)
 #plt.imshow( T[nnt-1,:,:,floor(Nz/2)] )
 plt.imshow( np.transpose(CEMthis[:,:,focplaneZpix]), cmap=image.cm.hot, vmin=0, vmax=240.0, extent=imageBounds, origin='lower' )
-
+plt.xlabel('cm')
+plt.ylabel('cm')
 plt.plot( [-1,-1,1,1,-1], [-1,1,1,-1,-1], 'b--')
 
 
 
-plt.subplot(222)
+ax1 = plt.subplot(222)
 #plt.imshow( np.transpose(CEMthis[:,:,focplaneZpix-3]), cmap=image.cm.hot, vmin=0, vmax=240.0, extent=imageBounds, origin='lower' )
-plt.plot(timeList[0:t], cemROIavg[0:t],'r')
-plt.plot(timeList[0:t], cemNonROIavg[0:t],'k')
-plt.xlabel('Time [s]')
-plt.ylabel('Volume-avg CEM')
+ax1.plot(timeList[0:t], cemROIavg[0:t],'r')
+ax1.plot(timeList[0:t], cemNonROIavg[0:t],'k')
+ax1.set_xlabel('Time [s]')
+ax1.set_ylabel('Volume-avg CEM')
+
+ax2 = ax1.twinx()
+ax2.plot(timeList[0:t], ROIavgTemp[0:t],'b--')
+ax2.set_ylabel('ROI Avg-Temp [C]', color='b')
+for tl in ax2.get_yticklabels():
+    tl.set_color('b')
 
 plt.subplot(223)
 plt.imshow( np.transpose(CEMthis[:,floor(Ny/2),:]), cmap=image.cm.hot, vmin=0, vmax=240.0, extent=vertImageBounds, origin='lower' )
-plt.colorbar(orientation='horizontal')
+plt.xlabel('cm')
+plt.ylabel('cm')
+cb = plt.colorbar(orientation='horizontal')
+cb.set_label('CEM')
 
-plt.subplot(224)
-plt.plot(timeList[0:t], cem240VolROI[0:t],'r')
-plt.plot(timeList[0:t], cem240VolNonROI[0:t],'k')
-plt.plot(timeList[[1,-1]], [roiVolume*1e6, roiVolume*1e6], 'b--')
-plt.xlabel('Time [s]')
-plt.ylabel('Volume at CEM >=240 [mL]')
+a41 = plt.subplot(224)
+a41.plot(timeList[0:t], cem240VolROI[0:t],'r')
+a41.plot(timeList[0:t], cem240VolNonROI[0:t],'k')
+a41.plot(timeList[[1,-1]], [roiVolume*1e6, roiVolume*1e6], 'b--')
+a41.set_xlabel('Time [s]')
+a41.set_ylabel('Volume at CEM >=240 [mL]')
 
-#plt.show()
+ax42 = a41.twinx()
+ax42.plot(timeList[0:t], ROIpeakTemp[0:t],'b')
+ax42.set_ylabel('ROI Peak Temp [C]', color='b')
+for tl in ax42.get_yticklabels():
+    tl.set_color('b')
 
 print("Writing ", figName)
 plt.savefig(figName)
+
+plt.show()
 plt.close()
 
 del tacqstops, Rbase, cemROIavg, cemNonROIavg, cem240VolROI, cem240VolNonROI, timeList
