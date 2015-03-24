@@ -34,6 +34,7 @@ parser.add_argument("-a", help="Dwell time (aka heating time per position) in se
 parser.add_argument("-f0", help="Sonication frequencey in MHz (0.8, 1.2 or 1.45 are supported on the Sonalleve. F0=1.2 by default)", type=float)
 parser.add_argument("-DX", help="Width of the roi in x (about 0). Value in cm, default = 2", type=float)
 parser.add_argument("-DY", help="Width of the roi in y (about 0). Value in cm, default = 2", type=float)
+parser.add_argument("--show", help="Display the std plot and block exiting of the program", action="store_true")
 
 args = parser.parse_args()
 
@@ -430,7 +431,9 @@ for tl in ax42.get_yticklabels():
 print("Writing ", figName)
 plt.savefig(figName)
 
-plt.show()
+if args.show:
+    plt.show()
+    
 plt.close()
 
 del tacqstops, Rbase, cemROIavg, cemNonROIavg, cem240VolROI, cem240VolNonROI, timeList
