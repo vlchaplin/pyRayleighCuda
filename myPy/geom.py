@@ -51,5 +51,8 @@ def rot(matrix,v):
     
 def equilateral_tri(d, z=0.0):
     h=d*sin(pi/3);
-    return numpy.array([[-d/2, -h/2, z], [d/2, -h/2, z], [0, h/2, z] ])
+    return (numpy.array([[-d/2, -h/2, z], [d/2, -h/2, z], [0, h/2, z] ]), h)
+
+def cross(d, z=0.0):
+    return numpy.array([[0,0,z], [d, 0, z], [0, d, z], [-d, 0, z], [0, -d, z] ])
 
