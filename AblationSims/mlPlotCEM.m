@@ -1,4 +1,5 @@
-filename='C:\\Users\\vchaplin\\Documents\\HiFU\\code\\AblationSims\\simdata\\cem_3.5mm_10000ms_I=3000_RT.hdf5'
+filename='C:\\Users\\vchaplin\\Documents\\HiFU\\code\\AblationSims\\simdata\\cem_2.5mm_30000ms_I=2500_RT.hdf5'
+filename='C:\\Users\\Vandiver\\Documents\\HiFU\\code\\AblationSims\\focal_point_opt\\cem_3.5_I=3500_t=90.hdf5'
 
 CEM = h5read(filename,'/CEM');
 
@@ -6,21 +7,28 @@ xp = 100*h5readatt(filename,'/CEM','xp');
 yp = 100*h5readatt(filename,'/CEM','yp');
 zp = 100*h5readatt(filename,'/CEM','zp');
 
+times = h5readatt(filename,'/CEM','times');
+cem240VolVsTime = h5readatt(filename,'/CEM','cem240VolROI');
+
+avgRate = ( cem240VolVsTime(end) - cem240VolVsTime(1) ) / ( times(end) - times(1) );
+
+%figure(5)
+%plot(times,  cem240VolVsTime )
 
 %% -- 3D CEM contour
 
 cemVal1 = 240;
 cemVal2 = 100;
-cemVal3 = 20;
+cemVal3 = 5;
 
-figure(2);
+figure(1);
 clf;
 hold on;
 
 xplotr = xp([1 end])';
 yplotr = yp([1 end])';
 zplotr = zp([1 end])';
-%axis([ xplotr yplotr zplotr 0 1 ] );
+axis([ yplotr zplotr xplotr 0 1 ] );
 
 
 %[tx, ty, tz] = meshgrid( xp, yp, zp );
@@ -75,8 +83,8 @@ set(p3, 'Clipping', 'on', 'FaceColor', [0 0.8 0], 'EdgeColor', 'none','FaceAlpha
 
 legend([p1 p2 p3], {sprintf('%dEM',cemVal1), sprintf('%dEM',cemVal2), sprintf('%dEM',cemVal3)})
 
-%axis equal
-axis equal tight
+axis equal
+%axis equal tight
 
 xboxr=[-1 1]; yboxr=xboxr;
 xyboxverts= [ xboxr([1 1 2 2 1]) ; yboxr([1 2 2 1 1]) ];
