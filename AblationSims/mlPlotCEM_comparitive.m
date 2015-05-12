@@ -1,4 +1,4 @@
-filename='C:\\Users\\vchaplin\\Documents\\HiFU\\code\\AblationSims\\cem0_to_cem1.hdf5'
+filename='C:\\Users\\vchaplin\\Documents\\HiFU\\code\\AblationSims\\cem_spiral_compare.hdf5'
 
 CEM0 = h5read(filename,'/CEM0');
 CEM1 = h5read(filename,'/CEM1');
@@ -12,7 +12,7 @@ zp = 100*h5readatt(filename,'/CEM0','zp');
 
 cemVal1 = 240;
 cemVal2 = 100;
-cemVal3 = 20;
+cemVal3 = 5;
 
 figure(1);
 clf;
@@ -100,7 +100,7 @@ end
 
 cemVal1 = 240;
 cemVal2 = 100;
-cemVal3 = 20;
+cemVal3 = 5;
 
 figure(2);
 clf;
@@ -181,3 +181,50 @@ for i=1:4
     plot3( xyboxverts(2,[i i]), [zminverts(1) zmaxverts(1)], xyboxverts(1,[i i]), 'LineStyle','--','LineWidth',2, 'Color', 'black' );
 
 end
+
+%%
+
+
+%% -- 3D CEM contour overplot
+
+cemVal = 200;
+
+figure(2);
+clf;
+hold on;
+
+xplotr = xp([1 end])';
+yplotr = yp([1 end])';
+zplotr = zp([1 end])';
+%axis([ xplotr yplotr zplotr 0 1 ] );
+
+
+%[tx, ty, tz] = meshgrid( xp, yp, zp );
+[tx, ty, tz] = meshgrid( yp, zp, xp );
+%[tx, ty, tz] = ndgrid( zp, xp, yp );
+
+light('Position', [0 12 0], 'Style', 'local');
+light('Position', [0 14 2], 'Style', 'local');
+light('Position', [0 18 0], 'Style', 'local');
+
+p0=patch( isosurface( tx, ty, tz, CEM0, cemVal1 ) );
+isonormals(tx, ty, tz, CEM0, p0);
+
+set(p0, 'FaceColor', 'blue', 'EdgeColor', 'none', ...
+    'FaceAlpha',0.2, ...
+    'FaceLighting', 'gouraud', ...
+    'AmbientStrength', 1.0, 'DiffuseStrength', 0.0, ...
+    'SpecularStrength', 0.9, 'SpecularExponent', 25, 'BackFaceLighting', 'unlit' ...
+    );
+
+p1=patch( isosurface( tx, ty, tz, CEM1, cemVal1 ) );
+isonormals(tx, ty, tz, CEM1, p1);
+
+set(p1, 'FaceColor', 'red', 'EdgeColor', 'none', ...
+    'FaceAlpha',0.2, ...
+    'FaceLighting', 'gouraud', ...
+    'AmbientStrength', 1.0, 'DiffuseStrength', 1.0, ...
+    'SpecularStrength', 0.9, 'SpecularExponent', 25, 'BackFaceLighting', 'unlit' ...
+    );
+
+axis equal

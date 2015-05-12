@@ -260,7 +260,7 @@ for i in range(0,Ni):
         I = np.abs(P)**2 / (2.0*rho*c0)
         I *= (Ispta/np.max(I))
 
-        Tdot[:] = 2.0*(alpha_acc)*I / (rho*c0)
+        Tdot[:] = 2.0*(alpha_acc)*I / (rhoCp)
         
         del [P,I]
         

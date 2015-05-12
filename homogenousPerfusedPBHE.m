@@ -12,10 +12,14 @@ function [ T, pixMultiplier, newDx, tdotsrc, newI ] = homogenousPerfusedPBHE( T0
 %       The the temperature source is dT/dt = 2*alpha * I / (rho*Cp), so alpha=0 means
 %       there is no heat source.  Only diffusion of the T0 occurs.
 %   Nx,Ny,Nz -  Dimensions of I.  
+%   Dx - 3-vector of space resolution, [dx dy dz]
 %   nnx,nny,nnz - Upper limit of the resulting temperature map dimensions.
 %       If downsample = 1, then the simulation grid will be downsampled from the input grid size (for faster results).
 %       The size is the result of an integer number of pixels being averaged
 %       together.
+%
+%   bloodTemp - temperature of perfusing fluid (blood).  Has no effect if
+%   perfusion is zero
 %   downsample - whether or not downsample I. 
 %
 %   %perfusionrate - units of 1/seconds.  Temp loss rate will be proportional to perf.rate * (T-Tblood)
@@ -54,7 +58,6 @@ newDx = pixMultiplier.*Dx;
 fdtdDX = [tstep newDx];
 
 T=zeros(Nt,nnx,nny,nnz);
-tdotsrc = newI* (2*alpha / (rho*c_sound));
 
 rho_cp_3d = zeros(nnx,nny,nnz);
 kt3d = zeros(nnx,nny,nnz);
@@ -63,6 +66,8 @@ T(1,:,:,:) = T0;
 
 kt3d(:) = ktherm;
 rho_cp_3d(:) = rho*cp;
+
+tdotsrc = newI .* (2*alpha / (rho_cp_3d));
 
 % bloodFlowRate = 1; %kg / (m^3*s)
 % perfFraction = 1;
