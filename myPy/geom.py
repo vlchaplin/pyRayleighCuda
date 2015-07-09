@@ -48,6 +48,17 @@ def rot(matrix,v):
     u=numpy.array(list(map ( lambda vec: matrix.dot(vec), v)))
     return u
     
+def ring(d,n, z=0.0, rot=0):
+    dphi = 2.0*pi/n;
+    phis = numpy.arange(0.0,2*pi,dphi) + rot
+    vecs = numpy.zeros([n,3]);
+    r=d/2;
+    
+    vecs[:,0] = r*numpy.cos(phis);
+    vecs[:,1] = r*numpy.sin(phis);
+    vecs[:,2] = z;
+    
+    return (vecs, r)
     
 def equilateral_tri(d, z=0.0):
     h=d*sin(pi/3);

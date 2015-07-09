@@ -34,6 +34,8 @@ for n=1:N
     
 end
 
+%H = abs(H);
+
 Hstar_t = ctranspose(H);
 HHstar_tinv = pinv(H*Hstar_t);
 

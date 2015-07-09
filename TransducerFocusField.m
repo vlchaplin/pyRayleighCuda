@@ -24,7 +24,7 @@ trans_element_area = pi*trans_element_radius^2;
 r_foc = 0.14;
 z_face = max(u_pos(3,:)) + 0.01;
 
-focal_point = [ 0.0 0 r_foc ];
+focal_point = [ 0.0 0 r_foc-0.005 ];
 
 N = size(u_pos,2);
 
@@ -72,21 +72,17 @@ end
 
 %% equilateral triangle in XY plane
 nfoci=3;
-triangle_height=0.01;
-triangle_halfside = triangle_height/tan(pi/3);
-modelframe_center = [0 triangle_halfside*tan(pi/6) 0];
-
-rm = [ [ triangle_halfside 0 0]; [0 triangle_height 0]; [ -triangle_halfside 0 0]];
-
-%R = rotmatZYZ(0, 0, pi/3);
-R = rotmatZYZ(0, 0, 0);
+d = 0.0035;
+h=d*sin(pi/3);
+rm = [[-d/2, -h/2, 0]; [d/2, -h/2, 0]; [0, h/2, 0]; ];
+center = mean(rm,1);
+R = rotmatZYZ(0,0,0);
 for k=1:nfoci
-    
-    rm(k,:) = (rm(k,:) - modelframe_center)*R + focal_point + 0*[ 0 modelframe_center(2)-triangle_height 0 ];
+    rm(k,:) = (rm(k,:) - center)*R + focal_point;
 end
 %% disk around focus in X-Y plane
-nfoci=4;
-radius=0.005;
+nfoci=3;
+radius=0.0035;
 rm = zeros(nfoci,3);
 thetas = (0:(2*pi/(nfoci)):2*pi) - pi/2  ;
 for k=1:nfoci
@@ -121,8 +117,8 @@ xrange = [-1 1]*0.02 ;
 yrange = [-1 1]*0.02 ;
 zrange = r_foc + [-1 1]*0.03;
 
-Nx=3;
-Ny=3;
+Nx=120;
+Ny=120;
 Nz=100;
 
 xrp = linspace(xrange(1), xrange(2), Nx);
@@ -131,7 +127,7 @@ zrp = linspace(zrange(1), zrange(2), Nz);
 
 dSvox = [xrp(2)-xrp(1), yrp(2)-yrp(1), zrp(2) - zrp(1)];
 
-focal_point_pix = floor( ([ 0.0 0 r_foc ] - [xrange(1), yrange(1), zrange(1)]) ./ dSvox)+1;
+focal_point_pix = floor( (focal_point - [xrange(1), yrange(1), zrange(1)]) ./ dSvox)+1;
 
 p = complex(zeros(Nx,Ny,Nz));
 
@@ -182,27 +178,32 @@ halfmaxI = 0.5*maxI;
 % jj=find(I > maxI);
 % I(jj)=maxI;
 
+Idb = 10*log10(I/maxI);
+
 figure(1);
 clf;
 hold on;
-
-s=slice(gx,gy,gz, I, [] ,[], r_foc );
+colormap('hot');
+s=slice(gx,gy,gz, Idb, [] ,[], r_foc );
 set(s,'EdgeColor','none');
 
-s=slice(gx,gy,gz, I, [] ,[], r_foc-0.005 );
+s=slice(gx,gy,gz, Idb, [] ,[], r_foc-0.005 );
 set(s,'EdgeColor','none');
 
-s=slice(gx,gy,gz, I, 0 ,[], [] );
+s=slice(gx,gy,gz, Idb, 0 ,[], [] );
 set(s,'EdgeColor','none');
 
-%s=slice(gx,gy,gz, I, [], 0, [] );
-%set(s,'EdgeColor','black');
+s=slice(gx,gy,gz, Idb, [], 0, [] );
+set(s,'EdgeColor','none');
+
+s=slice(gx,gy,gz, Idb, [], h/2 + dSvox(2), [] );
+set(s,'EdgeColor','none');
 
 daspect([1 1 1]);
 %view([45 45]);
 
-caxis([0.001*maxI maxI]);
-
+%caxis([0.001*maxI maxI]);
+caxis([-20 0]);
 %caxis([8.1762e+02 8.1762e+05]);
 
 xticklabs = 100*linspace(xrange(1), xrange(2), 9);
@@ -233,7 +234,7 @@ return;
 freeOut=1;
 %Free field acoustic intensity max in W/m^2 
 %(i.e., amount of power absorbed if alpha=1.0/m)
-newMaxI = 5e7;
+newMaxI = 1.2e7;
 
 maxI= max(I(:));
 I = I.*(newMaxI/maxI);
@@ -246,21 +247,21 @@ nny = 80;
 nnz = Nz;
 tstep = 0.1;
 Nt = 10;
-T0=37;
+T0=28;
 Tb=37;
 Cp = 3700;
 
 ktherm = 0.5;
-alpha = 0.5;
+alpha = 1.0;
 
 simDur=Nt*tstep;
 
 % Total Simulation Duration 
-totDur = 10;  %total time to "sonicate" in seconds
+totDur = 70.0;  %total time to "sonicate" in seconds
 
 time=0;
 
-perfusionrate = 0.01; %units of 1/seconds.  Temp loss rate will be proportional to perf.rate * (T-Tblood)
+perfusionrate = 0.00; %units of 1/seconds.  Temp loss rate will be proportional to perf.rate * (T-Tblood)
 
 %[Iregrid, pixMultiplier, newIdims] = reduceScalarGridFunc( I, [Nx,Ny,Nz], [nnx,nny,nnz]);
 [Iregrid, pixMultiplier, newIdims] = reduceTruncate3D( I, Nx, Ny, Nz, nnx, nny, nnz );
@@ -293,12 +294,13 @@ time=simDur;
 [Ton pixMult newDx tdotsrc] = homogenousePBHE( Tfinal, alpha, ktherm, rho, Cp, c, Iregrid, nnx, nny, nnz, newDx, nnx, nny, nnz, Nt, tstep, 0, Tb, perfusionrate, freeOut );
 %%
 
-figure(2);
-clf;
-imagesc( tdotsrc(:,:,zslice ) );
+% figure(2);
+% clf;
+% imagesc( tdotsrc(:,:,zslice ) );
 
 while( time < totDur )
 
+    disp(time);
     Rbase = 4.00*ones(Nt,nnx,nny,nnz);
     Rbase(Ton>=43) = 2.0;
 
@@ -309,16 +311,16 @@ while( time < totDur )
     figure(3);
     clf;
     hold on;
-
+    colormap('hot');
     s=slice(tx, ty, tz, tempChange, 0 ,[], [] );
     set(s,'EdgeColor','none');
 
-    s=slice(tx, ty, tz, tempChange, [] ,[], r_foc );
+    s=slice(tx, ty, tz, tempChange, [] ,[], focal_point(3) );
     set(s,'EdgeColor','none');
 
     daspect([1 1 1]);
     view([30 50]);
-    caxis([0 30]);
+    caxis([0 20]);
     
     
     figure(4);
@@ -328,7 +330,7 @@ while( time < totDur )
     s=slice(tx, ty, tz, ThermDose, 0 ,[], [] );
     set(s,'EdgeColor','none');
 
-    s=slice(tx, ty, tz, ThermDose, [] ,[], r_foc );
+    s=slice(tx, ty, tz, ThermDose, [] ,[], focal_point(3) );
     set(s,'EdgeColor','none');
 
     daspect([1 1 1]);
@@ -346,7 +348,35 @@ end
 
 Tfinal=Ton(Nt,:,:,: );
 
+%%
+figure(6);
+clf;
+hold on;
+subplot(121);
+colormap('jet');
+imagesc(  xrp*1e3, yrp*1e3, tempChange(:,:,focal_point_pix(3)), [0 30] );
+%imagesc( xrp*1e3, yrp*1e3, tempChange(:,:,focal_point_pix(3)), [0 20] );
+axis equal tight;
+%axis([-50 50 -50 50]);
+set(gca, 'YDir', 'normal');
+xlabel('mm','FontSize',16);
+ylabel('mm','FontSize',16);
+cbar=colorbar();
+cbar.Label.String = '\Delta T (^oC)';
+cbar.FontSize = 16;
 
+subplot(122);
+colormap('jet');
+imagesc( yrp*1e3, zrp*1e3, squeeze(tempChange(27,:,:))', [0 30] );
+%imagesc( xrp*1e3, yrp*1e3, tempChange(:,:,focal_point_pix(3)), [0 20] );
+axis equal tight;
+set(gca, 'YDir', 'normal', 'YLim', [125 140]);
+%axis([-50 50 -50 50]);
+xlabel('mm','FontSize',16);
+ylabel('mm','FontSize',16);
+cbar=colorbar();
+cbar.Label.String = '\Delta T (^oC)';
+cbar.FontSize = 16;
 
 %% -- 3D CEM contour
 

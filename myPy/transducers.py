@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
 import geom
-from math import floor,pi,sin,cos,asin
+from math import floor,pi,sin,cos,asin,sqrt
 import numpy
 
-def get_focused_element_vals(kwavenum, xyzVecs, focalPoints, focalPvals):
+def get_focused_element_vals(kwavenum, xyzVecs, focalPoints, focalPvals, L1renorm=None, L2renorm=None):
     
     M = len(focalPvals)
     N = len(xyzVecs)
@@ -22,6 +22,11 @@ def get_focused_element_vals(kwavenum, xyzVecs, focalPoints, focalPvals):
     HHa_inv=numpy.linalg.pinv(H.dot(Hadj))
     
     uopt = (Hadj).dot(HHa_inv).dot(focalPvals)
+    
+    if L1renorm is not None:
+        uopt = L1renorm*uopt/sum(abs(uopt))
+    elif L2renorm is not None:
+        uopt = L2renorm*uopt*sqrt(1.0/sum(abs(uopt)**2))
     
     return uopt
 
