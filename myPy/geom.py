@@ -3,6 +3,36 @@
 import numpy
 from math import sin,cos,pi
 
+def write_VTK_points(filename, xyz):
+
+    N = len(xyz)
+    d = len(xyz[0])
+    if d != 3:
+        return 1
+    
+    f = open(filename,mode='w')
+    f.write('# vtk DataFile Version 3.0\n')
+    f.write('vtk output\n')
+    f.write('ASCII\n')
+    f.write('DATASET POLYDATA\n')
+    f.write('POINTS %d ' % N)
+    f.write('float\n')
+
+    for i in range(0,N):
+        for j in range(0,3):
+            f.write("%.8f " % xyz[i][j] )
+        f.write('\n')
+        
+    f.write('\n\n')
+    f.write('VERTICES %d %d\n' % ( N,2*N) )
+    
+    for i in range(0,N):
+        f.write('%d %d\n' % ( 1, i) )
+        
+    f.close()
+    
+    return 0
+    
 
 def translate3vecs(inputVecs, delta, overwrite=False):
     """

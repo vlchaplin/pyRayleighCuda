@@ -14,13 +14,13 @@ db = 'C:\Users\Vandiver\Data\sonalleve\sonalleve.db';
 
 %single vs triangular sweep, 20W & 30W
 files_to_compare = {...
-    'QA_phantom_20150621\Caskey_999_11_01_15.14.59_(TemperatureMapping_CLEAR).PAR',...
-    'QA_phantom_20150621\Caskey_999_08_01_14.49.12_(TemperatureMapping_CLEAR).PAR',...
+    %'QA_phantom_20150621\Caskey_999_11_01_15.14.59_(TemperatureMapping_CLEAR).PAR',...
+    %'QA_phantom_20150621\Caskey_999_08_01_14.49.12_(TemperatureMapping_CLEAR).PAR',...
     'QA_phantom_20150628\Caskey_9999_WIP_TemperatureMapping_CLEAR_7_1.PAR',...
     'QA_phantom_20150628\Caskey_9999_WIP_TemperatureMapping_CLEAR_6_1.PAR'...
     };
 
-
+%files_to_compare={'QA_phantom_20150628\Caskey_9999_WIP_TemperatureMapping_CLEAR_7_1.PAR'};
 dbid = mksqlite(0,'open',db);
 
 figure(1);
@@ -31,12 +31,12 @@ ylabel('\Delta T (^oC)');
 for fn=1:length(files_to_compare)
 
     [fdir,fbase,fext]=fileparts(files_to_compare{fn});
-    query = sprintf('select * from mrhifu where file="%s%s";',fbase,fext)
+    query = sprintf('select * from data where file="%s%s";',fbase,fext)
     qrydata = mksqlite(dbid, query);
     
     [ deltaTseries, axis0_mm, axis1_mm, slice_axis_mm, dyntimes, im ] = GetDeltaTemp4D_PAR( [qrydata.path,'\',qrydata.file], qrydata.isRI, 0.1 );
 
-    dTroi = deltaTseries(qrydata.refvox0 + (-3:3),qrydata.refvox1 + (-3:3),qrydata.refvox2 + (-1:1), :);
+    dTroi = deltaTseries(qrydata.refvox0 + (-qrydata.mar0:qrydata.mar1),qrydata.refvox1 + (-qrydata.mar1:qrydata.mar1),qrydata.refvox2 + (-qrydata.mar2:qrydata.mar2), :);
     sz=size(dTroi);
     flattened = reshape(dTroi,sz(1)*sz(2)*sz(3),sz(4));
     avgTemp = mean(flattened,1);

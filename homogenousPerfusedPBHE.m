@@ -65,9 +65,9 @@ kt3d = zeros(nnx,nny,nnz);
 T(1,:,:,:) = T0;
 
 kt3d(:) = ktherm;
-rho_cp_3d(:) = rho*cp;
+rho_cp_3d(:) = rho.*cp;
 
-tdotsrc = newI .* (2*alpha / (rho_cp_3d));
+tdotsrc = newI .* (2*alpha ./ (rho_cp_3d));
 
 % bloodFlowRate = 1; %kg / (m^3*s)
 % perfFraction = 1;

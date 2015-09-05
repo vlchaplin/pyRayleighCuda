@@ -1,4 +1,4 @@
-function [ deltaTseries, axis0_mm, axis1_mm, slice_axis_mm, dyntimes, im ] = GetDeltaTemp4D_PAR( parrec, is_RI_image, maskMagThreshold )
+function [ deltaTseries, axis0_mm, axis1_mm, slice_axis_mm, dyntimes, im ] = GetDeltaTemp4D_PAR( parrec, is_RI_image, maskMagThreshold, angle2tempFactor )
 %GetDeltaTemp4D Open the PAR file and compute temperature shift
 %   is_RI_image  - 0 if image is in Real and Imaginary parts, 1 if Mag &
 %   Phase
@@ -20,6 +20,10 @@ function [ deltaTseries, axis0_mm, axis1_mm, slice_axis_mm, dyntimes, im ] = Get
         im.Data(:,:,:,2,:) = angle(tempComplex);
 
         clear('tempComplex');
+    end
+    
+    if ~exist('angle2tempFactor','var')
+       angle2tempFactor = 1.0 / (42.576*0.01*3.0*0.016*pi);
     end
 
     slice_thick_col=23;
@@ -52,7 +56,7 @@ function [ deltaTseries, axis0_mm, axis1_mm, slice_axis_mm, dyntimes, im ] = Get
     for dn=2:ndynamics
 
         complexStack = squeeze( (im.Data(:,:,:,1,dn).*exp(1i*im.Data(:,:,:,2,dn))) );
-        deltaTseries(:,:,:,dn) = (1-outsideVox).*angle(refStack.*conj(complexStack)) / (42.576*0.01*3.0*0.016*pi);
+        deltaTseries(:,:,:,dn) = (1-outsideVox).*angle(refStack.*conj(complexStack)) * angle2tempFactor;
     end
 
 end

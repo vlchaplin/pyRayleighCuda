@@ -95,7 +95,7 @@ end
 
 slicenum=10;
 
-figure(1);
+figure(2);
 clf;
 colormap('jet');
 minC=0;
@@ -118,9 +118,10 @@ for di=1:length(dynamicsToPlot)
     
     dn=dynamicsToPlot(di);
     deltaTstack = deltaTseries(:,:,:,dn);
-    deltaTstack=max(deltaTseries(:,:,:,1:dn),[],4);
+    %deltaTstack=max(deltaTseries(:,:,:,1:dn),[],4);
 
     if di==1 
+        set(gcf,'Color', 'white');
         subplot(121);
         hold on;
         imA = imagesc(axis1_mm, axis0_mm, deltaTstack(:,:,slicenum), [minC maxC]);
@@ -128,16 +129,16 @@ for di=1:length(dynamicsToPlot)
         plot( repmat( axis1_mm(sliceidx1)  , 1, im.Dims(1)), axis0_mm, '-.c');
         axis equal tight;
         %axis tight manual;
-        set(gca,'YDir','normal');
-        xlabel('mm','FontSize',16);
-        ylabel('mm','FontSize',16);
+        set(gca,'YDir','normal', 'FontSize', 18);
+        xlabel('mm','FontSize',20);
+        ylabel('mm','FontSize',20);
         cbar=colorbar();
-        cbar.Label.String = '\Delta T (^oC)';
-        cbar.FontSize = 14;
+        cbar.Label.String = '\DeltaT (^oC)';
+        cbar.FontSize = 20;
 
-        textlab=text( 50, 60, sprintf('t=%0.1f sec', dyntimes(dn) ), 'FontSize',18,'FontWeight', 'bold', 'Color', [0.9 0 0] );
+        textlab=text( 0.05, 0.1, sprintf('t=%0.1f sec', dyntimes(dn) ), 'FontSize',18,'FontWeight', 'bold', 'Color', [0.9 0 0], 'Units','normalized' );
 
-        %axis([50 175 50 170]);
+        axis([axis1_mm(sliceidx1)+[-40 40] axis0_mm(sliceidx0)+[-40 40]]);
 
         subplot(122);
         hold on;
@@ -145,15 +146,15 @@ for di=1:length(dynamicsToPlot)
         plot( axis1_mm, repmat( slice_axis_mm(slicenum)  , 1, im.Dims(2)), '--w');
         plot( repmat( axis1_mm(sliceidx1)  , 1, im.Dims(3)), slice_axis_mm, '--w');
         axis equal tight;
-        %axis([50 175 min(slice_axis_mm) max(slice_axis_mm)]);
+        axis([axis1_mm(sliceidx1)+[-40 40] min(slice_axis_mm) max(slice_axis_mm)]);
         
         %axis tight manual;
-        set(gca,'YDir','normal');
+        set(gca,'YDir','normal', 'FontSize', 18);
         cbar=colorbar();
-        cbar.Label.String = '\Delta T (^oC)';
-        cbar.FontSize = 16;
-        xlabel('mm','FontSize',16);
-        ylabel('mm','FontSize',16);
+        cbar.Label.String = '\DeltaT (^oC)';
+        cbar.FontSize = 20;
+        xlabel('mm','FontSize',20);
+        ylabel('mm','FontSize',20);
     
     else
         imA.CData = deltaTstack(:,:,slicenum);
@@ -243,19 +244,22 @@ movie2DFrames(length(dynamicsToPlot)) = struct('cdata',[],'colormap',[]);
 
 Rbase = 4.00*ones(im.Dims(1:3));
 ThermDose = zeros(im.Dims(1:3));
-T0 = 25;
+T0 = 22;
 for di=1:length(dynamicsToPlot)
     
     dn=dynamicsToPlot(di);
     deltaTstack = deltaTseries(:,:,:,dn);
-    
+    %Rbase = 4.00*ones(im.Dims(1:3));
     if di==1 
         subplot(121);
         hold on;
         imA = imagesc(axis1_mm, axis0_mm, ThermDose(:,:,slicenum), [minCEM maxCEM]);
         plot( axis1_mm, repmat( axis1_mm(sliceidx0)  , 1, im.Dims(2)), '--w');
-        axis equal tight;
+        %axis equal tight;
         %axis tight manual;
+        
+        axis([axis1_mm(sliceidx1)+[-40 40] axis0_mm(sliceidx0)+[-40 40]]);
+        
         set(gca,'YDir','normal');
         xlabel('mm','FontSize',16);
         ylabel('mm','FontSize',16);
@@ -271,8 +275,10 @@ for di=1:length(dynamicsToPlot)
         hold on;
         imB = imagesc(axis1_mm, slice_axis_mm, squeeze(ThermDose(sliceidx0,:,:))', [minCEM maxCEM]);
         plot( axis1_mm, repmat( slice_axis_mm(slicenum)  , 1, im.Dims(2)), '--w');
-        axis equal tight;
+        %axis equal tight;
         %axis([50 175 min(slice_axis_mm) max(slice_axis_mm)]);
+        
+        axis([axis1_mm(sliceidx1)+[-40 40] min(slice_axis_mm) max(slice_axis_mm)]);
         
         %axis tight manual;
         set(gca,'YDir','normal');

@@ -24,7 +24,7 @@ trans_element_area = pi*trans_element_radius^2;
 r_foc = 0.14;
 z_face = max(u_pos(3,:)) + 0.01;
 
-focal_point = [ 0.0 0 r_foc-0.005 ];
+focal_point = [ 0.0 0 r_foc-0.00 ];
 
 N = size(u_pos,2);
 
@@ -113,12 +113,12 @@ uopt = get_transducer_vals( u_pos, f_o, rho, c, p_control_xyz, p_control );
 
 u_amp = uopt';
 
-xrange = [-1 1]*0.02 ;
-yrange = [-1 1]*0.02 ;
-zrange = r_foc + [-1 1]*0.03;
+xrange = [-1 1]*0.005 ;
+yrange = [-1 1]*0.005 ;
+zrange = r_foc + [-1 1]*0.005;
 
-Nx=120;
-Ny=120;
+Nx=100;
+Ny=100;
 Nz=100;
 
 xrp = linspace(xrange(1), xrange(2), Nx);
@@ -179,7 +179,7 @@ halfmaxI = 0.5*maxI;
 % I(jj)=maxI;
 
 Idb = 10*log10(I/maxI);
-
+Idb =I;
 figure(1);
 clf;
 hold on;
@@ -202,8 +202,8 @@ set(s,'EdgeColor','none');
 daspect([1 1 1]);
 %view([45 45]);
 
-%caxis([0.001*maxI maxI]);
-caxis([-20 0]);
+caxis([0.001*maxI maxI]);
+%caxis([-20 0]);
 %caxis([8.1762e+02 8.1762e+05]);
 
 xticklabs = 100*linspace(xrange(1), xrange(2), 9);

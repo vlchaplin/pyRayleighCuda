@@ -189,7 +189,7 @@ end
 
 cemVal = 200;
 
-figure(2);
+figure(3);
 clf;
 hold on;
 
