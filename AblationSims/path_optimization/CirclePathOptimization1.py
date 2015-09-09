@@ -19,6 +19,8 @@ import ablation_utils
 import matplotlib.image as image
 import matplotlib.pyplot as plt
 
+import HookJeeves
+
 
 # free params of path will be avgSped, dwellSec, waitSec
 
@@ -102,7 +104,7 @@ Z0=11.0;
 
 focalpoint_dwell_seconds = 5
 avgSpeed_mm_per_sec = 0.6
-wait = 1
+wait = 2.0
 
 turnspace_mm = 4
 maxR_mm = 10
@@ -198,7 +200,7 @@ focplaneZpix=np.where(np.logical_and( (zrp[1:-1]-zplane>=0) , (zrp[0:-2]-zplane<
 roiOnTarget = np.logical_and( np.sqrt(gxp**2 + gyp**2) <= (1e-3*maxR_mm), np.abs(gzp-0.14) <= 0.005 )
 roiOffTarget = np.logical_and( np.sqrt(gxp**2 + gyp**2) <= 0.025, np.abs(gzp-0.14) <= 0.015 )
 roiOffTarget = np.logical_and(roiOffTarget, np.logical_not(roiOnTarget) )
-
+roiExtra = np.logical_and( np.sqrt(gxp**2 + gyp**2) <= (1e-3*1.5*maxR_mm), np.abs(gzp-0.14) <= 0.0125 )
 
 maxDwell = focalpoint_dwell_seconds
 if maxDwell < wait:
@@ -212,7 +214,7 @@ if Nt > 100:
 
 #this would be useful only if in an interactive session
 try:
-    del CEM, Rbase, T, Tdot, kdiff, rhoCp, Tmesh, Tdotmesh, kmesh, rhoCpmesh
+    del CEM, Rbase, T, Tdot, kdiff, rhoCp, Tmesh, Tdotmesh, kmesh, rhoCpmesh, roiOnTarget, roiOffTarget
 except NameError:
    1
 
@@ -261,21 +263,11 @@ uxyz = sonalleve.get_sonalleve_xdc_vecs()
 N = uxyz.shape[0]
 
 
-print('Proceeding with simulation...')
-
-
-def run_simulation( param_vec )
-
-### >> First use of ISPTA 
-# Get power normalization value 
 uamp0 = np.ones(N) / N
 P0 = sonalleve.calc_pressure_field(k0, geom.translate3vecs(uxyz, np.array([0, 0, 0 ]) ), uamp0, xrp, yrp, zrp)
 I0 = np.abs(P0)**2 / (2.0*rho*c0)
-powerRenorm = (Ispta0/np.max(I0))
 
-
-
-
+preNormI0max = np.max(I0)
 ### >> First use of 'd'
 ### >> First use of 'M'
 # Multi-focus template (in xy plane)
@@ -284,54 +276,87 @@ spacing = 2*(radius**2)*(1 - cos(2*pi/M))
 h=radius
 pxyz=ring;
 
-### >> First use of TRAJECTORY params: maxR, deltaR, speed, dwell, wait
-## Construct trajectory
-(focalpoint_coords_mm, nturns, num_sonications_per_turn) = contstruct_circ_sonication_points( maxR_mm, turnspace_mm, zplane*1000,
-                                                                                             avgSpeed_mm_per_sec, focalpoint_dwell_seconds, wait)
-plt.plot( focalpoint_coords_mm[:,0], focalpoint_coords_mm[:,1], '*-' )
-plt.show()
-num_sonications_total = np.sum(num_sonications_per_turn,dtype=int)
+#uamp1OnAxis = transducers.get_focused_element_vals(k0, uxyz, pxyz, np.ones([M]), L1renorm=sqrt(powerRenorm) )
+#P1Onaxis = sonalleve.calc_pressure_field(k0, uxyz, uamp1OnAxis, xrp, yrp, zrp)
+#I1Onaxis = np.abs(P1Onaxis)**2 / (2.0*rho*c0)
 
+print('Proceeding with simulation...', flush=True)
 
+def run_simulation( param_vec, verbose=False, show=False ):
 
-#elapsedTime = ablation_utils.calc_heating( simPhysGrid, duration, CEM, Rbase, perfRate=perfRate, perfTemp=37.0, Freeflow=flowBCs)
-
-uamp1OnAxis = transducers.get_focused_element_vals(k0, uxyz, pxyz, np.ones([M]), L1renorm=sqrt(powerRenorm) )
-P1Onaxis = sonalleve.calc_pressure_field(k0, uxyz, uamp1OnAxis, xrp, yrp, zrp)
-I1Onaxis = np.abs(P1Onaxis)**2 / (2.0*rho*c0)
-
-T0 = 37.0
-T[0] = T0
-CEM[:] = 0
-sonicate=True
-while (sonicate):
+    (avgSpeed_mm_per_sec, focalpoint_dwell_seconds) = param_vec
     
-    #rotate sonication points
-    #angle = pi/10
-    #Rn = geom.getRotZYZarray(pi/angle,0,0)
-    #focalpoint_coords_mm.dot(Rn)
+    ### >> First use of ISPTA 
+    # Get power normalization value 
+    powerRenorm = (Ispta0/preNormI0max)
     
-    ## Compute apodization for these trajectory points
-    pass_relative_amplitudes = np.zeros([num_sonications_total, N], dtype=complex)
-    for n in range(0,num_sonications_total,1):
-        pass_relative_amplitudes[n] = transducers.get_focused_element_vals(k0, uxyz, pxyz + focalpoint_coords_mm[n]*1e-3, np.ones([M]), L1renorm=sqrt(powerRenorm) )
+    
+    
+    ### >> First use of TRAJECTORY params: maxR, deltaR, speed, dwell, wait
+    ## Construct trajectory
+    (focalpoint_coords_mm, nturns, num_sonications_per_turn) = contstruct_circ_sonication_points( maxR_mm, turnspace_mm, zplane*1000,
+                                                                                                 avgSpeed_mm_per_sec, focalpoint_dwell_seconds, wait)
+    if show:
+        plt.plot( focalpoint_coords_mm[:,0], focalpoint_coords_mm[:,1], '*-' )
+        plt.show()
+    num_sonications_total = np.sum(num_sonications_per_turn,dtype=int)
+    
+    
+    
+    #elapsedTime = ablation_utils.calc_heating( simPhysGrid, duration, CEM, Rbase, perfRate=perfRate, perfTemp=37.0, Freeflow=flowBCs)
+    
+    T0 = 37.0
+    T[0] = T0
+    CEM[:] = 0
+    sonicate=True
+    while (sonicate):
+        
+        #rotate sonication points
+        #angle = pi/10
+        #Rn = geom.getRotZYZarray(pi/angle,0,0)
+        #focalpoint_coords_mm.dot(Rn)
+        
+        ## Compute apodization for these trajectory points
+        pass_relative_amplitudes = np.zeros([num_sonications_total, N], dtype=complex)
+        for n in range(0,num_sonications_total,1):
+            pass_relative_amplitudes[n] = transducers.get_focused_element_vals(k0, uxyz, pxyz + focalpoint_coords_mm[n]*1e-3, np.ones([M]), L1renorm=sqrt(powerRenorm) )
+    
+        
+        for n in range(0,num_sonications_total,1):
+            
+            if verbose:
+                print ('sonication %d' % (n+1), end='\n' )
+            
+            P1 = sonalleve.calc_pressure_field(k0, uxyz, pass_relative_amplitudes[n], xrp, yrp, zrp)
+            I1 = np.abs(P1)**2 / (2.0*rho*c0)
+            #print ('                                                 ', end='\r' )
+            #print ("0 %f, %f" % (np.max(T), np.max(Tdot)), end=' ok \n')
+            Tdot[:] = 2.0*alpha_acc*I1 / rhoCp
+            ablation_utils.calc_heating(simPhysGrid,focalpoint_dwell_seconds, CEM, Rbase, perfRate=perfRate, perfTemp=37.0, Freeflow=flowBCs,verbose=verbose)
+            
+            #Tdot[:] = 0.0
+            #ablation_utils.calc_heating(simPhysGrid,wait, CEM, Rbase, perfRate=perfRate, perfTemp=37.0, Freeflow=flowBCs)
+            
+            
+            
+            
+        sonicate = False
+        
+numTargetVox = np.sum(roiOnTarget)
+def VolumeObjective(param_vec, verbose=False, show=False ):
+    run_simulation( param_vec, verbose=verbose, show=show)
+    value = ( np.sum(CEM[roiExtra] >= 240.0) - numTargetVox )**2
+    print (param_vec, " -> ", value, flush=True)
+    return value
+ 
+def CEMObjective( param_vec, verbose=False, show=False ):
+    
+    run_simulation( param_vec, verbose=verbose, show=show)
+    value = np.mean( (CEM[roiOnTarget] - 240.0)**2 )
+    print (param_vec, " -> ", value, flush=True)
+    return value
 
-    
-    for n in range(0,num_sonications_total,1):
-        
-        print ('sonication %d' % (n+1), end='\n' )
-        
-        P1 = sonalleve.calc_pressure_field(k0, uxyz, pass_relative_amplitudes[n], xrp, yrp, zrp)
-        I1 = np.abs(P1)**2 / (2.0*rho*c0)
-        #print ('                                                 ', end='\r' )
-        #print ("0 %f, %f" % (np.max(T), np.max(Tdot)), end=' ok \n')
-        Tdot[:] = 2.0*alpha_acc*I1 / rhoCp
-        ablation_utils.calc_heating(simPhysGrid,focalpoint_dwell_seconds, CEM, Rbase, perfRate=perfRate, perfTemp=37.0, Freeflow=flowBCs)
-        
-        #Tdot[:] = 0.0
-        #ablation_utils.calc_heating(simPhysGrid,wait, CEM, Rbase, perfRate=perfRate, perfTemp=37.0, Freeflow=flowBCs)
-        
-        
-        
-        
-    sonicate = False
+
+x0 = np.array([avgSpeed_mm_per_sec, focalpoint_dwell_seconds])
+dx0 = np.array([0.25, 0.5])
+tol = np.array([0.1, 0.1])

@@ -26,7 +26,7 @@ def test():
     obj=PBHEswig.mesh1d()
     return obj
 
-def calc_heating(simPhysGrid, duration, CEM, Rbase, perfRate=0.0, perfTemp=37.0, T0=None, CEMinit=None, Tmax=None, Freeflow=0):
+def calc_heating(simPhysGrid, duration, CEM, Rbase, perfRate=0.0, perfTemp=37.0, T0=None, CEMinit=None, Tmax=None, Freeflow=0, verbose=True):
     
     """
     simPhysGrid is a dict with the following keys:
@@ -53,7 +53,7 @@ def calc_heating(simPhysGrid, duration, CEM, Rbase, perfRate=0.0, perfTemp=37.0,
     return is (time, Tmax), where 'time' is the actual duration of that was calculated
     """
     
-    
+
     T = simPhysGrid['T']
     Tdot = simPhysGrid['Tdot']
     Tmesh = simPhysGrid['Tmesh']
@@ -81,8 +81,9 @@ def calc_heating(simPhysGrid, duration, CEM, Rbase, perfRate=0.0, perfTemp=37.0,
     tstep=dt*buffsize    
     
     while time<duration :
-
-        print( '%d%%' % (time/duration *100.0), end='\n')
+        #print("here 2", flush=True)
+        if verbose:
+            print( '%d%%' % (time/duration *100.0), end='\n')
         
         if (time + tstep > duration):
             buffsize = math.ceil((duration-time)/dt)
@@ -92,15 +93,15 @@ def calc_heating(simPhysGrid, duration, CEM, Rbase, perfRate=0.0, perfTemp=37.0,
         PBHEswig.pbheSolve(Freeflow,dt,dx,dy,dz, Tmesh, Tdotmesh, kmesh, rhoCpmesh, perfTemp, perfRate,0,buffsize-1 )
         Rbase[:]=4
         Rbase[np.where(T[0] > 43.0, True, False)] = 2
-        
-        #print ("1 %f, %f" % (np.max(T), np.max(Tdot)), end=' ok \n')
+        #print(T.shape)
+        #print ("1 %f, %f" % (np.max(T), np.max(Tdot)), end=' ok \n', flush=True)
         #update = np.where(T[buffsize-1] > Tmax, True, False)
         #Tmax[update] = T[buffsize-1][update]
 
         #time integrate to get the thermal dose
         CEM[:] += (dt/60.0)*np.sum( Rbase**(T[0:buffsize]-43), 0  )
         
-        
+        #print("here 3", flush=True)
         
         ti+=1
         time+=tstep

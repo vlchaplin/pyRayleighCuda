@@ -7,16 +7,18 @@
 
 using namespace std;
 
-
+// Base class for to use in an abstract factory and sub-typing the 3D and 4D versions
+// This base class also handles the shared data lifecyle, though the actual interface would be through
+// one of the subclasses.
 template<typename mesh_t>
 class MeshFunction 
 {
 
 public:
-    long * d;
-    mesh_t * ds;
-    mesh_t * data;
-    mesh_t scalar;
+    long * d; //will be array of dimensions. This class is 0-D (a scalar), not 1-D.
+    mesh_t * ds; //will be array of resolution step
+    mesh_t * data; //will be pointing to grid data. This pointer can be shareable, perhaps allocated elsewhere.
+    mesh_t scalar; // the "data" for a MeshFunction<> object. Not super useful but is logically consistent
 
 private:
     
@@ -32,6 +34,9 @@ public:
         usesSharedData=false;
         isRowMaj=true;
     };
+
+	//This constructor is called from each sub-class constructor (instead of the default)
+	//to init pointers and define the dimensionality.
     MeshFunction(long n) {
         d=NULL;
         ds=NULL;
@@ -117,6 +122,14 @@ public:
             this->data[i] = value;
 
     };
+
+	// void useSharedData(...)
+	// This important method passes in a pointer to data block (ptr2meshdata) which 
+	// corresponds a mesh with 'dims' dimensions (i.e., size dims[0]*dims[1]*...*dims[n-1] ).
+	// The usesShared flag is set, which prevents that data block from being freed when
+	// this object gets destroyed (otherwise the object would assume it allocated the data block
+	// and must therefore free it on destruction). 'ptr2meshdata' memory must be freed from the calling program.
+	// However the 'dims' and 'resolution' values are copied into object memory. This applies to all subclasses.  
 
     void useSharedData( long * dims, mesh_t * ptr2meshdata, mesh_t * resolution )
     {
