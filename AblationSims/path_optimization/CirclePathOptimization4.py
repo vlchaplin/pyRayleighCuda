@@ -31,7 +31,7 @@ def isarray(a):
     except:
         return False
 
-def contstruct_circ_sonication_points( maxR_mm, deltaR_mm, z_mm, avgSpd, dwellSec, waitSec):
+def contstruct_circ_sonication_points( maxR_mm, deltaR_mm, z_mm, avgSpd, dwellSec, waitSec ):
     
     turnspace_mm=deltaR_mm
     minR_mm = turnspace_mm / 2.0
@@ -213,15 +213,15 @@ if Nt > 100:
 
 
 #this would be useful only if in an interactive session
-#try:
-#    del CEM, Rbase, T, Tdot, kdiff, rhoCp, Tmesh, Tdotmesh, kmesh, rhoCpmesh, roiOnTarget, roiOffTarget
-#except NameError:
-#   1
-#
-#try:
-#    del simPhysGrid
-#except NameError:
-#   1
+try:
+    del CEM, Rbase, T, Tdot, kdiff, rhoCp, Tmesh, Tdotmesh, kmesh, rhoCpmesh, roiOnTarget, roiOffTarget, roiExtra
+except NameError:
+   1
+
+try:
+    del simPhysGrid
+except NameError:
+   1
 
 # ----- allocate numpy data arrays --- #
 T = np.zeros([Nt,Nx,Ny,Nz])
@@ -284,13 +284,14 @@ pxyz=ring;
 
 print('Proceeding with simulation...', flush=True)
 
-def run_simulation( param_vec, verbose=False, show=False, Npass=1 ):
+#run_simulation_4  -  (speed, dwell, wait, Ispta)
+def run_simulation_4( param_vec, verbose=False, show=False, Npass=1 ):
 
-    (avgSpeed_mm_per_sec, focalpoint_dwell_seconds) = param_vec
+    (avgSpeed_mm_per_sec, focalpoint_dwell_seconds, wait, Ispta) = param_vec
     
     ### >> First use of ISPTA 
     # Get power normalization value 
-    powerRenorm = (Ispta0/preNormI0max)
+    powerRenorm = (Ispta/preNormI0max)
     
     
     
@@ -311,12 +312,13 @@ def run_simulation( param_vec, verbose=False, show=False, Npass=1 ):
     T[0] = T0
     CEM[:] = 0
     sonicate=True
-    passnum=1
+    angle = pi/10
+    Rn = geom.getRotZYZarray(angle,0,0)
+    
     while (passnum<=Npass):
         
         #rotate sonication points
-        angle = pi/10*(passnum-1)
-        Rn = geom.getRotZYZarray(angle,0,0)
+        
         focalpoint_coords_mm = focalpoint_coords_mm.dot(Rn)
         
         ## Compute apodization for these trajectory points
@@ -328,7 +330,7 @@ def run_simulation( param_vec, verbose=False, show=False, Npass=1 ):
         for n in range(0,num_sonications_total,1):
             
             if verbose:
-                print ('pass %d, sonication %d' % (passnum, n+1), end='\n' )
+                print ('sonication %d' % (n+1), end='\n' )
             
             P1 = sonalleve.calc_pressure_field(k0, uxyz, pass_relative_amplitudes[n], xrp, yrp, zrp)
             I1 = np.abs(P1)**2 / (2.0*rho*c0)
@@ -342,24 +344,24 @@ def run_simulation( param_vec, verbose=False, show=False, Npass=1 ):
             
             
             
-        passnum+=1    
-        sonicate = False
+            
+        passnum+=1
         
 numTargetVox = np.sum(roiOnTarget)
-def VolumeObjective(param_vec, verbose=False, show=False, Npass=1 ):
-    run_simulation( param_vec, verbose=verbose, show=show, Npass=Npass)
+def VolumeObjective_4(param_vec, verbose=False, show=False, Npass=1 ):
+    run_simulation_4( param_vec, verbose=verbose, show=show, Npass=Npass)
     value = ( np.sum(CEM[roiExtra] >= 240.0) - numTargetVox )**2
     print (param_vec, " -> ", value, flush=True)
     return value
  
-def CEMObjective( param_vec, verbose=False, show=False ):
+def CEMObjective_4( param_vec, verbose=False, show=False ):
     
-    run_simulation( param_vec, verbose=verbose, show=show)
+    run_simulation_4( param_vec, verbose=verbose, show=show)
     value = np.mean( (CEM[roiOnTarget] - 240.0)**2 )
     print (param_vec, " -> ", value, flush=True)
     return value
 
 
-x0 = np.array([avgSpeed_mm_per_sec, focalpoint_dwell_seconds])
-dx0 = np.array([0.25, 0.5])
-tol = np.array([0.075, 0.1])
+x0 = np.array([avgSpeed_mm_per_sec, focalpoint_dwell_seconds, wait, Ispta0])
+dx0 = np.array([0.25, 0.5, 1.0, 200e4])
+tol = np.array([0.075, 0.1, 0.1, 50e4])

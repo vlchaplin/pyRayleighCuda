@@ -105,12 +105,12 @@ void Pennes_Perfused(long * txyz, MESH_T * ds,
     
     //vector containing t,x,y,z tuples of each point in the finite template around the reference point (6 total)
     static long template4TupleSet[6*4];
-    static long * vXa=  &(template4TupleSet[0]);  static long * Xa= vXa+1;
-    static long * vXb=  &(template4TupleSet[4]);  static long * Xb= vXb+1;
-    static long * vYa=  &(template4TupleSet[8]);  static long * Ya= vYa+1;
-    static long * vYb= &(template4TupleSet[12]);  static long * Yb= vYb+1;
-    static long * vZa= &(template4TupleSet[16]);  static long * Za= vZa+1;
-    static long * vZb= &(template4TupleSet[20]);  static long * Zb= vZb+1;
+	const long * vXa = &(template4TupleSet[0]);  const long * Xa = vXa + 1;
+	const long * vXb = &(template4TupleSet[4]);  const long * Xb = vXb + 1;
+	const long * vYa = &(template4TupleSet[8]);  const long * Ya = vYa + 1;
+	const long * vYb = &(template4TupleSet[12]);  const long * Yb = vYb + 1;
+	const long * vZa = &(template4TupleSet[16]);  const long * Za = vZa + 1;
+	const long * vZb = &(template4TupleSet[20]);  const long * Zb = vZb + 1;
     const long XvertStep[] = {-1, 1, 0, 0, 0, 0};
     const long YvertStep[] = { 0, 0,-1, 1, 0, 0};
     const long ZvertStep[] = { 0, 0, 0, 0,-1, 1};
@@ -133,11 +133,11 @@ void Pennes_Perfused(long * txyz, MESH_T * ds,
 
     const double RhoCpBlood = 1060*4100; // (1060 kg/m^3 * 4100 J/(kg*C)) --> [J/m^3*C]
     long t1xyz[4];
-    long * xyz = txyz+1;
+    long * xyz = &(txyz[1]);
     MESH_T dx,dy,dz,dt, dxdx, dydy, dzdz;
     MESH_T t0_xiyizi;
     MESH_T rho_Cp0, laplacainT, gradKdotgradT, ts_dot;
-
+	//cout << "txyz = " << txyz[0] << "," << txyz[1] << "," << txyz[2] << "," << txyz[3] << endl;
     
     dt = ds[0]; dx = ds[1]; dy = ds[2]; dz = ds[3];
     dxdx = dx*dx;
@@ -313,8 +313,8 @@ void Pennes_Perfused_SolveCube_interface(int useFreeflow, MESH_T dt, MESH_T dx, 
     
     bool flag = (bool)useFreeflow;
 
-    //cout << "ok" << endl;
-    Pennes_Perfused_SolveCube(flag, resolution, 
+    //cout << "Pennes_Perfused_SolveCube_interface()" << endl;
+    Pennes_Perfused_SolveCube(flag>0, resolution, 
                      T, Tdot_source, 
                      kt0, rho_Cp, 
                      Tblood, perfusionrate, ta_i, tb_i  );

@@ -7,16 +7,22 @@ file = [dir,'\Caskey_999_08_01_14.49.12_(TemperatureMapping_CLEAR).PAR'];
 % dir = 'C:\Users\Vandiver\Data\sonalleve\Phantom_20150731';
 % file = [dir,'\Caskey_20150731_WIP_TemperatureMapping_CLEAR_15_1.PAR'];
 % 
-% dir = 'C:\Users\Vandiver\Data\sonalleve\Phantom_20150811';
-% file = [dir,'\Caskey_GPhantom_150811_7_1.PAR'];
+dir = 'C:\Users\Vandiver\Data\sonalleve\Phantom_20150811';
+file = [dir,'\Caskey_GPhantom_150811_6_1.PAR'];
+%file = [dir,'\Caskey_GPhantom_150811_7_1.PAR'];
 % 
 % 
 % dir = 'C:\Users\Vandiver\Data\sonalleve\Phantom_20150822';
 % file = [dir,'\Caskey_GPh2_99999_WIP_TemperatureMapping_CLEAR_4_1.PAR'];
 
 
+dir = 'C:\Users\Vandiver\Data\sonalleve\Phantom_20150915';
+file = [dir,'\Grissom_8888_WIP_TemperatureMapping_CLEAR_3_1.PAR'];
+%file = [dir,'\Caskey_GPhantom_150811_7_1.PAR'];
+% 
+
 %whether they are mag & phase or real and imaginary
-is_RI_image = 1;
+is_RI_image = 0;
 flipSliceDir=0;
 flipSliceAxisLabelDir=1;
 
@@ -59,6 +65,7 @@ slice_axis_mm = zeros([1 nslice]);
 
 axis0_mm = (1:im.Dims(1))*im.Spc(1);
 axis1_mm = (1:im.Dims(2))*im.Spc(2);
+slice_axis_mm = (1:im.Dims(3))*im.Spc(3);
 
 deltaTseries =  zeros(im.Dims([1,2,3,5]));
 deltaTseriesCorr =  zeros(im.Dims([1,2,3,5]));
@@ -76,7 +83,7 @@ end
 % phase un-wrapping 
 mask = (deltaTseries/angle2tempFactor) <= -0.8*pi;
 deltaTseriesCorr = deltaTseries;
-deltaTseriesCorr(mask) = deltaTseriesCorr(mask) + 2*pi*angle2tempFactor;
+%deltaTseriesCorr(mask) = deltaTseriesCorr(mask) + 2*pi*angle2tempFactor;
 
 T0=25;
 rbase = 4.0*ones(size(deltaTseries));
@@ -89,8 +96,8 @@ figure(1);
 clf;
 hold on;
 dn=ndynamics;
-%dn=1;
-slicenum=17;
+dn=10;
+slicenum=12;
 minC=0; maxC=30;
 %axis1_mm, axis0_mm, 
 magImGray = cat(3,im.Data(:,:,slicenum,1,dn),im.Data(:,:,slicenum,1,dn),im.Data(:,:,slicenum,1,dn));
@@ -99,6 +106,8 @@ imagesc( axis1_mm, axis0_mm,magImGray);
 mask=squeeze(deltaTseriesCorr(:,:,slicenum,dn)) > 1.0;
 colormap('hot');
 imagesc(axis1_mm, axis0_mm,deltaTseriesCorr(:,:,slicenum,dn), 'AlphaDataMapping', 'none', 'AlphaData', mask, [minC maxC]);
+
+%set(gca, 'YDir', 'Reverse');
 % 
 % figure(2);
 % colormap('gray');
@@ -107,14 +116,14 @@ imagesc(axis1_mm, axis0_mm,deltaTseriesCorr(:,:,slicenum,dn), 'AlphaDataMapping'
 
 %%
 
-figure(3);
+figure(2);
 clf;
 dynamicsToPlot = 1:ndynamics;
 % dynamicsToPlot = 1:6;
 %dynamicsToPlot = 1:30;
 %dynamicsToPlot=ndynamics-4:ndynamics;
 
-slicenum=11;
+slicenum=6;
 colormap('hot');
 clear('movie2DFrames');
 movie2DFrames(length(dynamicsToPlot)) = struct('cdata',[],'colormap',[]);
@@ -190,10 +199,14 @@ idx0 = 47:52;
 %idx1 = 42:47;
 
 %2015-08-22
-sliceset = [4:5];
-idx0 = 37:47;
-idx1 = 33:42;
+% sliceset = [4:5];
+% idx0 = 37:47;
+% idx1 = 33:42;
 
+2015-09-15
+sliceset = [3:9];
+idx0 = 55:65;
+idx1 = 42:60;
 
 avgTcurve = squeeze(mean(mean(mean(deltaTseriesCorr(idx0, idx1, sliceset,:),1),2),3));
 
@@ -213,53 +226,81 @@ rbase( (T0 + avgTcurve) > 43 )=2.0;
 cemcurve = cumsum((rbase.^((T0 + avgTcurve)-43))) .* dyntimes/60.0 ;
 plot(dyntimes - dyntimes(sthresh(1)), cemcurve);
 
-%%
-dn=ndynamics;
-dn=20;
-
-figure(8);
-% clf;
-% hold on;
-% colormap('gray');
-% imagesc(axis1_mm, axis0_mm, im.Data(:,:,slicenum,1,1));
-% text( 0.05, 0.1, sprintf('t=%0.1f sec', dyntimes(dn) ), 'FontSize',20,'FontWeight', 'bold', 'Color', [0.9 0 0], 'Units','normalized' );
-% 
-% % % multi
-% contour(axis1_mm, axis0_mm, cem(:,:,slicenum,dn), [240 240], 'LineWidth', 2.0, 'Color', [0.9 0.4 0.1] );
-
- contour(axis1_mm, axis0_mm, cem(:,:,slicenum,dn), [240 240], 'LineWidth', 2.0, 'Color', [0.1 0.4 0.9] );
-
-xlabel('mm','FontSize',20);
-ylabel('mm','FontSize',20);
-set(gca, 'FontSize', 22);
-axis equal tight;
 
 %%
-figure(9);
+
+
+
+%%
+idx0range=1:im.Dims(1);
+idx1range=1:im.Dims(2);
+
+idx0range=30:90;
+idx1range=20:81;
+
+slices=1:11
+[tx, ty, tz] = ndgrid( axis0_mm(idx0range), axis1_mm(idx1range), slice_axis_mm(slices) );
+%[tx, ty, tz] = meshgrid( axis1_mm, axis0_mm, slice_axis_mm );
+%[tx, ty, tz] = meshgrid( 1:64, 1:64, 1:7 );
+Pm = [2 1 3];
+tx = permute(tx, Pm);
+ty = permute(ty, Pm);
+tz = permute(tz, Pm);
+
+magmean = mean(im.Data(idx0range,idx1range,1:2,1,2),3);
+
+dynidx = 40;
+deltaTstack = deltaTseriesCorr(idx0range, idx1range, slices, dynidx);
+
+deltaTstack = permute(deltaTstack,[2 1 3]);
+
+figure(5);
 clf;
 hold on;
-colormap('hot');
-%imagesc(axis1_mm, axis0_mm, im.Data(:,:,slicenum,1,1));
-%text( 0.05, 0.1, sprintf('t=%0.1f sec', dyntimes(dn) ), 'FontSize',20,'FontWeight', 'bold', 'Color', [0.9 0 0], 'Units','normalized' );
 
-% % multi
-%contour(axis1_mm, axis0_mm, deltaTseriesCorr(:,:,slicenum,dn), [30 30], 'LineWidth', 2.0, 'Color', [0.9 0.4 0.1] );
-subplot(121);
-imagesc(  squeeze(cem(34,:,6:10,dn)), [0 240] );
+light('Position', [240 240 10], 'Style', 'local');
+%light('Position', [40 0 10], 'Style', 'local');
+
+cval1 = 30;
+p1=patch( isosurface( tx, ty, tz, deltaTstack, cval1 ) );
+isonormals(tx, ty, tz, deltaTstack, p1);
+set(p1, 'FaceColor', 'red', 'EdgeColor', 'none', ...
+    'FaceAlpha',1.0, ...
+    'FaceLighting', 'gouraud', ...
+    'AmbientStrength', 1.0, 'DiffuseStrength', 1.0, ...
+    'SpecularStrength', 1.0, 'SpecularExponent', 55, 'BackFaceLighting', 'unlit' ...
+    );
+
+cval2 = 20;
+p2=patch( isosurface( tx, ty, tz, deltaTstack, cval2 ) );
+isonormals(tx, ty, tz, deltaTstack,p2);
+set(p2, 'Clipping', 'on', 'FaceColor', 'yellow', 'EdgeColor', 'none','FaceAlpha',0.6, ...
+    'FaceLighting', 'gouraud', ...
+    'AmbientStrength', .5, 'DiffuseStrength', 1, ...
+    'SpecularStrength', 1.0, 'SpecularExponent', 5, 'BackFaceLighting', 'unlit' ...
+    );
+
+cval3 = 10;
+p3=patch( isosurface( tx, ty, tz, deltaTstack, cval3 ) );
+isonormals(tx, ty, tz, deltaTstack,p3);
+set(p3, 'Clipping', 'on', 'FaceColor', 'blue', 'EdgeColor', 'none','FaceAlpha',0.2, ...
+    'FaceLighting', 'gouraud', ...
+    'AmbientStrength', .9, 'DiffuseStrength', 1, ...
+    'SpecularStrength', 1.0, 'SpecularExponent', 5  ...
+    );
+
+%magmean = deltaTstack(:,:,1);
+%colormap('gray');
+%surf(axis1_mm, axis0_mm, 0+zeros(size(magmean)), magmean, 'EdgeColor','none');
+
+text( 10, 10, 10, sprintf('t=%0.1f sec', dyntimes(dynidx) ), 'FontSize',18,'FontWeight', 'bold', 'Color', [0.9 0 0] );
+
+legend([p1 p2 p3], {sprintf('+%2d C', cval1), sprintf('+%2d C', cval2), sprintf('+%2d C', cval3)})
 axis equal tight;
-subplot(122);
-imagesc( squeeze(cem(37,:,6:10,dn)), [0, 240] );
-%contour(axis1_mm, axis0_mm, deltaTseriesCorr(:,:,slicenum,dn), [30 30], 'LineWidth', 2.0, 'Color', [0.1 0.4 0.9] );
+xlabel('x mm');
+ylabel('y mm');
+zlabel('mm');
 
-xlabel('mm','FontSize',20);
-ylabel('mm','FontSize',20);
-set(gca, 'FontSize', 22);
-axis equal tight;
-
-
-
-
-
-
+set(gca, 'CameraPosition', [1400  1000  600]);
 
 
