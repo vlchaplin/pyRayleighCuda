@@ -200,7 +200,12 @@ focplaneZpix=np.where(np.logical_and( (zrp[1:-1]-zplane>=0) , (zrp[0:-2]-zplane<
 roiOnTarget = np.logical_and( np.sqrt(gxp**2 + gyp**2) <= (1e-3*maxR_mm), np.abs(gzp-0.14) <= 0.005 )
 roiOffTarget = np.logical_and( np.sqrt(gxp**2 + gyp**2) <= 0.025, np.abs(gzp-0.14) <= 0.015 )
 roiOffTarget = np.logical_and(roiOffTarget, np.logical_not(roiOnTarget) )
-roiExtra = np.logical_and( np.sqrt(gxp**2 + gyp**2) <= (1e-3*1.5*maxR_mm), np.abs(gzp-0.14) <= 0.0125 )
+roiExtra = np.logical_and( np.sqrt(gxp**2 + gyp**2) <= (1e-3*1.5*maxR_mm), np.abs(gzp-0.14) <= 0.0075 )
+roiExtra = np.logical_or( roiExtra,
+                np.logical_and( np.sqrt(gxp**2 + gyp**2) <= (1e-3*2.5),
+                    np.logical_and( gzp-0.14 <= 0.0125, gzp-0.14 >= -0.02 )
+                    )
+                )
 
 maxDwell = focalpoint_dwell_seconds
 if maxDwell < wait:
@@ -314,7 +319,7 @@ def run_simulation_4( param_vec, verbose=False, show=False, Npass=1 ):
     sonicate=True
     angle = pi/10
     Rn = geom.getRotZYZarray(angle,0,0)
-    
+    passnum=1
     while (passnum<=Npass):
         
         #rotate sonication points

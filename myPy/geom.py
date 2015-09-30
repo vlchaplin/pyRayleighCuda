@@ -1,7 +1,28 @@
 #!/usr/bin/env python3
 
 import numpy
+import re;
+import csv;
+
 from math import sin,cos,pi
+
+def readNDI_csv(filename, nmax=None, startcol=0):
+    csvfile=open(filename)
+    reader=csv.reader(csvfile)
+    text=list(reader)
+    csvfile.close()
+    
+    if re.search( 'Tools', text[0][0]):
+        text.pop(0)
+        
+    if nmax is not None:
+        text = text[0:nmax]
+    
+    err = np.array( list(map( lambda x: x[startcol + 12], text )), dtype='float')
+    txyz = np.array( list(map( lambda x: x[startcol + 9:startcol + 12], text )), dtype='float')
+    q0xyz = np.array( list(map( lambda x: x[startcol + 5:startcol + 9], text )), dtype='float')
+    
+    return (q0xyz, txyz, err)
 
 def write_VTK_points(filename, xyz):
 
