@@ -2,7 +2,7 @@
 
 file='C:\Users\Vandiver\Data\opti-track\7T-MR-HIFU\fusphantom_99999_16_01_11.43.43_(WIP_THRIVE_supine_1mmACQ_NSA3).PAR'
 
-%file='C:\Users\Vandiver\Data\opti-track\7T-MR-HIFU\fusphantom_99999_19_01_12.03.54_(WIP_THRIVE_supine_1mmACQ_NSA3).PAR'
+file='C:\Users\Vandiver\Data\opti-track\7T-MR-HIFU\fusphantom_99999_19_01_12.03.54_(WIP_THRIVE_supine_1mmACQ_NSA3).PAR'
 
 
 flipSliceDir=0;
@@ -36,7 +36,9 @@ idx0range=1:imThrive.Dims(1);
 idx1range=1:imThrive.Dims(2);
 slices=1:imThrive.Dims(3);
 
-[tx, ty, tz] = ndgrid( thriveAxis0_mm(idx0range), thriveAxis1_mm(idx1range), thriveAxis2_mm(slices) );
+%[tx, ty, tz] = ndgrid( thriveAxis0_mm(idx0range), thriveAxis1_mm(idx1range), thriveAxis2_mm(slices) );
+
+[tx, ty, tz] = ndgrid( (idx0range), idx1range, (slices) );
 
 Pm = [2 1 3];
 tx = permute(tx, Pm);
@@ -76,15 +78,18 @@ set(p2, 'Clipping', 'on', 'FaceColor', 0.7*[1,1,1], 'EdgeColor', 'none','FaceAlp
     );
 
 axis equal;
-xlabel('x (rl) ... hf')
-ylabel('y (hf) ... lr')
-zlabel('z (ap)')
+xlabel('x m')
+ylabel('y p')
+zlabel('z s')
 
 %%
-% s1=slice(tx, ty, tz, volViewPermuted, 80.0, [], [] );
-% s2=slice(tx, ty, tz, volViewPermuted, [], [], 100 );
-% set(s1,'EdgeColor', 'None' );
-% set(s2,'EdgeColor', 'None' );
+%s1=slice(tx, ty, tz, volViewPermuted, 80.0, [], [] );
+s2=slice(tx, ty, tz, volViewPermuted, [], [], 99 );
+%set(s1,'EdgeColor', 'None' );
+set(s2,'EdgeColor', 'None' );
+figure(2);
+clf;
+imagesc( s2.CData );
 %%
 % delete([s1,s2]);
 

@@ -1,4 +1,4 @@
-function [ pn, near_field_mask ] = calc_finitexdc_pressure_field_ndgrid( kr, uamp, uxyz, simXp, simYp, simZp, u_normals, u_template )
+function [ pn, near_field_mask, gx, gy, gz ] = calc_finitexdc_pressure_field_ndgrid( kr, uamp, uxyz, simXp, simYp, simZp, u_normals, u_template )
 %UNTITLED5 Summary of this function goes here
 %   Detailed explanation goes here
 

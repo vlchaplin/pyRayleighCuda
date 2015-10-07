@@ -12,10 +12,11 @@ dir = 'C:\Users\Vandiver\Data\sonalleve\Phantom_20150811';
 file = [dir,'\Caskey_GPhantom_150811_7_1.PAR'];
 % 
 % 
-% dir = 'C:\Users\Vandiver\Data\sonalleve\Phantom_20150822';
-% %file = [dir,'\Caskey_GPh2_99999_WIP_TemperatureMapping_CLEAR_8_1.PAR'];
-% file = [dir,'\Caskey_GPh2_99999_WIP_TemperatureMapping_CLEAR_9_1.PAR'];
+dir = 'C:\Users\Vandiver\Data\sonalleve\Phantom_20150822';
+%file = [dir,'\Caskey_GPh2_99999_WIP_TemperatureMapping_CLEAR_8_1.PAR'];
+file = [dir,'\Caskey_GPh2_99999_WIP_TemperatureMapping_CLEAR_9_1.PAR'];
 
+file = [dir,'\Caskey_GPh2_99999_WIP_TemperatureMapping_CLEAR_15_1.PAR'];
 %file = [dir,'\Caskey_GPh2_99999_WIP_TemperatureMapping_CLEAR_16_1.PAR'];
 
 % dir = 'C:\Users\Vandiver\Data\sonalleve\Phantom_20150915';
@@ -24,21 +25,22 @@ file = [dir,'\Caskey_GPhantom_150811_7_1.PAR'];
 % 
 
 % dir = 'C:\Users\Vandiver\Data\sonalleve\Hifu_20150924\phant1';
-% file = [dir,'\Caskey_20150924_WIP_TemperatureMapping_CLEAR_9_1.PAR'];
-
+% file = [dir,'\Caskey_20150924_WIP_TemperatureMapping_CLEAR_8_1.PAR'];
+% 
 % dir = 'C:\Users\Vandiver\Data\sonalleve\Hifu_20150924\egg1';
 % file = [dir,'\Caskey_20150924_WIP_TempMapEgg1_CLEAR_20_1.PAR'];
-
+% 
 % dir = 'C:\Users\Vandiver\Data\sonalleve\Hifu_20150924\egg2';
-% file = [dir,'\Caskey_20150924_WIP_TempMapEgg2_CLEAR_27_1.PAR'];
+% file = [dir,'\Caskey_20150924_WIP_TempMapEgg2_CLEAR_30_1.PAR'];
 % 
-dir = 'C:\Users\Vandiver\Data\sonalleve\Hifu_20150926';
-%file = [dir,'\Caskey_20150926_WIP_TMap_Sing_60W_CLEAR_4_1.PAR'];
-%file = [dir,'\Caskey_20150926_WIP_TMap_Mult_60W_CLEAR_3_1.PAR'];
-% 
-file = [dir,'\Caskey_20150926_WIP_TMap_Sing_40W_CLEAR_5_1.PAR'];
-%file = [dir,'\Caskey_20150926_WIP_TMap_Mult_40W_CLEAR_6_1.PAR'];
-% 
+
+%dir = 'C:\Users\Vandiver\Data\sonalleve\Hifu_20150926';
+% %file = [dir,'\Caskey_20150926_WIP_TMap_Sing_60W_CLEAR_4_1.PAR'];
+% %file = [dir,'\Caskey_20150926_WIP_TMap_Mult_60W_CLEAR_3_1.PAR'];
+% % 
+%file = [dir,'\Caskey_20150926_WIP_TMap_Sing_40W_CLEAR_5_1.PAR'];
+% %file = [dir,'\Caskey_20150926_WIP_TMap_Mult_40W_CLEAR_6_1.PAR'];
+% % 
 % file = [dir,'\Caskey_20150926_WIP_TMap_Sing_B_40W_CLEAR_8_1.PAR'];
 % %file = [dir,'\Caskey_20150926_WIP_TMap_Mult_B_40W_CLEAR_7_1.PAR'];
  
@@ -118,7 +120,7 @@ clf;
 hold on;
 dn=ndynamics;
 %dn=10;
-slicenum=8;
+slicenum=6;
 minC=0; maxC=30;
 %axis1_mm, axis0_mm, 
 magImGray = cat(3,im.Data(:,:,slicenum,1,dn),im.Data(:,:,slicenum,1,dn),im.Data(:,:,slicenum,1,dn));
@@ -151,7 +153,7 @@ dynamicsToPlot = 1:ndynamics;
 %dynamicsToPlot = 1:30;
 %dynamicsToPlot=ndynamics-4:ndynamics;
 
-slicenum=8;
+slicenum=3;
 colormap('hot');
 clear('movie2DFrames');
 movie2DFrames(length(dynamicsToPlot)) = struct('cdata',[],'colormap',[]);
@@ -233,9 +235,9 @@ idx1 = 32:45;
 % idx1 = 36:46;
 
 %2015-08-22 scans 15-16
-% sliceset = [1:5];
-% idx0 = 41:54;
-% idx1 = 36:46;
+sliceset = [1:5];
+idx0 = 41:54;
+idx1 = 36:46;
 
 %2015-09-15
 % sliceset = [3:9];
@@ -243,14 +245,24 @@ idx1 = 32:45;
 % idx1 = 42:60;
 
 %2015-09-24  phantom 1
-sliceset = [5:9];
-idx0 = 70:88;
-idx1 = 66:78;
+% sliceset = [5:9];
+% idx0 = 70:88;
+% idx1 = 66:78;
+% 
+% %2015-09-24  egg 1
+% sliceset = [5:10];
+% idx0 = 66:82;
+% idx1 = 68:76;
+% 
+% %2015-09-24  egg 2
+% sliceset = [4:12];
+% idx0 = 66:82;
+% idx1 = 68:76;
 
 % %2015-09-26  phantom 1
-sliceset = [4:9];
-idx0 = 107:125;
-idx1 = 105:118;
+% sliceset = [4:9];
+% idx0 = 107:125;
+% idx1 = 105:118;
 
 lesionVol = squeeze(sum(sum(sum(cem(idx0, idx1, sliceset,:) >= 240.0,1),2),3));
 
@@ -286,7 +298,7 @@ idx1range=1:im.Dims(2);
 % idx1range=20:81;
 
 slices=1:im.Dims(3);
-%slices=1:5;
+slices=1:10;
 
 [tx, ty, tz] = ndgrid( axis0_mm(idx0range), axis1_mm(idx1range), slice_axis_mm(slices) );
 %[tx, ty, tz] = meshgrid( axis1_mm, axis0_mm, slice_axis_mm );
@@ -382,8 +394,15 @@ tstart=dyntimes(tstartidx);
 expdate='2015-09-24';
 
 [fdir,fbase,fext]=fileparts(file);
-[query,err] = sprintf( 'insert or replace into data (file,path,date,isRI,start0,end0,start1,end1,start2,end2,tstartidx,tstart) \n values ("%s", "%s", "%s" ,%d,%d,%d,%d,%d,%d,%d,%d,%f);' ...
+[query,err] = sprintf( 'insert or ignore into data (file,path,date,isRI,start0,end0,start1,end1,start2,end2,tstartidx,tstart) \n values ("%s", "%s", "%s" ,%d,%d,%d,%d,%d,%d,%d,%d,%f);' ...
     , [fbase fext], fdir, expdate, is_RI_image, idx0(1), idx0(end), idx1(1),idx1(end), sliceset(1), sliceset(end), tstartidx, tstart )
+
+dbid = mksqlite(0,'open',db);
+qrydata = mksqlite(dbid, query);
+mksqlite(dbid,'close');
+
+[query,err] = sprintf( 'insert or ignore into params (file) values ("%s");' ...
+    , [fbase fext] )
 
 dbid = mksqlite(0,'open',db);
 qrydata = mksqlite(dbid, query);

@@ -1,47 +1,53 @@
-dir = 'C:\Users\Vandiver\Data\sonalleve\QA_phantom_20150621';
-%file = [dir,'\Caskey_999_05_01_14.29.16_(TemperatureMapping_CLEAR).PAR'];
-file = [dir,'\Caskey_999_08_01_14.49.12_(TemperatureMapping_CLEAR).PAR'];
-%file = [dir,'\Caskey_999_11_01_15.14.59_(TemperatureMapping_CLEAR).PAR'];
-%file = [dir,'\Caskey_999_12_01_15.27.34_(TemperatureMapping_CLEAR).PAR'];
-
-% dir = 'C:\Users\Vandiver\Data\sonalleve\Phantom_20150731';
-% file = [dir,'\Caskey_20150731_WIP_TemperatureMapping_CLEAR_15_1.PAR'];
-% 
-dir = 'C:\Users\Vandiver\Data\sonalleve\Phantom_20150811';
-file = [dir,'\Caskey_GPhantom_150811_6_1.PAR'];
-%file = [dir,'\Caskey_GPhantom_150811_7_1.PAR'];
-% 
-% 
-% dir = 'C:\Users\Vandiver\Data\sonalleve\Phantom_20150822';
-% file = [dir,'\Caskey_GPh2_99999_WIP_TemperatureMapping_CLEAR_4_1.PAR'];
 
 
-dir = 'C:\Users\Vandiver\Data\sonalleve\Phantom_20150915';
-file = [dir,'\Grissom_8888_WIP_TemperatureMapping_CLEAR_3_1.PAR'];
-%file = [dir,'\Caskey_GPhantom_150811_7_1.PAR'];
-% 
 
-% file='C:\Users\Vandiver\Data\opti-track\7T-MR-HIFU\fusphantom_99999_20_01_12.10.22_(WIP_TemperatureMapping).PAR'
 file='C:\Users\Vandiver\Data\opti-track\7T-MR-HIFU\fusphantom_99999_11_01_10.53.21_(WIP_TemperatureMapping).PAR'
+file='C:\Users\Vandiver\Data\opti-track\7T-MR-HIFU\fusphantom_99999_12_01_10.58.42_(WIP_TemperatureMapping).PAR';
+%file='C:\Users\Vandiver\Data\opti-track\7T-MR-HIFU\fusphantom_99999_18_01_11.57.08_(WIP_TemperatureMapping).PAR'
+%  scan 11 is sagitall (like 17)
 
 %file='C:\Users\Vandiver\Data\opti-track\7T-MR-HIFU\fusphantom_99999_17_01_11.52.02_(WIP_TemperatureMapping).PAR'
 %file='C:\Users\Vandiver\Data\opti-track\7T-MR-HIFU\fusphantom_99999_18_01_11.57.08_(WIP_TemperatureMapping).PAR'
 
-
-%file='C:\Users\Vandiver\Data\opti-track\7T-MR-HIFU\fusphantom_99999_17_01_11.52.02_(WIP_TemperatureMapping).PAR'
-%file='C:\Users\Vandiver\Data\opti-track\7T-MR-HIFU\fusphantom_99999_18_01_11.57.08_(WIP_TemperatureMapping).PAR'
+%  scan 18 has fat-shift = P (like scan 20)
+%  scan 17 has fat-shift = F
 
 %file='C:\Users\Vandiver\Data\opti-track\7T-MR-HIFU\fusphantom_99999_20_01_12.10.22_(WIP_TemperatureMapping).PAR'
 %file='C:\Users\Vandiver\Data\opti-track\7T-MR-HIFU\fusphantom_99999_21_01_12.20.12_(WIP_TemperatureMapping).PAR'
 % 
+%  scan 20 has fat-shift = P
+%  scan 21 has fat-shift = F
+
+im = vuOpenImage(file);
+
+rowMajScan20TmomEmpirical= [ [1 0 0]; [0 0 -1]; [0 1 0]; ];
+rowMajScan21TmomEmpirical=from_euler(0,-90,0);
+
+%this is ad-hoc and really should be replaced by correct calc. of Tmom
+if im.Parms.SliceOrientation == 2
+    empiricalRot = rowMajScan21TmomEmpirical;
+elseif im.Parms.SliceOrientation == 1
+    empiricalRot =rowMajScan20TmomEmpirical;
+else
+    empiricalRot=eye(3);
+end
+tempScanFatShiftDir='P';
 
 %whether they are mag & phase or real and imaginary
 is_RI_image = 1;
 flipSliceDir=0;
 flipSliceAxisLabelDir=0;
 
-im = vuOpenImage(file);
 
+% im.Data = im.Data(:,:,:,1,1);
+% vuWriteImage(im,'C:\Users\Vandiver\Data\opti-track\7T-MR-HIFU\scan21.mha');
+% break;
+
+
+%un-flip row/column
+im.Data = permute(im.Data, [2 1 3 4 5]);
+im.Spc = permute(im.Spc,[2 1 3])';
+im.Dims = size(im.Data);
 
 if flipSliceDir
     im.Data = flip(im.Data,3);
