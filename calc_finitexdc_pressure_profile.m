@@ -17,7 +17,9 @@ pn = zeros([1 mm]);
 
 near_field_mask = zeros(size(pn));
 
-integral_coeffs = uamp(:).*1i.*ones([N 1]);
+integral_coeffs = uamp(:).*ones([N 1]);
+
+u_normals_unit = u_normals ./ repmat(sqrt( sum( u_normals.^2, 1) ), [3 1] );
 
 for n=1:N
     
@@ -37,15 +39,33 @@ for n=1:N
     end
     
 
+      % rayleigh I integral 
     for j=1:nsubsamp
         
-        d = sqrt( sum( (repmat(patchcoords(:,j), 1, mm) - pathXYZ).^2, 1) );
+        dvec = (repmat(patchcoords(:,j), 1, mm) - pathXYZ);
+        d = sqrt( sum( dvec.^2, 1) );
+        cosines = (u_normals_unit(:,n)'*dvec)./d;
 
-        thisSource = integral_coeffs(n).*exp(-1i*kr.*(d))./d;
+        thisSource = cosines.*1i.*integral_coeffs(n).*exp(-1i*kr.*(d))./d;
     
         pn = thisSource+pn;
         
     end
+   
+
+%     % rayleigh II integral (doesn't seem to be correct yet)
+%     for j=1:nsubsamp
+%         
+%         dvec = (repmat(patchcoords(:,j), 1, mm) - pathXYZ);
+%         d = sqrt( sum( dvec.^2, 1) );
+%         
+%         cosines = (u_normals_unit(:,n)'*dvec)./d;
+% 
+%         thisSource = cosines.*(2*pathXYZ(3,:) ./ d).*integral_coeffs(n).*(1./d - 1i*kr).*exp(-1i*kr.*(d))./d;
+%     
+%         pn = thisSource+pn;
+%         
+%     end
     
     near_field_mask( d < 0.01 ) = true;
 

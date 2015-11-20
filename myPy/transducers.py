@@ -4,6 +4,12 @@ import geom
 from math import floor,pi,sin,cos,asin,sqrt
 import numpy
 
+#CUDA-enabled library
+import sys
+
+sys.path.append('C:\\Users\\Vandiver\\Documents\\HiFU\\code\\CUDA\\RSgpu\\Release')
+import RSgpuPySwig
+
 def get_focused_element_vals(kwavenum, xyzVecs, focalPoints, focalPvals, L1renorm=None, L2renorm=None):
     
     M = len(focalPvals)
@@ -89,7 +95,10 @@ def calc_pressure_profile(kwavenum, upos, uamp, vecs):
 
 
 def calc_pressure_field(kwavenum, upos, uamp, xarray, yarray, zarray):
-    
+    """
+    Return Rayleigh-Sommerfield calculation over the ndgrid formed from the Cartesian product space of {xarray x yarray x zarray}
+    Returned field is complex, with dimensions Nx, Ny, Nz.
+    """
     nx = len(xarray)
     ny = len(yarray)
     nz = len(zarray)
@@ -108,3 +117,29 @@ def calc_pressure_field(kwavenum, upos, uamp, xarray, yarray, zarray):
         
            
     return P
+
+
+def calc_pressure_field_cuda(kwavenum, upos, unormals, uamp, xarray, yarray, zarray):
+    """
+    Same as calc_pressure_field() but use the CUDA-enabled version compiled in the RSgpuPySwig libary.
+    upos is [N x 3]
+    unormals is [N x 3]
+    Returned field is complex, with dimensions Nx, Ny, Nz.
+    """
+    nx = len(xarray)
+    ny = len(yarray)
+    nz = len(zarray)
+    
+    N = len(uamp)
+    
+    Pre = numpy.zeros([nx,ny,nz]);
+    Pim = numpy.zeros([nx,ny,nz]);
+    
+    coeffs = numpy.ones([N])
+    
+    ure = numpy.real(uamp)
+    uim = numpy.imag(uamp)
+    
+    RSgpuPySwig.RSgpuCalcField(kwavenum, Pre, Pim, xarray, yarray, zarray, ure, uim, coeffs, upos[:,0], upos[:,1], upos[:,2], unormals[:,0], unormals[:,1], unormals[:,2])
+           
+    return Pre + 1j*Pim

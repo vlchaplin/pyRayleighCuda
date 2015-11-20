@@ -109,6 +109,8 @@ wait = 2.0
 turnspace_mm = 4
 maxR_mm = 10
 
+use_gpu=0
+
 parser = argparse.ArgumentParser()
 parser.add_argument("-o", help="Output h5 file", type=str)
 parser.add_argument("-maxR", help="Max trajectory radius (cm), default = %f" % (maxR_mm*0.1), type=float)
@@ -130,6 +132,7 @@ parser.add_argument("-Z0", help="Minimum z-slice locaiton in cm, default z=11", 
 parser.add_argument("-Nx", help="# X grid", type=int)
 parser.add_argument("-Ny", help="# Y grid", type=int)
 parser.add_argument("-Nz", help="# Z grid", type=int)
+parser.add_argument("-gpu", help="Use the CUDA kernel version of Rayleigh Sommerfield", action='store_true')
 
 args = parser.parse_args()
 if args.o:
@@ -172,6 +175,8 @@ if args.Nz :
     Nz = args.Nz
 if args.speed :
     avgSpeed_mm_per_sec = args.speed
+if args.gpu :
+    use_gpu=1
 
 
 xedges = 1e-2*np.linspace(-xw/2.0, xw/2.0,Nx+1)
@@ -269,9 +274,15 @@ CEM = np.zeros([Nx,Ny,Nz])
 uxyz = sonalleve.get_sonalleve_xdc_vecs()
 N = uxyz.shape[0]
 
+unvecs = np.apply_along_axis(lambda x: x / np.sqrt(np.sum(x**2)), 1, [0.0,0.0,0.14] - uxyz )
 
 uamp0 = np.ones(N) / N
-P0 = sonalleve.calc_pressure_field(k0, geom.translate3vecs(uxyz, np.array([0, 0, 0 ]) ), uamp0, xrp, yrp, zrp)
+
+if use_gpu:
+    P0 = transducers.calc_pressure_field_cuda(k0, geom.translate3vecs(uxyz, np.array([0, 0, 0 ]) ), unvecs, uamp0, xrp, yrp, zrp)
+else:
+    P0 = sonalleve.calc_pressure_field(k0, geom.translate3vecs(uxyz, np.array([0, 0, 0 ]) ), uamp0, xrp, yrp, zrp)
+    
 I0 = np.abs(P0)**2 / (2.0*rho*c0)
 
 preNormI0max = np.max(I0)
@@ -336,8 +347,11 @@ def run_simulation_4( param_vec, verbose=False, show=False, Npass=1 ):
             
             if verbose:
                 print ('sonication %d' % (n+1), end='\n' )
-            
-            P1 = sonalleve.calc_pressure_field(k0, uxyz, pass_relative_amplitudes[n], xrp, yrp, zrp)
+            if use_gpu:
+                P1 = transducers.calc_pressure_field_cuda(k0, uxyz, unvecs, pass_relative_amplitudes[n], xrp, yrp, zrp)
+            else:
+                P1 = sonalleve.calc_pressure_field(k0, uxyz, pass_relative_amplitudes[n], xrp, yrp, zrp)
+                
             I1 = np.abs(P1)**2 / (2.0*rho*c0)
             #print ('                                                 ', end='\r' )
             #print ("0 %f, %f" % (np.max(T), np.max(Tdot)), end=' ok \n')
@@ -354,6 +368,10 @@ def run_simulation_4( param_vec, verbose=False, show=False, Npass=1 ):
         
 numTargetVox = np.sum(roiOnTarget)
 def VolumeObjective_4(param_vec, verbose=False, show=False, Npass=1 ):
+    """
+    param_vec = [speed (mm/s), dwell (s), wait (s), I0 (W/m^2) ]
+    """
+    
     run_simulation_4( param_vec, verbose=verbose, show=show, Npass=Npass)
     value = ( np.sum(CEM[roiExtra] >= 240.0) - numTargetVox )**2
     print (param_vec, " -> ", value, flush=True)
