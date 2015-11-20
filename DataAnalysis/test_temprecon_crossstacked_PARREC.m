@@ -4,19 +4,21 @@ file = [dir,'\Caskey_999_08_01_14.49.12_(TemperatureMapping_CLEAR).PAR'];
 %file = [dir,'\Caskey_999_11_01_15.14.59_(TemperatureMapping_CLEAR).PAR'];
 %file = [dir,'\Caskey_999_12_01_15.27.34_(TemperatureMapping_CLEAR).PAR'];
 
+dir = 'C:\Users\Vandiver\Data\sonalleve\QA_phantom_20150628';
+file = [dir, '\Caskey_9999_WIP_TemperatureMapping_CLEAR_7_1.PAR'];
 dir = 'C:\Users\Vandiver\Data\sonalleve\Phantom_20150731';
-file = [dir,'\Caskey_20150731_WIP_TemperatureMapping_CLEAR_16_1.PAR'];
+file = [dir,'\Caskey_20150731_WIP_TemperatureMapping_CLEAR_14_1.PAR'];
 % 
-dir = 'C:\Users\Vandiver\Data\sonalleve\Phantom_20150811';
+%dir = 'C:\Users\Vandiver\Data\sonalleve\Phantom_20150811';
 %file = [dir,'\Caskey_GPhantom_150811_6_1.PAR'];
-file = [dir,'\Caskey_GPhantom_150811_7_1.PAR'];
+%file = [dir,'\Caskey_GPhantom_150811_7_1.PAR'];
 % 
 % 
-dir = 'C:\Users\Vandiver\Data\sonalleve\Phantom_20150822';
+%dir = 'C:\Users\Vandiver\Data\sonalleve\Phantom_20150822';
 %file = [dir,'\Caskey_GPh2_99999_WIP_TemperatureMapping_CLEAR_8_1.PAR'];
-file = [dir,'\Caskey_GPh2_99999_WIP_TemperatureMapping_CLEAR_9_1.PAR'];
+%file = [dir,'\Caskey_GPh2_99999_WIP_TemperatureMapping_CLEAR_10_1.PAR'];
 
-file = [dir,'\Caskey_GPh2_99999_WIP_TemperatureMapping_CLEAR_15_1.PAR'];
+%file = [dir,'\Caskey_GPh2_99999_WIP_TemperatureMapping_CLEAR_15_1.PAR'];
 %file = [dir,'\Caskey_GPh2_99999_WIP_TemperatureMapping_CLEAR_16_1.PAR'];
 
 % dir = 'C:\Users\Vandiver\Data\sonalleve\Phantom_20150915';
@@ -24,11 +26,11 @@ file = [dir,'\Caskey_GPh2_99999_WIP_TemperatureMapping_CLEAR_15_1.PAR'];
 %file = [dir,'\Caskey_GPhantom_150811_7_1.PAR'];
 % 
 
-% dir = 'C:\Users\Vandiver\Data\sonalleve\Hifu_20150924\phant1';
-% file = [dir,'\Caskey_20150924_WIP_TemperatureMapping_CLEAR_8_1.PAR'];
+dir = 'C:\Users\Vandiver\Data\sonalleve\Hifu_20150924\phant1';
+file = [dir,'\Caskey_20150924_WIP_TemperatureMapping_CLEAR_7_1.PAR'];
 % 
-% dir = 'C:\Users\Vandiver\Data\sonalleve\Hifu_20150924\egg1';
-% file = [dir,'\Caskey_20150924_WIP_TempMapEgg1_CLEAR_20_1.PAR'];
+dir = 'C:\Users\Vandiver\Data\sonalleve\Hifu_20150924\egg1';
+file = [dir,'\Caskey_20150924_WIP_TempMapEgg1_CLEAR_20_1.PAR'];
 % 
 % dir = 'C:\Users\Vandiver\Data\sonalleve\Hifu_20150924\egg2';
 % file = [dir,'\Caskey_20150924_WIP_TempMapEgg2_CLEAR_30_1.PAR'];
@@ -120,7 +122,7 @@ clf;
 hold on;
 dn=ndynamics;
 %dn=10;
-slicenum=6;
+slicenum=8;
 minC=0; maxC=30;
 %axis1_mm, axis0_mm, 
 magImGray = cat(3,im.Data(:,:,slicenum,1,dn),im.Data(:,:,slicenum,1,dn),im.Data(:,:,slicenum,1,dn));
@@ -153,13 +155,13 @@ dynamicsToPlot = 1:ndynamics;
 %dynamicsToPlot = 1:30;
 %dynamicsToPlot=ndynamics-4:ndynamics;
 
-slicenum=3;
+slicenum=8;
 colormap('hot');
 clear('movie2DFrames');
 movie2DFrames(length(dynamicsToPlot)) = struct('cdata',[],'colormap',[]);
 
 magImGray = cat(3,im.Data(:,:,slicenum,1,dn),im.Data(:,:,slicenum,1,dn),im.Data(:,:,slicenum,1,dn));
-magImGray = magImGray/max(magImGray(:));
+magImGray = 1.2*magImGray/max(magImGray(:));
 
 
 
@@ -211,15 +213,21 @@ for di=1:length(dynamicsToPlot)
     movie2DFrames(di) = getframe(gcf);
 end
 %%
-%2015-07-13
-% sliceset = [1:5];
-% idx0 = 30:50;
-% idx1 = 35:45;
+
+%2015-06-28
+% sliceset = [7:13];
+% idx0 = 61:71;
+% idx1 = 58:69;
+
+%2015-07-31
+sliceset = [1:5];
+idx0 = 30:50;
+idx1 = 35:45;
 
 %2015-08-11
-sliceset = [2:8];
-idx0 = 30:44;
-idx1 = 32:45;
+% sliceset = [2:8];
+% idx0 = 30:44;
+% idx1 = 32:45;
 
 
 % sliceset=6;
@@ -235,9 +243,9 @@ idx1 = 32:45;
 % idx1 = 36:46;
 
 %2015-08-22 scans 15-16
-sliceset = [1:5];
-idx0 = 41:54;
-idx1 = 36:46;
+% sliceset = [1:5];
+% idx0 = 41:54;
+% idx1 = 36:46;
 
 %2015-09-15
 % sliceset = [3:9];
@@ -245,9 +253,9 @@ idx1 = 36:46;
 % idx1 = 42:60;
 
 %2015-09-24  phantom 1
-% sliceset = [5:9];
-% idx0 = 70:88;
-% idx1 = 66:78;
+sliceset = [5:11];
+idx0 = 70:88;
+idx1 = 66:78;
 % 
 % %2015-09-24  egg 1
 % sliceset = [5:10];
@@ -298,8 +306,10 @@ idx1range=1:im.Dims(2);
 % idx1range=20:81;
 
 slices=1:im.Dims(3);
-slices=1:10;
+%slices=1:5;
 
+roiVolume = 1e-3*prod(im.Spc.*[length(idx0) length(idx1) length(sliceset)]);
+disp(sprintf('roi volume(mL) = %f', roiVolume))
 [tx, ty, tz] = ndgrid( axis0_mm(idx0range), axis1_mm(idx1range), slice_axis_mm(slices) );
 %[tx, ty, tz] = meshgrid( axis1_mm, axis0_mm, slice_axis_mm );
 %[tx, ty, tz] = meshgrid( 1:64, 1:64, 1:7 );
@@ -391,10 +401,10 @@ if tstartidx == 0
 end
 tstart=dyntimes(tstartidx);
 
-expdate='2015-09-24';
+expdate='2015-06-28';
 
 [fdir,fbase,fext]=fileparts(file);
-[query,err] = sprintf( 'insert or ignore into data (file,path,date,isRI,start0,end0,start1,end1,start2,end2,tstartidx,tstart) \n values ("%s", "%s", "%s" ,%d,%d,%d,%d,%d,%d,%d,%d,%f);' ...
+[query,err] = sprintf( 'insert or ignore into data (fid,file,path,date,isRI,start0,end0,start1,end1,start2,end2,tstartidx,tstart) \n values ( (select max(fid)+1 from data), "%s", "%s", "%s" ,%d,%d,%d,%d,%d,%d,%d,%d,%f);' ...
     , [fbase fext], fdir, expdate, is_RI_image, idx0(1), idx0(end), idx1(1),idx1(end), sliceset(1), sliceset(end), tstartidx, tstart )
 
 dbid = mksqlite(0,'open',db);

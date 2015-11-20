@@ -21,8 +21,8 @@ MRILocalizations=containers.Map( ...
     {fiducials_itk_vox_thrive16, fiducials_itk_vox_thrive19, fiducials_itk_vox_thrive16} );
 
 %file='C:\Users\Vandiver\Data\opti-track\7T-MR-HIFU\fusphantom_99999_14_01_11.29.02_(WIP_THRIVE_supine_1mmACQ_NSA3).PAR'
-file='C:\Users\Vandiver\Data\opti-track\7T-MR-HIFU\fusphantom_99999_15_01_11.32.52_(WIP_THRIVE_supine_1mmACQ_NSA3).PAR'
-%file='C:\Users\Vandiver\Data\opti-track\7T-MR-HIFU\fusphantom_99999_16_01_11.43.43_(WIP_THRIVE_supine_1mmACQ_NSA3).PAR'
+%file='C:\Users\Vandiver\Data\opti-track\7T-MR-HIFU\fusphantom_99999_15_01_11.32.52_(WIP_THRIVE_supine_1mmACQ_NSA3).PAR'
+file='C:\Users\Vandiver\Data\opti-track\7T-MR-HIFU\fusphantom_99999_16_01_11.43.43_(WIP_THRIVE_supine_1mmACQ_NSA3).PAR'
 
 %file='C:\Users\Vandiver\Data\opti-track\7T-MR-HIFU\fusphantom_99999_19_01_12.03.54_(WIP_THRIVE_supine_1mmACQ_NSA3).PAR'
 
@@ -377,7 +377,7 @@ h115_pulseEchoAvg_MPS_vox = ceil( (h115_pulseEchoAvg_MPS - [MvoxEdges(1) PvoxEdg
 
 %plot3( h115_focus_lph(1,:), h115_focus_lph(2,:), h115_focus_lph(3,:), 'gx', 'LineWidth', 1.0, 'DisplayName', 'Pulse-echo focus' );
 
-avgPlot=plot3( h115_pulseEchoAvg_LPH(1), h115_pulseEchoAvg_LPH(2), h115_pulseEchoAvg_LPH(3), 'gx', 'LineWidth', 1.0, 'DisplayName', 'Pulse-echo focus' );
+avgPlot=plot3( h115_pulseEchoAvg_LPH(1), h115_pulseEchoAvg_LPH(2), h115_pulseEchoAvg_LPH(3), 'x','Color',[0., 0., 0.7], 'LineWidth', 2.0, 'DisplayName', 'Pulse-echo focus' );
 
 %% find maximum MP voxel in each tempature map slice
 
@@ -439,7 +439,7 @@ hold on;
 errVecPlt=plot3( [ h115_pulseEchoAvg_LPH(1) heatMaxPoint_LPH(1) ], ...
     [ h115_pulseEchoAvg_LPH(2) heatMaxPoint_LPH(2) ], ...
     [ h115_pulseEchoAvg_LPH(3) heatMaxPoint_LPH(3) ], ...
-    'y', 'LineWidth', 2.0, 'Color', [0.0 0.8 0.6], 'DisplayName', 'MRI vs Pulse-echo TRE' );
+    'y', 'LineWidth', 2.0, 'Color', [0.0 0.0 0.9], 'DisplayName', 'MRI vs Pulse-echo TRE' );
 
 figure(3);
 clf;

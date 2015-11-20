@@ -1,12 +1,12 @@
 
 
 
-file='C:\Users\Vandiver\Data\opti-track\7T-MR-HIFU\fusphantom_99999_11_01_10.53.21_(WIP_TemperatureMapping).PAR'
-file='C:\Users\Vandiver\Data\opti-track\7T-MR-HIFU\fusphantom_99999_12_01_10.58.42_(WIP_TemperatureMapping).PAR';
+%file='C:\Users\Vandiver\Data\opti-track\7T-MR-HIFU\fusphantom_99999_11_01_10.53.21_(WIP_TemperatureMapping).PAR'
+%file='C:\Users\Vandiver\Data\opti-track\7T-MR-HIFU\fusphantom_99999_12_01_10.58.42_(WIP_TemperatureMapping).PAR';
 %file='C:\Users\Vandiver\Data\opti-track\7T-MR-HIFU\fusphantom_99999_18_01_11.57.08_(WIP_TemperatureMapping).PAR'
 %  scan 11 is sagitall (like 17)
 
-%file='C:\Users\Vandiver\Data\opti-track\7T-MR-HIFU\fusphantom_99999_17_01_11.52.02_(WIP_TemperatureMapping).PAR'
+file='C:\Users\Vandiver\Data\opti-track\7T-MR-HIFU\fusphantom_99999_17_01_11.52.02_(WIP_TemperatureMapping).PAR'
 %file='C:\Users\Vandiver\Data\opti-track\7T-MR-HIFU\fusphantom_99999_18_01_11.57.08_(WIP_TemperatureMapping).PAR'
 
 %  scan 18 has fat-shift = P (like scan 20)
@@ -31,7 +31,7 @@ elseif im.Parms.SliceOrientation == 1
 else
     empiricalRot=eye(3);
 end
-tempScanFatShiftDir='P';
+tempScanFatShiftDir='F';
 
 %whether they are mag & phase or real and imaginary
 is_RI_image = 1;
