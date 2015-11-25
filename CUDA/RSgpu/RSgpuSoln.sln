@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RSgpu", "RSgpu.vcxproj", "{
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RSgpuPySwig", "RSgpuPySWIG.vcxproj", "{46FCFEA6-40CE-454D-A7EF-CABA66E7D380}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PBHE_CUDA", "PBHE_CUDA.vcxproj", "{2356C3AC-10F7-42B9-AD10-672EE2945C8B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,10 @@ Global
 		{46FCFEA6-40CE-454D-A7EF-CABA66E7D380}.Debug|x64.Build.0 = Debug|x64
 		{46FCFEA6-40CE-454D-A7EF-CABA66E7D380}.Release|x64.ActiveCfg = Release|x64
 		{46FCFEA6-40CE-454D-A7EF-CABA66E7D380}.Release|x64.Build.0 = Release|x64
+		{2356C3AC-10F7-42B9-AD10-672EE2945C8B}.Debug|x64.ActiveCfg = Debug|x64
+		{2356C3AC-10F7-42B9-AD10-672EE2945C8B}.Debug|x64.Build.0 = Debug|x64
+		{2356C3AC-10F7-42B9-AD10-672EE2945C8B}.Release|x64.ActiveCfg = Release|x64
+		{2356C3AC-10F7-42B9-AD10-672EE2945C8B}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
