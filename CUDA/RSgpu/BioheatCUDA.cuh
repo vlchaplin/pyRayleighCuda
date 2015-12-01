@@ -16,50 +16,64 @@
 #define BIOHEAT_CUH
 
 #define FDRadius 1
-#define FD_FIXEDVAL_BOUNDARYCOND 0
-#define FD_FREEFLOW_BOUNDARYCOND 1
+#define MAX_NUMELLS_SHARED_ARRAY 600
 
 #ifndef ROWMAJ2d
 #define ROWMAJ2d(i,j,Ni,Nj) ( (i)*Nj + (j) )
 #define COLMAJ2d(i,j,Ni,Nj) ( (j)*Ni + (i) )
+//#define COLMAJ2d(j,i,Nj,Ni) ( (j)*Ni + (i) )
 
 #define ROWMAJ3d(i,j,k,Ni,Nj,Nk) ( (i)*Nj*Nk + (j)*Nk + (k) )
-#define ROWMAJ3d(i,j,k,Ni,Nj,Nk) ( (k)*Ni*Nj + (j)*Ni + (i) )
+#define COLMAJ3d(i,j,k,Ni,Nj,Nk) ( (k)*Ni*Nj + (j)*Ni + (i) )
 #endif
 
 __global__ void testEmptyKernel() {
 	return;
 };
 
+// invocation should have block dims = (8,4,0)*( fx,fy,0 ) where fx+fy = (#threadsPerBlock/32) (and fx,fy are ints >=1)
+// and grid dims = ( 1 + ny /  blockDim.x, 1 + nz /  blockDim.y , nx) and 
 template <typename pbhe_t>
 __global__ void Pennes_2ndOrder_cuda_kernel(
 	pbhe_t * temp3D_tf, pbhe_t * temp3D_ti, pbhe_t * tdot3D, pbhe_t * kt3D, pbhe_t * rhoCp3D,
-	int nx, int ny, int nz)
+	pbhe_t * Dtxyz, pbhe_t Tb, pbhe_t perfusionRate,
+	int nx, int ny, int nz, int boundaryConditionMode = FD_FREEFLOW_BOUNDARYCOND)
 {
+	/*
 	__constant__ int boundaryConditionMode;
 	__constant__ pbhe_t rhoCpBlood;
 	__constant__ pbhe_t perfusionRate, Tb;
 	__constant__ pbhe_t pbheDt, pbheDx, pbheDy, pbheDz, dxdx, dydy, dzdz;
+	*/
+
+	const pbhe_t rhoCpBlood = 1060 * 4100;
+	pbhe_t dxdx = Dtxyz[1] * Dtxyz[1];
+	pbhe_t dydy = Dtxyz[2] * Dtxyz[2];
+	pbhe_t dzdz = Dtxyz[3] * Dtxyz[3];
 
 	bool inBounds=true;
 	int boundaryConditionHit;
 
 	//# voxels we'll compute per block is sni*snj*snk and the
-	//# stencil voxels per block that we'll to do it need is:
+	//# stencil voxels per block that we'll need is:
 	// nVox = 2*radius*(Ni*Nk + Ni*Nj + Nj*Nk) + Ni*Nj*Nk
 	// Ni x Nj x Nk is the dimension of the output block that's being written. radius=1 below
 
 	//Size of shared memory.  Output voxels will be written 1 per kernel launch, but shared mem needs to be bigger for the halo
 
 	const int sni = 1; // this is because we're only computing j-k slices per thread block
-	int snj = blockDim.x + 2; //add the radius=1 halo
-	int snk = blockDim.y + 2;
+	const int snj = blockDim.x + 2; //add the radius=1 halo
+	const int snk = blockDim.y + 2;
+	const int numSharedVox = snj*snk;
 
-	int numSharedVox = snj*snk;
+	if (numSharedVox > MAX_NUMELLS_SHARED_ARRAY){
+		assert(0);
+	}
+
 	//Shared memory for this set of threads (i.e. one block)
-	__shared__  pbhe_t Tvals_shared[numSharedVox];
+	__shared__  pbhe_t Tvals_shared[MAX_NUMELLS_SHARED_ARRAY];
 	//__shared__  pbhe_t rhoCp_shared[numSharedVox];
-	__shared__  pbhe_t kHeat_shared[numSharedVox];
+	__shared__  pbhe_t kHeat_shared[MAX_NUMELLS_SHARED_ARRAY];
 
 	pbhe_t rhoCp;
 
@@ -73,183 +87,259 @@ __global__ void Pennes_2ndOrder_cuda_kernel(
 	//block z is mapped to voxel i
 	unsigned int vi = blockIdx.z;
 
-	int voxel;
+	int voxel, outvoxel;
 	int tx = threadIdx.x ;
 	int ty = threadIdx.y ;
 	int s, sj, sk;
 
-	//From the (0,0) thread, Load the boundary data into shared memory for this block
-	if (tx == 0 && ty == 0) {
+	//Determine if we are on a global boundary
+	boundaryConditionHit = 0;
+	if (vi == 0)
+		boundaryConditionHit = 1;
+	else if (vi == nx - 1)
+		boundaryConditionHit = 2;
 
-		for (sk = 0; sk < snk; sk++)
+	if (vj == 0)
+		boundaryConditionHit += 4;
+	else if (vj == ny - 1)
+		boundaryConditionHit += 8;
+
+	if (vk == 0)
+		boundaryConditionHit += 16;
+	else if (vk == nz - 1)
+		boundaryConditionHit += 32;
+	
+	if ((vi >= nx || vj >= ny || vk >= nz))
+		inBounds = false;
+	else {
+		inBounds = true;
+		outvoxel = ROWMAJ3d(vi, vj, vk, nx, ny, nz);
+	}
+
+	int mink, maxk, minj, maxj;
+
+	if (inBounds && tx == 0)
+	{
+		//Fill in halo to the left
+		s = COLMAJ2d(tx , ty+1, snj, snk);
+		Tvals_shared[s] = temp3D_ti[outvoxel];
+		kHeat_shared[s] = kt3D[outvoxel];
+	}
+	else if ((boundaryConditionHit & 2) || tx == (blockDim.x-1))
+	{
+		//Fill in halo to the right
+		s = COLMAJ2d(tx + 2, ty + 1, snj, snk);
+		Tvals_shared[s] = temp3D_ti[outvoxel];
+		kHeat_shared[s] = kt3D[outvoxel];
+	}
+
+	if (inBounds && ty == 0)
+	{
+		//Fill in the halo below
+		s = COLMAJ2d( tx+1 , ty, snj, snk);
+		Tvals_shared[s] = temp3D_ti[outvoxel];
+		kHeat_shared[s] = kt3D[outvoxel];
+	}
+	else if ((boundaryConditionHit & 8) || ty == (blockDim.y - 1))
+	{
+		//Fill in halo to above
+		s = COLMAJ2d(tx + 1, ty + 2, snj, snk);
+		Tvals_shared[s] = temp3D_ti[outvoxel];
+		kHeat_shared[s] = kt3D[outvoxel];
+	}
+
+	/*
+	//From the (0,0) thread, Load the boundary data into shared memory for this block.
+	if (inBounds && tx == 0 && ty == 0) {
+
+		// .... Need to handle global boundary condition ....
+		if (vk > 0)
 		{
-			//sj = 0
-			//voxel = vi*ny*nz + (0 + vj - 1)*nz + sk + vk - 1;
-			//s = sk*snj + 0;
+			mink = vk - 1;
+			if (mink + snk - 1 >= nz)
+				maxk = nz - 1;
+			else
+				maxk = snk - 1 + mink;
+		} 
+		else
+		{
+			mink = 0;
+			maxk = snk - 1;
+		}
 
-			voxel = ROWMAJ3d(vi, vj - 1, sk + vk - 1, nx, ny, nz);
+		if (vj > 0)
+		{
+			minj = vj - 1;
+			if (minj + snj - 1 >= ny)
+				maxj = ny - 1;
+			else
+				maxj = snj - 1 + minj;
+		}
+		else
+		{
+			minj = 0;
+			maxj = snj - 1;
+		}
+
+		for (sk = 0; sk <= (maxk - mink); sk++)
+		{
+			//sj = 0 (lower tile bound)
+			voxel = ROWMAJ3d(vi, minj, sk + mink, nx, ny, nz);
 			s = COLMAJ2d(0, sk, snj, snk);
-
-			
 			Tvals_shared[s] = temp3D_ti[voxel];
 			kHeat_shared[s] = kt3D[voxel];
 
-			//sj = snj-1
-			//voxel = vi*ny*nz + (snj - 1 + vj - 1)*nz + sk + vk - 1;
-			//s = sk*snj + snj-1;
-			voxel = ROWMAJ3d(vi, (snj - 1 + vj - 1), (sk + vk - 1), nx, ny, nz);
-			s = COLMAJ2d(snj-1, sk, snj, snk);
-			
+			// tile upper bound
+			voxel = ROWMAJ3d(vi, maxj, sk + mink, nx, ny, nz);
+			s = COLMAJ2d(maxj - minj, sk, snj, snk);
 			Tvals_shared[s] = temp3D_ti[voxel];
 			kHeat_shared[s] = kt3D[voxel];
 		}
-			
-		for (sj = 0; sj < snj; sj++)
+
+		//If interior in the k-direction	
+		for (sj = 0; sj <= (maxj - minj); sj++)
 		{
-			//sk = 0
-			//voxel = vi*ny*nz + (sj + vj - 1)*nz + 0 + vk - 1;
-			//s = 0*snj + sj;
-
-			voxel = ROWMAJ3d(vi, (sj + vj - 1), vk-1, nx, ny, nz);
+			//sk =  (lower bound)
+			voxel = ROWMAJ3d(vi, sj + minj, mink, nx, ny, nz);
 			s = COLMAJ2d(sj, 0, snj, snk);
-
 			Tvals_shared[s] = temp3D_ti[voxel];
 			kHeat_shared[s] = kt3D[voxel];
 
-			//sk = snk-1
-			//voxel = vi*ny*nz + (snj + vj - 1)*nz + snk-1 + vk - 1;
-			//s = (snk-1)*snj + sj;
-
-			voxel = ROWMAJ3d(vi, (sj + vj - 1), (snk - 1 + vk - 1), nx, ny, nz);
-			s = COLMAJ2d(sj, snk - 1, snj, snk);
-
+			//sk = (upper bound)
+			voxel = ROWMAJ3d(vi, sj + minj, maxk, nx, ny, nz);
+			s = COLMAJ2d(sj, maxk-mink, snj, snk);
 			Tvals_shared[s] = temp3D_ti[voxel];
 			kHeat_shared[s] = kt3D[voxel];
 		}
 	} 
-	
-
-	sj = tx + 1;
-	sk = ty + 1;
-	s = COLMAJ2d(sj, sk, snj, snk);
-
-	// invocation should have block dims = (8,4,0)*( fx,fy,0 ) where fx+fy = (#threadsPerBlock/32) (and fx,fy are ints >=1)
-	// and grid dims = ( 1 + ny /  blockDim.x, 1 + nz /  blockDim.y , nx) and 
-	if (vi < nx && vj < ny && vk < nz)
+	*/
+	if (inBounds)
 	{
-		
-		voxel = vi*ny*nz + vj*nz + vk;
-		Tvals_shared[s] = temp3D_ti[voxel];
-		kHeat_shared[s] = kt3D[voxel];
+		//Now set the shared memory offset index s for this thread
+		sj = tx + 1;
+		sk = ty + 1;
+		s = COLMAJ2d(sj, sk, snj, snk);
 
-		//rhoCp_shared[s] = rhoCp3D[voxel];
-		rhoCp = rhoCp3D[voxel];
+		//Now compute 
+		outvoxel = ROWMAJ3d(vi, vj, vk, nx, ny, nz);
 
-		if (vi == 0)
-			boundaryConditionHit = 1;
-		if (vi == nx - 1)
-			boundaryConditionHit = 2;
-		if (vj == 0)
-			boundaryConditionHit = 3;
-		if (vj == ny - 1)
-			boundaryConditionHit = 4;
-		if (vk == 0)
-			boundaryConditionHit = 5;
-		if (vk == nz - 1)
-			boundaryConditionHit = 6;
-		else
-			boundaryConditionHit = 0;
+		if (outvoxel >= nx*ny*nz)
+			assert(0);
+
+		Tvals_shared[s] = temp3D_ti[outvoxel];
+		kHeat_shared[s] = kt3D[outvoxel];
 	}
-	else {
-		// do nothing and wait for __syncthreads(), then exit thread
-		inBounds = false;
-	}
+	
 
 	//... now sync before doing anything with the tile. 
 	//  This ensures it will have been fully defined across every thread in this block prior to accessing it's values.
-	__sycthreads();
+	__syncthreads();
 
 	if (!inBounds)
 		return;
 
-	//Now compute 
-	int outvoxel = vi*ny*nz + vj*nz + vk;
+	sj = tx + 1;
+	sk = ty + 1;
+	s = COLMAJ2d(sj, sk, snj, snk);
+	outvoxel = ROWMAJ3d(vi, vj, vk, nx, ny, nz);
 
-
-	//First handle a global boundary condition case (i.e., the output voxel is on the edge of the simulation grid)
-	if (boundaryConditionHit && boundaryConditionMode == FD_FIXEDVAL_BOUNDARYCOND)
-	{
-		temp3D_tf[outvoxel] = Tvals_shared[s];
-		return;
-	}
-	else if (boundaryConditionHit && boundaryConditionMode == FD_FREEFLOW_BOUNDARYCOND)
-	{
-		if (boundaryConditionHit == 1) //copy x+1
-			temp3D_tf[outvoxel] = temp3D_ti[(vi + 1)*ny*nz + vj*nz + vk];
-		else if (boundaryConditionHit == 2) //copy x-1
-			temp3D_tf[outvoxel] = temp3D_ti[(vi - 1)*ny*nz + vj*nz + vk];
-		else if (boundaryConditionHit == 3) //copy y+1
-			temp3D_tf[outvoxel] = Tvals_shared[(sk + 1)*snj + sj];
-		else if (boundaryConditionHit == 4) //copy y-1
-			temp3D_tf[outvoxel] = Tvals_shared[(sk - 1)*snj + sj];
-		else if (boundaryConditionHit == 5) //copy z+1
-			temp3D_tf[outvoxel] = Tvals_shared[sk*snj + sj + 1];
-		else if (boundaryConditionHit == 6) //copy z-1
-			temp3D_tf[outvoxel] = Tvals_shared[sk*snj + sj - 1];
-
-		return;
-	}
-
-	//Now check if we are on a block boundary
-
-	//Need to check that we are on the interior of the stencil.
-	if (sk < FDRadius || sj < FDRadius || sj >= (snj - FDRadius) || sk >= (snk - FDRadius))
-	{
-		//Need to add global boundary condition case
-		return;
-	}
-
+	//numaccess[outvoxel] = boundaryConditionHit;
 
 	int s1;
-	pbhe_t Dxyz = kHeat_shared[s] / rhoCp;
+	pbhe_t Dxyz;
 
-	//additive constant
-	temp3D_tf[outvoxel] = pbheDt*tdot3D[outvoxel] + Tb*perfusionRate*pbheDt*rhoCpBlood / rhoCp;
+	//First handle a global boundary condition hit (i.e., the output voxel is on the edge of the simulation grid)
+	if (boundaryConditionHit && boundaryConditionMode == FD_FIXEDVAL_BOUNDARYCOND)
+	{
+		//If b.c.'s are fixed, can read straight away from the shared memory for this voxel.
 
-	//Txyz coefficient
-	temp3D_tf[outvoxel] += Tvals_shared[s] * (1 - 2 * pbheDt*Dxyz*(1.0 / dxdx + 1.0 / dydy + 1.0 / dzdz) - perfusionRate*pbheDt*rhoCpBlood / rhoCp);
+		temp3D_tf[outvoxel] = Tvals_shared[s];
+		//temp3D_tf[outvoxel] = temp3D_ti[outvoxel];
+		//return;
+	}
+	else {
 
-	//{data x-> voxel i, data y-> voxel j-> data z-> voxel k}
-	//{ thread x-> voxel j, thread y-> voxel k }
+		//If not on the interior of the global grid, compute function values.
+		//This has to be done and threads syncronized before handling f'=0 boudary conditions
 
-	//y+1 term from shared memory.  
-	s1 = (sk + 1)*snj + sj;
-	temp3D_tf[outvoxel] += Tvals_shared[s1] * (pbheDt / dydy)*(Dxyz + pbheDt*kHeat_shared[s1] / rhoCp);
+		rhoCp = rhoCp3D[outvoxel];
+		Dxyz = kHeat_shared[s] / rhoCp;
 
-	//y-1
-	s1 = (sk - 1)*snj + sj;
-	//voxel = vi*ny*nz + (vj - 1)*nz + vk;
-	temp3D_tf[outvoxel] += Tvals_shared[s1] * (pbheDt / dydy)*(Dxyz - pbheDt*kHeat_shared[s1] / rhoCp);
+		//additive constant
+		temp3D_tf[outvoxel] = Dtxyz[0] * tdot3D[outvoxel] + Tb*perfusionRate*Dtxyz[0] * rhoCpBlood / rhoCp;
 
-	//z+1
-	s1 = sk*snj + sj + 1;
-	//voxel = vi*ny*nz + vj*nz + vk + 1;
-	temp3D_tf[outvoxel] += Tvals_shared[s1] * (pbheDt / dzdz)*(Dxyz + pbheDt*kHeat_shared[s1] / rhoCp);
+		//Txyz coefficient
+		temp3D_tf[outvoxel] += Tvals_shared[s] * (1 - 2 * Dtxyz[0] * Dxyz*(1.0 / dxdx + 1.0 / dydy + 1.0 / dzdz) - perfusionRate*Dtxyz[0] * rhoCpBlood / rhoCp);
 
-	//z-1
-	s1 = sk*snj + sj - 1;
-	//voxel = vi*ny*nz + vj*nz + vk - 1;
-	temp3D_tf[outvoxel] += Tvals_shared[s1] * (pbheDt / dzdz)*(Dxyz - pbheDt*kHeat_shared[s1] / rhoCp);
+		//{data x-> voxel i, data y-> voxel j-> data z-> voxel k}
+		//{ thread x-> voxel j, thread y-> voxel k }
+
+		//return;
+		//y+1 term from shared memory.  
+		s1 = (sk + 1)*snj + sj;
+		temp3D_tf[outvoxel] += Tvals_shared[s1] * (Dtxyz[0] / dydy)*(Dxyz + Dtxyz[0] * kHeat_shared[s1] / rhoCp);
+
+		//y-1
+		s1 = (sk - 1)*snj + sj;
+		//voxel = vi*ny*nz + (vj - 1)*nz + vk;
+		temp3D_tf[outvoxel] += Tvals_shared[s1] * (Dtxyz[0] / dydy)*(Dxyz - Dtxyz[0] * kHeat_shared[s1] / rhoCp);
+
+		//z+1
+		s1 = sk*snj + sj + 1;
+		//voxel = vi*ny*nz + vj*nz + vk + 1;
+		temp3D_tf[outvoxel] += Tvals_shared[s1] * (Dtxyz[0] / dzdz)*(Dxyz + Dtxyz[0] * kHeat_shared[s1] / rhoCp);
+
+		//z-1
+		s1 = sk*snj + sj - 1;
+		//voxel = vi*ny*nz + vj*nz + vk - 1;
+		temp3D_tf[outvoxel] += Tvals_shared[s1] * (Dtxyz[0] / dzdz)*(Dxyz - Dtxyz[0] * kHeat_shared[s1] / rhoCp);
 
 
-	//x+1 (not stored in shared mem)
-	voxel = (vi + 1)*ny*nz + vj*nz + vk;
-	temp3D_tf[outvoxel] += temp3D_ti[voxel]*(pbheDt / dxdx)*(Dxyz + pbheDt*kt3D[voxel] / rhoCp);
-	//x-1
-	voxel = (vi - 1)*ny*nz + vj*nz + vk;
-	temp3D_tf[outvoxel] += temp3D_ti[voxel]*(pbheDt / dxdx)*(Dxyz - pbheDt*kt3D[voxel] / rhoCp);
+		//x+1 (not stored in shared mem)
+		voxel = (vi + 1)*ny*nz + vj*nz + vk;
+		temp3D_tf[outvoxel] += temp3D_ti[voxel] * (Dtxyz[0] / dxdx)*(Dxyz + Dtxyz[0] * kt3D[voxel] / rhoCp);
+		//x-1
+		voxel = (vi - 1)*ny*nz + vj*nz + vk;
+		temp3D_tf[outvoxel] += temp3D_ti[voxel] * (Dtxyz[0] / dxdx)*(Dxyz - Dtxyz[0] * kt3D[voxel] / rhoCp);
+	}
+
+	//Can't make this one conditional 
+	__syncthreads();
+
+	if (boundaryConditionHit && boundaryConditionMode == FD_FREEFLOW_BOUNDARYCOND)
+	{
+		if (boundaryConditionHit & 1) //copyy x+1
+			temp3D_tf[outvoxel] = temp3D_tf[ROWMAJ3d(vi + 1, vj, vk, nx, ny, nz)];
+		else if (boundaryConditionHit & 2) //copy x-1
+			temp3D_tf[outvoxel] = temp3D_tf[ROWMAJ3d(vi - 1, vj, vk, nx, ny, nz)];
 
 
+
+		if (boundaryConditionHit & 4) //copy y+1
+		{
+			//temp3D_tf[outvoxel] = Tvals_shared[COLMAJ2d(sj, sk + 1, snj, snk)];
+			temp3D_tf[outvoxel] = temp3D_tf[ROWMAJ3d(vi, vj + 1, vk, nx, ny, nz)];
+		}
+		else if (boundaryConditionHit & 8) //copy y-1
+		{
+			//temp3D_tf[outvoxel] = Tvals_shared[COLMAJ2d(sj, sk - 1, snj, snk)];
+			temp3D_tf[outvoxel] = temp3D_tf[ROWMAJ3d(vi, vj - 1, vk, nx, ny, nz)];
+		}
+
+		if (boundaryConditionHit & 16) //copy z+1
+		{
+			//temp3D_tf[outvoxel] = Tvals_shared[COLMAJ2d(sj + 1, sk, snj, snk)];
+			temp3D_tf[outvoxel] = temp3D_tf[ROWMAJ3d(vi, vj, vk + 1, nx, ny, nz)];
+		}
+		else if (boundaryConditionHit & 32) //copy z-1
+		{
+			//temp3D_tf[outvoxel] = Tvals_shared[COLMAJ2d(sj - 1, sk, snj, snk)];
+			temp3D_tf[outvoxel] = temp3D_tf[ROWMAJ3d(vi, vj, vk - 1, nx, ny, nz)];
+		}
+		
+	}
+
+	return;
 }
 
 #endif
