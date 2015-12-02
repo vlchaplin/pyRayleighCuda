@@ -354,10 +354,10 @@ def run_simulation_2( param_vec, verbose=False, show=False, Npass=1 ):
             #print ('                                                 ', end='\r' )
             #print ("0 %f, %f" % (np.max(T), np.max(Tdot)), end=' ok \n')
             Tdot[:] = 2.0*alpha_acc*I1 / rhoCp
-            ablation_utils.calc_heating(simPhysGrid,T,Tdot,Tmesh,Tdotmesh,kmesh,rhoCpmesh,focalpoint_dwell_seconds, CEM, Rbase, perfRate=perfRate, perfTemp=37.0, Freeflow=flowBCs,verbose=verbose)
+            ablation_utils.calc_heating(simPhysGrid,T,Tdot,Tmesh,Tdotmesh,kmesh,rhoCpmesh,focalpoint_dwell_seconds, CEM, Rbase, perfRate=perfRate, perfTemp=37.0, Freeflow=flowBCs,verbose=verbose,GPU=use_gpu)
             
             Tdot[:] = 0.0
-            ablation_utils.calc_heating(simPhysGrid,T,Tdot,Tmesh,Tdotmesh,kmesh,rhoCpmesh,wait, CEM, Rbase, perfRate=perfRate, perfTemp=37.0, Freeflow=flowBCs)
+            ablation_utils.calc_heating(simPhysGrid,T,Tdot,Tmesh,Tdotmesh,kmesh,rhoCpmesh,wait, CEM, Rbase, perfRate=perfRate, perfTemp=37.0, Freeflow=flowBCs,GPU=use_gpu)
             
             
             

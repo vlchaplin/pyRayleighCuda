@@ -11,6 +11,8 @@ import sys
 sys.path.append('C:\\Users\\Vandiver\\Documents\\HiFU\\code\\BioHeatCpp\\PBHEswig\\x64')
 import PBHEswig
 
+sys.path.append('C:\\Users\\Vandiver\\Documents\\HiFU\\code\\CUDA\\RSgpu\\Release')
+import PBHE_CUDA
 
 # simPhysGrid params
 # 'Tmesh' - corresponding 4d mesh object
@@ -26,7 +28,7 @@ def test():
     obj=PBHEswig.mesh1d()
     return obj
 
-def calc_heating(simPhysGrid,T,Tdot,Tmesh,Tdotmesh,kmesh,rhoCpmesh, duration, CEM, Rbase, perfRate=0.0, perfTemp=37.0, T0=None, CEMinit=None, Tmax=None, Freeflow=0, verbose=False):
+def calc_heating(simPhysGrid,T,Tdot,Tmesh,Tdotmesh,kmesh,rhoCpmesh, duration, CEM, Rbase, Ntbuff=None, perfRate=0.0, perfTemp=37.0, T0=None, CEMinit=None, Tmax=None, Freeflow=0, verbose=False, GPU=False):
     
     """
     simPhysGrid is a dict with the following keys:
@@ -77,9 +79,13 @@ def calc_heating(simPhysGrid,T,Tdot,Tmesh,Tdotmesh,kmesh,rhoCpmesh, duration, CE
     
     time=0
     ti=0
-    buffsize=T.shape[0]-1
-    buffsize=10
-    tstep=dt*buffsize    
+    if Ntbuff is None:
+        buffsize=10
+    else:
+        buffsize=Ntbuff
+        
+    tstep=dt*buffsize
+    
     
     while time<duration :
         #print("here 2", flush=True)
@@ -91,8 +97,17 @@ def calc_heating(simPhysGrid,T,Tdot,Tmesh,Tdotmesh,kmesh,rhoCpmesh, duration, CE
             tstep = dt*buffsize
             
         #print (buffsize, T.shape[0], flush=True)
-    
-        PBHEswig.pbheSolve(Freeflow,dt,dx,dy,dz, Tmesh, Tdotmesh, kmesh, rhoCpmesh, perfTemp, perfRate,0,buffsize-1 )
+        
+        #PBHE_CUDA.Pennes_2ndOrder_GPU64_mesh(Freeflow,dt,dx,dy,dz, Tmesh, Tdotmesh, kmesh, rhoCpmesh, perfTemp, perfRate,0,buffsize-1 )
+        
+        if not GPU:
+            PBHEswig.pbheSolve(Freeflow,dt,dx,dy,dz, Tmesh, Tdotmesh, kmesh, rhoCpmesh, perfTemp, perfRate,0,buffsize-1 )
+        else:
+            if T.dtype == np.float64:
+                PBHE_CUDA.Pennes_2ndOrder_GPU64_mesh(Freeflow,dt,dx,dy,dz, Tmesh, Tdotmesh, kmesh, rhoCpmesh, perfTemp, perfRate,0,buffsize-1 )
+            elif T.dtype == np.float32:
+                PBHE_CUDA.Pennes_2ndOrder_GPU32_mesh(Freeflow,dt,dx,dy,dz, Tmesh, Tdotmesh, kmesh, rhoCpmesh, perfTemp, perfRate,0,buffsize-1 )
+            
         Rbase[:]=4
         Rbase[np.where(T[0] > 43.0, True, False)] = 2
         #print(T.shape)

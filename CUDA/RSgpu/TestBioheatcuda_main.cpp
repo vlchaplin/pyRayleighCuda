@@ -11,10 +11,10 @@ typedef double pbhe_t;
 int main()
 {
 	int nt = 10;
-	int nx = 80;
-	int ny = 80;
-	int nz = 80;
-	int bcMode = 0;
+	int nx = 40;
+	int ny = 40;
+	int nz = 40;
+	int bcMode = 1;
 	
 	MeshFunction4D<int> NumWrites4d(nt, nx, ny, nz);
 	MeshFunction4D<pbhe_t> Temp4d(nt, nx, ny, nz);
@@ -22,9 +22,9 @@ int main()
 	MeshFunction3D<pbhe_t> rhoCp3d(nx, ny, nz);
 	MeshFunction3D<pbhe_t> ktherm3d(nx, ny, nz);
 	pbhe_t dt = 0.1;
-	pbhe_t dx = 0.00025;
+	pbhe_t dx = 0.000253;
 	pbhe_t dy = dx;
-	pbhe_t dz = 0.00088;
+	pbhe_t dz = 0.000886;
 
 	pbhe_t Dtxyz[] = { dt, dx, dy, dz };
 

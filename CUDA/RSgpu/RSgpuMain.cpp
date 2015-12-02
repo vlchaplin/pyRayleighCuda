@@ -23,9 +23,9 @@ int main()
 	gpureal ** u_xyz = Create2D<gpureal>(3, N);
 	gpureal ** unormals_xyz = Create2D<gpureal>(3, N);
 
-	int Nx = 128;
-	int Ny = 128;
-	int Nz = 128;
+	int Nx = 80;
+	int Ny = 80;
+	int Nz = 80;
 
 	gpureal * xp = new gpureal[Nx];
 	gpureal * yp = new gpureal[Ny];

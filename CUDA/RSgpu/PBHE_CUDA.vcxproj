@@ -19,27 +19,35 @@
     <ClInclude Include="..\..\BioHeatCpp\BioHeatCpp\MeshFunction3D.h" />
     <ClInclude Include="..\..\BioHeatCpp\BioHeatCpp\MeshFunction4D.h" />
     <ClInclude Include="..\..\myIncludes\MultiDimArrays.h" />
-    <ClInclude Include="BioheatCUDA.cuh" />
+    <ClInclude Include="BioheatCUDA.cuh">
+      <FileType>CppHeader</FileType>
+    </ClInclude>
     <ClInclude Include="BioheatCUDAinf.h" />
     <ClInclude Include="BioheatCUDA.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BioheatCUDAinf.cpp" />
-    <ClCompile Include="Release\PBHEswig_cuda_wrap.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <CustomBuild Include="PBHEswig_cuda.i">
-      <FileType>Text</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">swig.exe -c++ -python -IC:\Users\vchaplin\Anaconda3\Lib\site-packages\numpy\core\include -I$(SolutionDir)  -o $(OutDir)%(Filename)_wrap.cpp %(FullPath)</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)%(Filename)_wrap.cpp</Outputs>
-    </CustomBuild>
+    <ClCompile Include="Release\PBHE_CUDA_wrap.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="TestBioheatcuda_main.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="BioheatCUDA.cu" />
   </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="PBHE_CUDA.i">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">swig.exe -c++ -python -IC:\Users\vchaplin\Anaconda3\Lib\site-packages\numpy\core\include -I$(SolutionDir) -IC:\Users\Vandiver\Documents\HiFU\code\BioHeatCpp\BioHeatCpp  -o $(OutDir)%(Filename)_wrap.cpp %(FullPath)</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)%(Filename)_wrap.cpp</Outputs>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </CustomBuild>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{2356C3AC-10F7-42B9-AD10-672EE2945C8B}</ProjectGuid>
-    <RootNamespace>RSgpu</RootNamespace>
+    <RootNamespace>PBHE_CUDA</RootNamespace>
     <ProjectName>PBHE_CUDA</ProjectName>
     <CudaToolkitCustomDir />
   </PropertyGroup>
@@ -74,20 +82,24 @@
     <OutDir>$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <TargetName>$(ProjectName)</TargetName>
+    <TargetName>_$(ProjectName)</TargetName>
     <TargetExt>.pyd</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetExt>.exe</TargetExt>
+    <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./;$(ProjectDir);$(NUMPY_INCLUDE)\..;$(NUMPY_INCLUDE);C:\Users\vchaplin\Anaconda3\include;$(CudaToolkitDir)/include;C:\ProgramData\NVIDIA Corporation\CUDA Samples\v7.5/common/inc;inc;C:\Users\Vandiver\Documents\HiFU\code\myIncludes;C:\Users\Vandiver\Documents\HiFU\code\BioHeatCpp\BioHeatCpp</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;$(ProjectDir);$(NUMPY_INCLUDE)\..;$(NUMPY_INCLUDE);C:\Users\vchaplin\Anaconda3\include;$(CudaToolkitDir)/include;C:\ProgramData\NVIDIA Corporation\CUDA Samples\v7.5/common/inc;inc;C:\Users\Vandiver\Documents\HiFU\code\myIncludes;C:\Users\Vandiver\Documents\HiFU\code\BioHeatCpp\BioHeatCpp;C:\Users\Vandiver\Documents\HiFU\code\BioHeatCpp</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <AdditionalDependencies>cudart_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(CudaToolkitLibDir);C:\Users\vchaplin\Anaconda3\Lib\site-packages\numpy\core\lib;C:\Users\vchaplin\Downloads\swigwin-3.0.3\swigwin-3.0.3;C:\Users\vchaplin\Anaconda3\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <OutputFile>$(OutDir)_$(TargetName)$(TargetExt)</OutputFile>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
     <CudaCompile>
       <CodeGeneration>compute_50,sm_50</CodeGeneration>

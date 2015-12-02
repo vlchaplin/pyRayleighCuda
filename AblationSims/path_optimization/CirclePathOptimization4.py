@@ -21,6 +21,9 @@ import matplotlib.pyplot as plt
 
 import HookJeeves
 
+sys.path.append('C:\\Users\\Vandiver\\Documents\\HiFU\\code\\CUDA\\RSgpu\\Release')
+import PBHE_CUDA
+
 
 # free params of path will be avgSped, dwellSec, waitSec
 
@@ -218,8 +221,8 @@ if maxDwell < wait:
 
 Nt = round(maxDwell/dt)
 
-if Nt > 100:
-    Nt=100
+if Nt > 50:
+    Nt=50
 
 
 #this would be useful only if in an interactive session
@@ -356,10 +359,12 @@ def run_simulation_4( param_vec, verbose=False, show=False, Npass=1 ):
             #print ('                                                 ', end='\r' )
             #print ("0 %f, %f" % (np.max(T), np.max(Tdot)), end=' ok \n')
             Tdot[:] = 2.0*alpha_acc*I1 / rhoCp
-            ablation_utils.calc_heating(simPhysGrid,T,Tdot,Tmesh,Tdotmesh,kmesh,rhoCpmesh,focalpoint_dwell_seconds, CEM, Rbase, perfRate=perfRate, perfTemp=37.0, Freeflow=flowBCs,verbose=verbose)
+            ablation_utils.calc_heating(simPhysGrid,T,Tdot,Tmesh,Tdotmesh,kmesh,rhoCpmesh,focalpoint_dwell_seconds, CEM, Rbase, perfRate=perfRate, perfTemp=37.0, Freeflow=flowBCs,verbose=verbose, GPU=use_gpu, Ntbuff=Nt)
+            
+            #PBHE_CUDA.Pennes_2ndOrder_GPU64_mesh(flowBCs, dt,dx,dy,dz, Tmesh, Tdotmesh, kmesh, rhoCpmesh, 37.0, perfRate )
             
             Tdot[:] = 0.0
-            ablation_utils.calc_heating(simPhysGrid,T,Tdot,Tmesh,Tdotmesh,kmesh,rhoCpmesh,wait, CEM, Rbase, perfRate=perfRate, perfTemp=37.0, Freeflow=flowBCs)
+            ablation_utils.calc_heating(simPhysGrid,T,Tdot,Tmesh,Tdotmesh,kmesh,rhoCpmesh,wait, CEM, Rbase, perfRate=perfRate, perfTemp=37.0, Freeflow=flowBCs, GPU=use_gpu , Ntbuff=Nt)
             
             
             
