@@ -58,6 +58,7 @@ __global__ void CalculatePressureMeshKernel(
 		gj = (voxidx / nz) % ny;
 		gk = voxidx % nz;
 
+
 		if (gi >= nx)
 			assert(0);
 		if (gj >= ny)
@@ -75,7 +76,8 @@ __global__ void CalculatePressureMeshKernel(
 
 			dirCosine = (sepX*unormalX[n] + sepY*unormalY[n] + sepZ*unormalZ[n]) / dist;
 
-			arg = kr*dist;
+			//need the negative!
+			arg = -kr*dist;
 			//sin() and cos() cause problems for some reason
 			sincos(arg, &sinarg, &cosarg);
 			//sinarg = sin(arg);

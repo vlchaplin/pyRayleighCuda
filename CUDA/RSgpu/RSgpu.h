@@ -11,7 +11,7 @@ typedef uint64_t memsize_t;
 
 typedef double gpureal;
 
-#define THREADS_PER_BLOCK 512
+#define THREADS_PER_BLOCK 128
 
 #include <iostream>
 

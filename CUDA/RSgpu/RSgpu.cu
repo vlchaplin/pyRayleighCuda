@@ -53,7 +53,7 @@ bool RSgpu_CalcPressureField(
 	threadsPerBlock = THREADS_PER_BLOCK;
 	//numBlocks = globalMaxThreads / threadsPerBlock;
 	numBlocks = numVoxelsToCompute / threadsPerBlock + 1;
-	numBlocks = 1024;
+	//numBlocks = 1024;
 	numVoxPerKernel = 1+ numVoxelsToCompute / (numBlocks*threadsPerBlock);
 	
 	if (numVoxPerKernel == 1)
