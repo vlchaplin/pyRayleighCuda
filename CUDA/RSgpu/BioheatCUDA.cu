@@ -3,6 +3,43 @@
 #include "BioheatCUDA.h"
 #include "BioheatCUDA.cuh"
 
+int computeBlockDims(int nx, int ny, int nz, int * dimX, int * dimY)
+{
+	const size_t wx = 8; // # size in block x 
+	const size_t wy = 4;
+	const size_t warpsize = wx*wy; //should be wx*wy = 32
+	// invocation should have block dims = (scale*wx,scale*wy,0) where scale^2*wx*wy = (#threadsPerBlock) and scale is an int >= 1
+	// dimY = (#threadsPerBlock)/(dimX)
+	// and grid dims = ( 1 + ny /  blockDim.x, 1 + nz /  blockDim.y , nx) and 
+	size_t blockSize = THREADS_PER_BLOCK;
+	size_t scale = 4;
+	size_t blockX = wx * scale;
+	size_t blockY = wy * scale;
+	size_t sharedMemArrDims = (blockX + 2)*(blockY + 2);
+
+	std::cout << "scale = " << scale << std::endl;
+	std::cout << "sharedMemArrSize = " << sharedMemArrDims << std::endl;
+	while ((blockX*blockY >blockSize || MAX_NUMELLS_SHARED_ARRAY < sharedMemArrDims) && scale>1) {
+
+		scale--;
+		std::cout << "Adjusting scale to " << scale << std::endl;
+		blockX = wx * scale;
+		blockY = wy * scale;
+		sharedMemArrDims = (blockX + 2)*(blockY + 2);
+		std::cout << "sharedMemArrSize = " << sharedMemArrDims << std::endl;
+		std::cout << "block X,Y = " << blockX << ", " << blockY << std::endl;
+	}
+
+	if (MAX_NUMELLS_SHARED_ARRAY < sharedMemArrDims) {
+		std::cout << "Error, not enough space for shared arrays. Adjust either 'MAX_NUMELLS_SHARED_ARRAY' or 'THREADS_PER_BLOCK' and re-compile" << std::endl;
+		return -1;
+	}
+
+	*dimX = blockX;
+	*dimY = blockY;
+	return 0;
+}
+
 template<typename pbhe_t>
 int Pennes_2ndOrder_template(pbhe_t * temp4D, pbhe_t * tdot3D, pbhe_t * kt3D, pbhe_t * rhoCp3D,
 	pbhe_t * Dtxyz, pbhe_t Tblood, pbhe_t perfRate, 
@@ -10,6 +47,7 @@ int Pennes_2ndOrder_template(pbhe_t * temp4D, pbhe_t * tdot3D, pbhe_t * kt3D, pb
 	int nx, int ny, int nz, int bcMode=FD_FREEFLOW_BOUNDARYCOND)
 {
 	
+	/*
 	const size_t wx = 8; // # size in block x 
 	const size_t wy = 4;
 	const size_t warpsize = wx*wy; //should be wx*wy = 32
@@ -40,6 +78,14 @@ int Pennes_2ndOrder_template(pbhe_t * temp4D, pbhe_t * tdot3D, pbhe_t * kt3D, pb
 		return -1;
 	}
 	
+	*/
+	int blockX, blockY;
+
+	if (computeBlockDims(nx, ny, nz, &blockX, &blockY) != 0)
+	{
+		return -1;
+	}
+
 	dim3 griddims3(1 + ny / blockX, 1 + nz / blockY, nx);
 	dim3 blockdims(blockX, blockY, 1);
 	
@@ -68,6 +114,11 @@ int Pennes_2ndOrder_template(pbhe_t * temp4D, pbhe_t * tdot3D, pbhe_t * kt3D, pb
 	checkCudaErrors(cudaMemcpy(rhoCp3D_dev, rhoCp3D, nx *ny*nz* typeSize, cudaMemcpyHostToDevice));
 	checkCudaErrors(cudaMemcpy(Dtxyz_d, Dtxyz, 4* typeSize, cudaMemcpyHostToDevice));
 
+	
+	checkCudaErrors(cudaMemcpy(temp3D_tf_dev, temp4D, nx *ny*nz*  typeSize, cudaMemcpyHostToDevice));
+	
+
+	
 	//int * numwrites_d;
 	//size_t intsize = sizeof(int);
 	//checkCudaErrors(cudaMalloc((void **)&numwrites_d, nx *ny*nz * intsize));
@@ -76,14 +127,22 @@ int Pennes_2ndOrder_template(pbhe_t * temp4D, pbhe_t * tdot3D, pbhe_t * kt3D, pb
 	pbhe_t * T_in, *T_out;
 	T_in = temp3D_ti_dev;
 	T_out = temp3D_tf_dev;
-	int ti;
+	int ti; 
 	for (ti = 0; ti < nt - 1; ti++)
 	{
-		std::cout << "ti = " << ti << std::endl;
-		Pennes_2ndOrder_cuda_kernel<pbhe_t> << < griddims3, blockdims >> > (T_out, T_in, tdot3D_dev, kt3D_dev, rhoCp3D_dev, Dtxyz_d, Tblood, perfRate, nx, ny, nz, bcMode);
-		checkCudaErrors(cudaDeviceSynchronize());
+		//std::cout << "ti = " << ti << std::endl;
+		//Pennes_2ndOrder_cuda_kernel<pbhe_t> << < griddims3, blockdims >> > (T_out, T_in, tdot3D_dev, kt3D_dev, rhoCp3D_dev, Dtxyz_d, Tblood, perfRate, nx, ny, nz, bcMode);
+		//checkCudaErrors(cudaDeviceSynchronize());
+		
+		for (unsigned int vi = 0; vi < nx; vi++)
+		{
+			griddims3.z = 1;
+			Pennes_2ndOrder_cuda_kernel_singleslice<pbhe_t> << < griddims3, blockdims >> > (vi, T_out, T_in, tdot3D_dev, kt3D_dev, rhoCp3D_dev, Dtxyz_d, Tblood, perfRate, nx, ny, nz, bcMode);
+			checkCudaErrors(cudaDeviceSynchronize());
+		}
+
 		checkCudaErrors(cudaMemcpy( (temp4D + (ti+1)*nx*ny*nz ) , T_out, nx *ny*nz* typeSize, cudaMemcpyDeviceToHost));
-		//checkCudaErrors(cudaMemcpy((numwrites + (ti+1)*nx*ny*nz), numwrites_d, nx *ny*nz*intsize, cudaMemcpyDeviceToHost));
+
 		tmp = T_in;
 		T_in = T_out;
 		T_out = tmp ;

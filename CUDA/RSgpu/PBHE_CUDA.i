@@ -35,7 +35,8 @@
 %apply (float* IN_ARRAY3, int DIM1, int DIM2, int DIM3) {(float *rhoCp3d, int nx4, int ny4, int nz4)}
 %apply (float* IN_ARRAY1, int DIM1) {(float *  Dtxyz, int nn)}
 
-
+%apply (double* IN_ARRAY1, int DIM1) {( double * res, int ressz)}
+%apply (float* IN_ARRAY1, int DIM1) {( float * res, int ressz)}
 
 //Copied from PBHEswig.i
 %include "MeshFunction.h"
@@ -55,10 +56,27 @@
 %template(mesh4d_f) MeshFunction4D<float>;
 %template(mesh34d_f) MeshFunctionPseudo4D<float>;
 
+%feature("autodoc", "Get the blockDims.x, and blockDims.y that will be used in the Pennes_2ndOrder codes for the nx,ny,nz volume") Pennes_GPU_SliceDims;
 
 
 %feature("autodoc", "Double-precision CUDA-enabled solution to bioheat equation. Input arrays are numpy.float64") Pennes_2ndOrder_GPU64;
+%feature("autodoc", "Double-precision CUDA-enabled solution to bioheat equation. Input arrays are numpy.float64") Pennes_2ndOrder_GPU64_mesh;
 
 %feature("autodoc", "Single-precision CUDA-enabled solution to bioheat equation. Input arrays are numpy.float") Pennes_2ndOrder_GPU32;
-
+%feature("autodoc", "Single-precision CUDA-enabled solution to bioheat equation. Input arrays are numpy.float") Pennes_2ndOrder_GPU32_mesh;
 %include "BioheatCUDAinf.h"
+
+%template(ShareMemoryMesh3) ShareMemoryMesh3<double>;
+%template(ShareMemoryMesh34) ShareMemoryMesh34<double>;
+%template(ShareMemoryMesh4) ShareMemoryMesh4<double>;
+
+%template(ShareMemoryMesh3_f) ShareMemoryMesh3<float>;
+%template(ShareMemoryMesh34_f) ShareMemoryMesh34<float>;
+%template(ShareMemoryMesh4_f) ShareMemoryMesh4<float>;
+
+%feature("autodoc", "Set-up data sharing between numpy array and mesh object") ShareMemoryMesh3;
+%feature("autodoc", "Set-up data sharing between numpy array and mesh object") ShareMemoryMesh34;
+%feature("autodoc", "Set-up data sharing between numpy array and mesh object") ShareMemoryMesh4;
+%feature("autodoc", "Set-up data sharing between numpy array and mesh object") ShareMemoryMesh3_f;
+%feature("autodoc", "Set-up data sharing between numpy array and mesh object") ShareMemoryMesh34_f;
+%feature("autodoc", "Set-up data sharing between numpy array and mesh object") ShareMemoryMesh4_f;
