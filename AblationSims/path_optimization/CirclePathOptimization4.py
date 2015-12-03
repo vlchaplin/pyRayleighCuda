@@ -35,7 +35,10 @@ def isarray(a):
         return False
 
 def contstruct_circ_sonication_points( maxR_mm, deltaR_mm, z_mm, avgSpd, dwellSec, waitSec ):
-    
+    """
+    (coords_mm, nturns, num_sonications_per_turn) = contstruct_circ_sonication_points(...)
+    Return the points used in constructing concentric circular paths
+    """
     turnspace_mm=deltaR_mm
     minR_mm = turnspace_mm / 2.0
     

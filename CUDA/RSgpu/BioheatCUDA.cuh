@@ -21,7 +21,6 @@
 #ifndef ROWMAJ2d
 #define ROWMAJ2d(i,j,Ni,Nj) ( (i)*Nj + (j) )
 #define COLMAJ2d(i,j,Ni,Nj) ( (j)*Ni + (i) )
-//#define COLMAJ2d(j,i,Nj,Ni) ( (j)*Ni + (i) )
 
 #define ROWMAJ3d(i,j,k,Ni,Nj,Nk) ( (i)*Nj*Nk + (j)*Nk + (k) )
 #define COLMAJ3d(i,j,k,Ni,Nj,Nk) ( (k)*Ni*Nj + (j)*Ni + (i) )
@@ -108,7 +107,7 @@ __global__ void Pennes_2ndOrder_cuda_kernel(
 		boundaryConditionHit += 16;
 	else if (vk == nz - 1)
 		boundaryConditionHit += 32;
-	
+
 	if ((vi >= nx || vj >= ny || vk >= nz))
 	{
 		inBounds = false;
@@ -117,38 +116,66 @@ __global__ void Pennes_2ndOrder_cuda_kernel(
 		inBounds = true;
 		outvoxel = ROWMAJ3d(vi, vj, vk, nx, ny, nz);
 
+
+		//Need to make the distinction between tile boundaries and tile boundaries corresponding to global boundaries
+		//For tile boundaries that ARE GLOBAL, simply duplicate the input value into the halo
+		//For tile boundaries that are NOT GLOBAL BOUNDARIES, copy the adjacent voxel into it's corresponding position in the halo
 		if (tx == 0)
 		{
 			//Fill in halo to the left
 			s = COLMAJ2d(tx, ty + 1, snj, snk);
-			Tvals_shared[s] = temp3D_ti[outvoxel];
-			kHeat_shared[s] = kt3D[outvoxel];
+
+			//If this a global boundary, copy the input voxel temperature value into the adjacent halo voxel
+			//Otherwise if it's just a tile boundary, copy the adjacent input voxel into adjacent halo voxel
+			if (boundaryConditionHit & (4 + 8))
+				voxel = outvoxel;
+			else
+				voxel = ROWMAJ3d(vi, vj - 1, vk, nx, ny, nz);
+
+			Tvals_shared[s] = temp3D_ti[voxel];
+			kHeat_shared[s] = kt3D[voxel];
 		}
 		else if ((boundaryConditionHit & 8) || tx == (blockDim.x - 1))
 		{
 			//Fill in halo to the right
 			s = COLMAJ2d(tx + 2, ty + 1, snj, snk);
-			Tvals_shared[s] = temp3D_ti[outvoxel];
-			kHeat_shared[s] = kt3D[outvoxel];
+
+			if (boundaryConditionHit & 8)
+				voxel = outvoxel;
+			else
+				voxel = ROWMAJ3d(vi, vj + 1, vk, nx, ny, nz);
+
+			Tvals_shared[s] = temp3D_ti[voxel];
+			kHeat_shared[s] = kt3D[voxel];
 		}
 
 		if (ty == 0)
 		{
 			//Fill in the halo below
 			s = COLMAJ2d(tx + 1, ty, snj, snk);
-			Tvals_shared[s] = temp3D_ti[outvoxel];
-			kHeat_shared[s] = kt3D[outvoxel];
+			if (boundaryConditionHit & (16 + 32))
+				voxel = outvoxel;
+			else
+				voxel = ROWMAJ3d(vi, vj, vk - 1, nx, ny, nz);
+
+
+			Tvals_shared[s] = temp3D_ti[voxel];
+			kHeat_shared[s] = kt3D[voxel];
 		}
 		else if ((boundaryConditionHit & 32) || ty == (blockDim.y - 1))
 		{
 			//Fill in halo to above
 			s = COLMAJ2d(tx + 1, ty + 2, snj, snk);
+			if (boundaryConditionHit & (32))
+				voxel = outvoxel;
+			else
+				voxel = ROWMAJ3d(vi, vj, vk + 1, nx, ny, nz);
+
 			Tvals_shared[s] = temp3D_ti[outvoxel];
 			kHeat_shared[s] = kt3D[outvoxel];
 		}
 
 	}
-
 	
 
 	if (inBounds)

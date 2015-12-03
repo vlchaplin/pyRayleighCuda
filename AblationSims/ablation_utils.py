@@ -28,6 +28,45 @@ def test():
     obj=PBHEswig.mesh1d()
     return obj
 
+def contstruct_circ_sonication_points( maxR_mm, deltaR_mm, z_mm, avgSpd, dwellSec, waitSec ):
+    """
+    (coords_mm, nturns, num_sonications_per_turn) = contstruct_circ_sonication_points(...)
+    Return the points used in constructing concentric circular paths
+    """
+    turnspace_mm=deltaR_mm
+    minR_mm = turnspace_mm / 2.0
+    
+    nturns = math.ceil( (maxR_mm - minR_mm)/turnspace_mm )
+    
+    avgSpeed_mm_per_sec=avgSpd
+    focalpoint_dwell_seconds=dwellSec
+    wait=waitSec
+    
+    turn_radii_mm = minR_mm + turnspace_mm*np.arange(0,nturns)
+    num_sonications_per_turn = (np.round( (2*math.pi*turn_radii_mm/avgSpeed_mm_per_sec) / focalpoint_dwell_seconds ) );
+    
+    num_sonications_total = np.sum(num_sonications_per_turn,dtype=int)
+    focalpoint_coords_mm = np.zeros([num_sonications_total, 3])
+    #pass_relative_amplitudes = np.zeros([num_sonications_total, 256])
+    
+    turnIdxStart=0;
+    for n in range(0,nturns):
+        ns = num_sonications_per_turn[n]
+        phis = np.arange(1,ns+1)*(2.0*math.pi/ns) + 0.5*(2.0*math.pi/ns)
+        x = turn_radii_mm[n]*np.cos(phis)
+        y = turn_radii_mm[n]*np.sin(phis)
+        z = z_mm*np.ones(ns);
+        
+        i = turnIdxStart
+        
+        focalpoint_coords_mm[i:(i+ns),0] = x;
+        focalpoint_coords_mm[i:(i+ns),1] = y;
+        focalpoint_coords_mm[i:(i+ns),2] = z;
+        
+        turnIdxStart += ns
+        
+    return (focalpoint_coords_mm, nturns, num_sonications_per_turn)
+
 def calc_heating(simPhysGrid,T,Tdot,Tmesh,Tdotmesh,kmesh,rhoCpmesh, duration, CEM, Rbase, Ntbuff=None, perfRate=0.0, perfTemp=37.0, T0=None, CEMinit=None, Tmax=None, Freeflow=0, verbose=False, GPU=False):
     
     """
