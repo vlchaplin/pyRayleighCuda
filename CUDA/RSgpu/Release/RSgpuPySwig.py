@@ -95,9 +95,12 @@ def TestKern(blocks, threads):
     """TestKern test"""
     return _RSgpuPySwig.TestKern(blocks, threads)
 
-def RSgpuCalcField(kr, pre, pim, xp, yp, zp, u_real, u_imag, coeffs, ux, uy, uz, uvx, uvy, uvz):
-    """Calculate the ndgrid style {xp X yp X zp} pressure field"""
-    return _RSgpuPySwig.RSgpuCalcField(kr, pre, pim, xp, yp, zp, u_real, u_imag, coeffs, ux, uy, uz, uvx, uvy, uvz)
+def RSgpuCalcField(kr, pre, pim, xp, yp, zp, u_real, u_imag, coeffs, ux, uy, uz, uvx, uvy, uvz, numGPUBlocks=0):
+    """
+    Calculate the ndgrid style {xp X yp X zp} pressure field
+    Calculate the ndgrid style {xp X yp X zp} pressure field
+    """
+    return _RSgpuPySwig.RSgpuCalcField(kr, pre, pim, xp, yp, zp, u_real, u_imag, coeffs, ux, uy, uz, uvx, uvy, uvz, numGPUBlocks)
 # This file is compatible with both classic and new-style classes.
 
 

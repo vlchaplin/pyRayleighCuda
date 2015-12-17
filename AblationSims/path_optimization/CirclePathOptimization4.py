@@ -138,6 +138,7 @@ parser.add_argument("-Z0", help="Minimum z-slice locaiton in cm, default z=11", 
 parser.add_argument("-Nx", help="# X grid", type=int)
 parser.add_argument("-Ny", help="# Y grid", type=int)
 parser.add_argument("-Nz", help="# Z grid", type=int)
+parser.add_argument("-Nt", help="# time steps to allocate. Default is to allocate enough for max dwell or a max of 50. -Nt will override the max.", type=int)
 parser.add_argument("-gpu", help="Use the CUDA kernel version of Rayleigh Sommerfield", action='store_true')
 
 args = parser.parse_args()
@@ -184,6 +185,10 @@ if args.speed :
 if args.gpu :
     use_gpu=1
 
+if use_gpu:
+    dataType=np.float32
+else:
+    dataType=np.float64
 
 xedges = 1e-2*np.linspace(-xw/2.0, xw/2.0,Nx+1)
 yedges = 1e-2*np.linspace(-yw/2.0, yw/2.0,Ny+1)
@@ -196,36 +201,42 @@ zrp = zedges[0:Nz]
 gxp,gyp,gzp = np.meshgrid(xrp, yrp, zrp, sparse=False, indexing='ij')
 calcGridDist= lambda rr: np.sqrt((gxp-rr[0])**2 + (gyp-rr[1])**2 + (gzp-rr[2])**2)
 
-dx = xrp[1]-xrp[0]
-dy = yrp[1]-yrp[0]
-dz = zrp[1]-zrp[0]
-dt = 0.1
+dx = dataType(xrp[1]-xrp[0])
+dy = dataType(yrp[1]-yrp[0])
+dz = dataType(zrp[1]-zrp[0])
+dt = dataType(0.1)
 
-res = np.array([dt,dx,dy,dz])
+res = np.array([dt,dx,dy,dz],dtype=dataType)
 voxVol=dx*dy*dz
 
 zplane=0.14
 focplaneZpix=np.where(np.logical_and( (zrp[1:-1]-zplane>=0) , (zrp[0:-2]-zplane<0) ))[0][0]
 
-## ROI ##
-roiOnTarget = np.logical_and( np.sqrt(gxp**2 + gyp**2) <= (1e-3*maxR_mm), np.abs(gzp-0.14) <= 0.005 )
-roiOffTarget = np.logical_and( np.sqrt(gxp**2 + gyp**2) <= 0.025, np.abs(gzp-0.14) <= 0.015 )
-roiOffTarget = np.logical_and(roiOffTarget, np.logical_not(roiOnTarget) )
-roiExtra = np.logical_and( np.sqrt(gxp**2 + gyp**2) <= (1e-3*1.5*maxR_mm), np.abs(gzp-0.14) <= 0.0075 )
-roiExtra = np.logical_or( roiExtra,
-                np.logical_and( np.sqrt(gxp**2 + gyp**2) <= (1e-3*2.5),
-                    np.logical_and( gzp-0.14 <= 0.0125, gzp-0.14 >= -0.02 )
-                    )
-                )
 
 maxDwell = focalpoint_dwell_seconds
 if maxDwell < wait:
     maxDwell = wait
 
-Nt = round(maxDwell/dt)
+if args.Nt:
+    Nt = args.Nt
+else:
+    Nt = int(round(maxDwell/dt))
+    if Nt > 50:
+        Nt=50
 
-if Nt > 50:
-    Nt=50
+
+## ROI ##
+roiOnTarget = np.logical_and( np.sqrt(gxp**2 + gyp**2) <= (1e-3*(maxR_mm-2)), np.abs(gzp-0.1375) <= 0.005 )
+roiOffTarget = np.logical_and( np.sqrt(gxp**2 + gyp**2) <= 0.025, np.abs(gzp-0.14) <= 0.015 )
+roiOffTarget = np.logical_and(roiOffTarget, np.logical_not(roiOnTarget) )
+roiExtra = np.logical_and( np.sqrt(gxp**2 + gyp**2) <= (1e-3*1.5*maxR_mm), np.abs(gzp-0.1375) <= 0.0075 )
+roiExtra = np.logical_or( roiExtra,
+                np.logical_and( np.sqrt(gxp**2 + gyp**2) <= (1e-3*7.5),
+                    np.logical_and( gzp-0.14 <= 0.0125, gzp-0.14 >= -0.02 )
+                    )
+                )
+
+
 
 
 #this would be useful only if in an interactive session
@@ -240,32 +251,51 @@ except NameError:
    1
 
 # ----- allocate numpy data arrays --- #
-T = np.zeros([Nt,Nx,Ny,Nz])
-Tdot = np.zeros([Nx,Ny,Nz])
-kdiff = np.zeros([Nx,Ny,Nz])
-rhoCp = np.zeros([Nx,Ny,Nz])
+T = np.zeros([Nt,Nx,Ny,Nz],dtype=dataType)
+Tdot = np.zeros([Nx,Ny,Nz],dtype=dataType)
+kdiff = np.zeros([Nx,Ny,Nz],dtype=dataType)
+rhoCp = np.zeros([Nx,Ny,Nz],dtype=dataType)
 
 # ---- Create C++ mesh objects ---
-Tmesh = PBHEswig.mesh4d()
-Tdotmesh = PBHEswig.mesh34d();
-kmesh = PBHEswig.mesh3d();
-rhoCpmesh = PBHEswig.mesh3d();
+
+if dataType == np.float32:
+    Tmesh = PBHE_CUDA.mesh4d_f()
+    Tdotmesh = PBHE_CUDA.mesh34d_f();
+    kmesh = PBHE_CUDA.mesh3d_f();
+    rhoCpmesh = PBHE_CUDA.mesh3d_f();
 
 
-kdiff[:]=ktdiffusion
-rhoCp[:]= rho*Cp
+    kdiff[:]=ktdiffusion
+    rhoCp[:]= rho*Cp
+    ### IMPORTANT!! The 'tying' step appears to be needed before copying a reference into simPhysGrid{} below
+    # ----- tie data arrays to mesh objects (to pass to C++) ---
+    # the data in each mesh can now be accessed/manipulated from python via the arrays, 'T', 'Tdot', etc.
+    PBHE_CUDA.ShareMemoryMesh4_f(T, res, Tmesh)
+    PBHE_CUDA.ShareMemoryMesh34_f(Tdot, res, Tdotmesh)
+    PBHE_CUDA.ShareMemoryMesh3_f(kdiff, res[1:4], kmesh)
+    PBHE_CUDA.ShareMemoryMesh3_f(rhoCp, res[1:4], rhoCpmesh)
+else:
+    Tmesh = PBHE_CUDA.mesh4d()
+    Tdotmesh = PBHE_CUDA.mesh34d();
+    kmesh = PBHE_CUDA.mesh3d();
+    rhoCpmesh = PBHE_CUDA.mesh3d();
 
-### IMPORTANT!! The 'tying' step appears to be needed before copying a reference into simPhysGrid{} below
-# ----- tie data arrays to mesh objects (to pass to C++) ---
-# the data in each mesh can now be accessed/manipulated from python via the arrays, 'T', 'Tdot', etc.
-PBHEswig.ShareMemoryMesh4(T, res, Tmesh)
-PBHEswig.ShareMemoryMesh34(Tdot, res, Tdotmesh)
-PBHEswig.ShareMemoryMesh3(kdiff, res[1:4], kmesh)
-PBHEswig.ShareMemoryMesh3(rhoCp, res[1:4], rhoCpmesh)
+
+    kdiff[:]=ktdiffusion
+    rhoCp[:]= rho*Cp
+    ### IMPORTANT!! The 'tying' step appears to be needed before copying a reference into simPhysGrid{} below
+    # ----- tie data arrays to mesh objects (to pass to C++) ---
+    # the data in each mesh can now be accessed/manipulated from python via the arrays, 'T', 'Tdot', etc.
+    PBHE_CUDA.ShareMemoryMesh4(T, res, Tmesh)
+    PBHE_CUDA.ShareMemoryMesh34(Tdot, res, Tdotmesh)
+    PBHE_CUDA.ShareMemoryMesh3(kdiff, res[1:4], kmesh)
+    PBHE_CUDA.ShareMemoryMesh3(rhoCp, res[1:4], rhoCpmesh)
 
 simPhysGrid = {}
 simPhysGrid['T'] = T
 simPhysGrid['Tdot'] = Tdot
+simPhysGrid['kt'] = kdiff
+simPhysGrid['rhoCp'] = rhoCp
 simPhysGrid['Tmesh'] = Tmesh
 simPhysGrid['Tdotmesh'] = Tdotmesh
 simPhysGrid['kmesh'] = kmesh
@@ -273,8 +303,8 @@ simPhysGrid['rhoCpmesh'] = rhoCpmesh
 simPhysGrid['dtxyz'] = res
 
 
-Rbase = np.zeros([Nx,Ny,Nz])
-CEM = np.zeros([Nx,Ny,Nz])
+Rbase = np.zeros([Nx,Ny,Nz],dtype=dataType)
+CEM = np.zeros([Nx,Ny,Nz],dtype=dataType)
 
 ## Load Sonalleve element positions
 uxyz = sonalleve.get_sonalleve_xdc_vecs()
@@ -307,8 +337,10 @@ pxyz=ring;
 print('Proceeding with simulation...', flush=True)
 
 #run_simulation_4  -  (speed, dwell, wait, Ispta)
-def run_simulation_4( param_vec, verbose=False, show=False, Npass=1 ):
-
+def run_simulation_4( param_vec, verbose=False, show=False, Npass=1, T0=37.0 ):
+    """
+    param_vec = [speed (mm/s), dwell (s), wait (s), I0 (W/m^2) ]
+    """
     (avgSpeed_mm_per_sec, focalpoint_dwell_seconds, wait, Ispta) = param_vec
     
     ### >> First use of ISPTA 
@@ -326,12 +358,9 @@ def run_simulation_4( param_vec, verbose=False, show=False, Npass=1 ):
         plt.show()
     num_sonications_total = np.sum(num_sonications_per_turn,dtype=int)
     
-    
-    
     #elapsedTime = ablation_utils.calc_heating( simPhysGrid, duration, CEM, Rbase, perfRate=perfRate, perfTemp=37.0, Freeflow=flowBCs)
     
-    T0 = 37.0
-    T[0] = T0
+    T[0][:] = T0
     CEM[:] = 0
     sonicate=True
     angle = pi/10
@@ -339,9 +368,6 @@ def run_simulation_4( param_vec, verbose=False, show=False, Npass=1 ):
     passnum=1
     while (passnum<=Npass):
         
-        #rotate sonication points
-        
-        focalpoint_coords_mm = focalpoint_coords_mm.dot(Rn)
         
         ## Compute apodization for these trajectory points
         pass_relative_amplitudes = np.zeros([num_sonications_total, N], dtype=complex)
@@ -361,7 +387,7 @@ def run_simulation_4( param_vec, verbose=False, show=False, Npass=1 ):
             I1 = np.abs(P1)**2 / (2.0*rho*c0)
             #print ('                                                 ', end='\r' )
             #print ("0 %f, %f" % (np.max(T), np.max(Tdot)), end=' ok \n')
-            Tdot[:] = 2.0*alpha_acc*I1 / rhoCp
+            Tdot[:] = dataType(2.0*alpha_acc*I1 / rhoCp)
             ablation_utils.calc_heating(simPhysGrid,T,Tdot,Tmesh,Tdotmesh,kmesh,rhoCpmesh,focalpoint_dwell_seconds, CEM, Rbase, perfRate=perfRate, perfTemp=37.0, Freeflow=flowBCs,verbose=verbose, GPU=use_gpu, Ntbuff=Nt)
             
             #PBHE_CUDA.Pennes_2ndOrder_GPU64_mesh(flowBCs, dt,dx,dy,dz, Tmesh, Tdotmesh, kmesh, rhoCpmesh, 37.0, perfRate )
@@ -373,21 +399,25 @@ def run_simulation_4( param_vec, verbose=False, show=False, Npass=1 ):
             
             
         passnum+=1
+        #rotate sonication points
+        focalpoint_coords_mm = focalpoint_coords_mm.dot(Rn)
         
 numTargetVox = np.sum(roiOnTarget)
-def VolumeObjective_4(param_vec, verbose=False, show=False, Npass=1 ):
+def VolumeObjective_4(param_vec, verbose=False, show=False, Npass=1, T0=37.0 ):
     """
     param_vec = [speed (mm/s), dwell (s), wait (s), I0 (W/m^2) ]
     """
     
-    run_simulation_4( param_vec, verbose=verbose, show=show, Npass=Npass)
+    run_simulation_4( param_vec, verbose=verbose, show=show, Npass=Npass, T0=T0)
     value = ( np.sum(CEM[roiExtra] >= 240.0) - numTargetVox )**2
     print (param_vec, " -> ", value, flush=True)
     return value
  
-def CEMObjective_4( param_vec, verbose=False, show=False ):
-    
-    run_simulation_4( param_vec, verbose=verbose, show=show)
+def CEMObjective_4( param_vec, verbose=False, show=False, Npass=1, T0=37.0 ):
+    """
+    param_vec = [speed (mm/s), dwell (s), wait (s), I0 (W/m^2) ]
+    """
+    run_simulation_4( param_vec, verbose=verbose, show=show, Npass=Npass, T0=T0)
     value = np.mean( (CEM[roiOnTarget] - 240.0)**2 )
     print (param_vec, " -> ", value, flush=True)
     return value

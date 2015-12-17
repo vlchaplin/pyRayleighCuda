@@ -94,6 +94,33 @@ def getRotZYZarray(az, ayp, azpp, translationColumn=None):
     
     return R
 
+def cart2sphere(x,y,z):
+    """
+    (r,theta,phi) = cart2sphere(x,y,z)
+    Theta is polar angle. Angles returned in radians
+    """
+    
+    r = numpy.sqrt( x**2 + y**2 + z**2 )
+    theta = numpy.arccos(z/r)
+    phi = numpy.arctan2(y,x)
+    
+    if type(r)==numpy.ndarray:
+        gimbles=numpy.abs(r) < 1e-12
+        theta[gimbles]=0.0
+    elif abs(r) < 1e-12:
+        theta=0.0
+        
+
+    return (r,theta,phi)
+
+def cart2sphere_deg(x,y,z):
+    """
+    (r,theta,phi) = cart2sphere_deg(x,y,z)
+    Theta is polar angle. Angles returned in degrees
+    """
+    rtod=180.0/np.pi
+    (r,theta,phi) = cart2sphere(x,y,z)
+    return (r,theta*rtod,phi*rtod)
 
 def rot(matrix,v):
     u=numpy.array(list(map ( lambda vec: matrix.dot(vec), v)))

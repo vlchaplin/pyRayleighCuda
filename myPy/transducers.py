@@ -48,11 +48,17 @@ def new_stipled_spherecap_array(sphereRadius, capDiam, nn):
         nb=nk
         nk = sum( map( lambda j: floor((2*pi)*j), range(0,nr) ) ) + nr
         
-
-    nn=nb    
+    nr-=1
+    
+       
     maxtheta = asin( (capDiam/2.0)/sphereRadius )
-    dth = maxtheta / (nr-1)
-    nphi = list(map(lambda x:1+floor( x*2*pi), range(0,nr))) 
+    
+    if nr > 1:
+        dth = maxtheta / (nr-1)
+        nphi = list(map(lambda x:1+floor( x*2*pi), range(0,nr)))
+    else:
+        dth=0
+        nphi=[1]
     
     nn=sum(nphi)
     
@@ -70,7 +76,65 @@ def new_stipled_spherecap_array(sphereRadius, capDiam, nn):
         
     return [uxyz  , nn]
 
-
+def subsample_transducer_array( upos, diam, Nmax, unormvecs=None, ROC=None, arrays_to_grow=None ):
+    """
+    ( newxyz, ns, returnSet ) = subsample_transducer_array(...)
+    
+    upos is Nx3
+    N = upos.shape[0]
+    
+    arrays_to_grow is a list of arrays that all have first dimension length N,
+    i.e., there's a value for each input element.  This value is simply copied for the
+    expanded set of output elements.
+    
+    returnSet contains the list of arrays_to_grow, but expanded.
+    returnSet is [] if arrays_to_grow is empty.
+    """
+    N = len(upos)
+    
+    if arrays_to_grow is not None:
+        Nvecs=len(arrays_to_grow) 
+    else:
+        Nvecs=0
+        
+    if ROC is None:
+        #If the transducer's ROC isn't given, then
+        #this essentially makes it a flat element
+        ROC=1e9*diam
+        
+        
+    diskxyz, ns = new_stipled_spherecap_array(ROC,diam,Nmax)
+    
+    returnSet=[]
+    for vec_i in range(0,Nvecs):
+        Arr_i = arrays_to_grow[vec_i]    
+        newshape_i = list(Arr_i.shape)
+        newshape_i[0] = N*ns
+        newArr_i = numpy.zeros(tuple(newshape_i),dtype=Arr_i.dtype.type)
+        returnSet.append(newArr_i)
+    
+    newxyz = numpy.zeros([N*ns,3])
+    
+    for n in range(0,N):
+        
+        if unormvecs is not None:
+            (un_r, un_theta, un_phi) = geom.cart2sphere(*unormvecs[n,:])
+            Rn = geom.getRotZYZarray( un_phi, un_theta, 0 )
+            
+            trfmDisk = diskxyz.dot(Rn) + upos[n]
+        else:
+            trfmDisk = diskxyz + upos[n]
+        
+        for s in range(0,ns):
+            newxyz[n*ns + s] = trfmDisk[s]
+    
+            for vec_i in range(0,Nvecs):
+                returnSet[vec_i][n*ns + s] = arrays_to_grow[vec_i][n]
+                
+    return ( newxyz, ns, returnSet )
+                
+        
+        
 
 def calc_pressure_profile(kwavenum, upos, uamp, vecs):
     
@@ -119,7 +183,7 @@ def calc_pressure_field(kwavenum, upos, uamp, xarray, yarray, zarray):
     return P
 
 
-def calc_pressure_field_cuda(kwavenum, upos, unormals, uamp, xarray, yarray, zarray):
+def calc_pressure_field_cuda(kwavenum, upos, unormals, uamp, xarray, yarray, zarray, gpublocks=0,subsampN=None, subsampDiam=None, ROC=None):
     """
     Same as calc_pressure_field() but use the CUDA-enabled version compiled in the RSgpuPySwig libary.
     upos is [N x 3]
@@ -136,10 +200,19 @@ def calc_pressure_field_cuda(kwavenum, upos, unormals, uamp, xarray, yarray, zar
     Pim = numpy.zeros([nx,ny,nz]);
     
     coeffs = numpy.ones([N])
-    
     ure = numpy.real(uamp)
     uim = numpy.imag(uamp)
+
     
-    RSgpuPySwig.RSgpuCalcField(kwavenum, Pre, Pim, xarray, yarray, zarray, ure, uim, coeffs, upos[:,0], upos[:,1], upos[:,2], unormals[:,0], unormals[:,1], unormals[:,2])
+    if subsampN is not None and subsampDiam is not None:
+        
+        ( vxyz, ns, (ure,uim,unormals,coeffs) )=subsample_transducer_array(upos, subsampDiam, subsampN,
+                                                                 unormvecs=unormals, ROC=ROC, arrays_to_grow=[ure,uim,unormals,coeffs])  
+        upos=vxyz
+        coeffs/=ns
+
+    #print( upos.shape, unormals.shape, coeffs.shape, ure.shape, uim.shape)
+    
+    RSgpuPySwig.RSgpuCalcField(kwavenum, Pre, Pim, xarray, yarray, zarray, ure, uim, coeffs, upos[:,0], upos[:,1], upos[:,2], unormals[:,0], unormals[:,1], unormals[:,2], gpublocks)
            
     return Pre + 1j*Pim

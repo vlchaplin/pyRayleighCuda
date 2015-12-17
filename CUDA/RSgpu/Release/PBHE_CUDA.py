@@ -90,187 +90,6 @@ except AttributeError:
     _newclass = 0
 
 
-class mesh1d(_object):
-    __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, mesh1d, name, value)
-    __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, mesh1d, name)
-    __repr__ = _swig_repr
-    __swig_setmethods__["d"] = _PBHE_CUDA.mesh1d_d_set
-    __swig_getmethods__["d"] = _PBHE_CUDA.mesh1d_d_get
-    if _newclass:
-        d = _swig_property(_PBHE_CUDA.mesh1d_d_get, _PBHE_CUDA.mesh1d_d_set)
-    __swig_setmethods__["ds"] = _PBHE_CUDA.mesh1d_ds_set
-    __swig_getmethods__["ds"] = _PBHE_CUDA.mesh1d_ds_get
-    if _newclass:
-        ds = _swig_property(_PBHE_CUDA.mesh1d_ds_get, _PBHE_CUDA.mesh1d_ds_set)
-    __swig_setmethods__["data"] = _PBHE_CUDA.mesh1d_data_set
-    __swig_getmethods__["data"] = _PBHE_CUDA.mesh1d_data_get
-    if _newclass:
-        data = _swig_property(_PBHE_CUDA.mesh1d_data_get, _PBHE_CUDA.mesh1d_data_set)
-    __swig_setmethods__["scalar"] = _PBHE_CUDA.mesh1d_scalar_set
-    __swig_getmethods__["scalar"] = _PBHE_CUDA.mesh1d_scalar_get
-    if _newclass:
-        scalar = _swig_property(_PBHE_CUDA.mesh1d_scalar_get, _PBHE_CUDA.mesh1d_scalar_set)
-    __swig_setmethods__["ndims"] = _PBHE_CUDA.mesh1d_ndims_set
-    __swig_getmethods__["ndims"] = _PBHE_CUDA.mesh1d_ndims_get
-    if _newclass:
-        ndims = _swig_property(_PBHE_CUDA.mesh1d_ndims_get, _PBHE_CUDA.mesh1d_ndims_set)
-    __swig_setmethods__["usesSharedData"] = _PBHE_CUDA.mesh1d_usesSharedData_set
-    __swig_getmethods__["usesSharedData"] = _PBHE_CUDA.mesh1d_usesSharedData_get
-    if _newclass:
-        usesSharedData = _swig_property(_PBHE_CUDA.mesh1d_usesSharedData_get, _PBHE_CUDA.mesh1d_usesSharedData_set)
-
-    def __init__(self, *args):
-        this = _PBHE_CUDA.new_mesh1d(*args)
-        try:
-            self.this.append(this)
-        except:
-            self.this = this
-    __swig_destroy__ = _PBHE_CUDA.delete_mesh1d
-    __del__ = lambda self: None
-
-    def setndims(self, num):
-        return _PBHE_CUDA.mesh1d_setndims(self, num)
-
-    def setdims(self, dims):
-        return _PBHE_CUDA.mesh1d_setdims(self, dims)
-    __swig_setmethods__["isRowMaj"] = _PBHE_CUDA.mesh1d_isRowMaj_set
-    __swig_getmethods__["isRowMaj"] = _PBHE_CUDA.mesh1d_isRowMaj_get
-    if _newclass:
-        isRowMaj = _swig_property(_PBHE_CUDA.mesh1d_isRowMaj_get, _PBHE_CUDA.mesh1d_isRowMaj_set)
-
-    def getndims(self):
-        return _PBHE_CUDA.mesh1d_getndims(self)
-
-    def getdims(self, dims):
-        return _PBHE_CUDA.mesh1d_getdims(self, dims)
-
-    def setres(self, dres):
-        return _PBHE_CUDA.mesh1d_setres(self, dres)
-
-    def getres(self, dres):
-        return _PBHE_CUDA.mesh1d_getres(self, dres)
-
-    def clear(self):
-        return _PBHE_CUDA.mesh1d_clear(self)
-
-    def setToScalar(self, value):
-        return _PBHE_CUDA.mesh1d_setToScalar(self, value)
-
-    def useSharedData(self, dims, ptr2meshdata, resolution):
-        return _PBHE_CUDA.mesh1d_useSharedData(self, dims, ptr2meshdata, resolution)
-
-    def val(self, idx):
-        return _PBHE_CUDA.mesh1d_val(self, idx)
-mesh1d_swigregister = _PBHE_CUDA.mesh1d_swigregister
-mesh1d_swigregister(mesh1d)
-
-class mesh3d(mesh1d):
-    __swig_setmethods__ = {}
-    for _s in [mesh1d]:
-        __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
-    __setattr__ = lambda self, name, value: _swig_setattr(self, mesh3d, name, value)
-    __swig_getmethods__ = {}
-    for _s in [mesh1d]:
-        __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
-    __getattr__ = lambda self, name: _swig_getattr(self, mesh3d, name)
-    __repr__ = _swig_repr
-
-    def __init__(self, *args):
-        this = _PBHE_CUDA.new_mesh3d(*args)
-        try:
-            self.this.append(this)
-        except:
-            self.this = this
-    __swig_destroy__ = _PBHE_CUDA.delete_mesh3d
-    __del__ = lambda self: None
-
-    def index(self, *args):
-        return _PBHE_CUDA.mesh3d_index(self, *args)
-
-    def val(self, *args):
-        return _PBHE_CUDA.mesh3d_val(self, *args)
-
-    def __call__(self, i0, i1, i2):
-        return _PBHE_CUDA.mesh3d___call__(self, i0, i1, i2)
-
-    def getval(self, i0, i1, i2):
-        return _PBHE_CUDA.mesh3d_getval(self, i0, i1, i2)
-
-    def setval(self, val, i0, i1, i2):
-        return _PBHE_CUDA.mesh3d_setval(self, val, i0, i1, i2)
-mesh3d_swigregister = _PBHE_CUDA.mesh3d_swigregister
-mesh3d_swigregister(mesh3d)
-
-class mesh4d(mesh1d):
-    __swig_setmethods__ = {}
-    for _s in [mesh1d]:
-        __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
-    __setattr__ = lambda self, name, value: _swig_setattr(self, mesh4d, name, value)
-    __swig_getmethods__ = {}
-    for _s in [mesh1d]:
-        __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
-    __getattr__ = lambda self, name: _swig_getattr(self, mesh4d, name)
-    __repr__ = _swig_repr
-
-    def __init__(self, *args):
-        this = _PBHE_CUDA.new_mesh4d(*args)
-        try:
-            self.this.append(this)
-        except:
-            self.this = this
-    __swig_destroy__ = _PBHE_CUDA.delete_mesh4d
-    __del__ = lambda self: None
-
-    def index(self, *args):
-        return _PBHE_CUDA.mesh4d_index(self, *args)
-
-    def val(self, *args):
-        return _PBHE_CUDA.mesh4d_val(self, *args)
-
-    def __call__(self, i0, i1, i2, i3):
-        return _PBHE_CUDA.mesh4d___call__(self, i0, i1, i2, i3)
-
-    def getval(self, i0, i1, i2, i3):
-        return _PBHE_CUDA.mesh4d_getval(self, i0, i1, i2, i3)
-
-    def setval(self, val, i0, i1, i2, i3):
-        return _PBHE_CUDA.mesh4d_setval(self, val, i0, i1, i2, i3)
-
-    def getpage(self, i0):
-        return _PBHE_CUDA.mesh4d_getpage(self, i0)
-mesh4d_swigregister = _PBHE_CUDA.mesh4d_swigregister
-mesh4d_swigregister(mesh4d)
-
-class mesh34d(mesh4d):
-    __swig_setmethods__ = {}
-    for _s in [mesh4d]:
-        __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
-    __setattr__ = lambda self, name, value: _swig_setattr(self, mesh34d, name, value)
-    __swig_getmethods__ = {}
-    for _s in [mesh4d]:
-        __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
-    __getattr__ = lambda self, name: _swig_getattr(self, mesh34d, name)
-    __repr__ = _swig_repr
-
-    def __init__(self, *args):
-        this = _PBHE_CUDA.new_mesh34d(*args)
-        try:
-            self.this.append(this)
-        except:
-            self.this = this
-    __swig_destroy__ = _PBHE_CUDA.delete_mesh34d
-    __del__ = lambda self: None
-
-    def index(self, *args):
-        return _PBHE_CUDA.mesh34d_index(self, *args)
-
-    def val(self, idx):
-        return _PBHE_CUDA.mesh34d_val(self, idx)
-mesh34d_swigregister = _PBHE_CUDA.mesh34d_swigregister
-mesh34d_swigregister(mesh34d)
-
 class mesh1d_f(_object):
     __swig_setmethods__ = {}
     __setattr__ = lambda self, name, value: _swig_setattr(self, mesh1d_f, name, value)
@@ -452,10 +271,215 @@ class mesh34d_f(mesh4d_f):
 mesh34d_f_swigregister = _PBHE_CUDA.mesh34d_f_swigregister
 mesh34d_f_swigregister(mesh34d_f)
 
+class mesh1d(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, mesh1d, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, mesh1d, name)
+    __repr__ = _swig_repr
+    __swig_setmethods__["d"] = _PBHE_CUDA.mesh1d_d_set
+    __swig_getmethods__["d"] = _PBHE_CUDA.mesh1d_d_get
+    if _newclass:
+        d = _swig_property(_PBHE_CUDA.mesh1d_d_get, _PBHE_CUDA.mesh1d_d_set)
+    __swig_setmethods__["ds"] = _PBHE_CUDA.mesh1d_ds_set
+    __swig_getmethods__["ds"] = _PBHE_CUDA.mesh1d_ds_get
+    if _newclass:
+        ds = _swig_property(_PBHE_CUDA.mesh1d_ds_get, _PBHE_CUDA.mesh1d_ds_set)
+    __swig_setmethods__["data"] = _PBHE_CUDA.mesh1d_data_set
+    __swig_getmethods__["data"] = _PBHE_CUDA.mesh1d_data_get
+    if _newclass:
+        data = _swig_property(_PBHE_CUDA.mesh1d_data_get, _PBHE_CUDA.mesh1d_data_set)
+    __swig_setmethods__["scalar"] = _PBHE_CUDA.mesh1d_scalar_set
+    __swig_getmethods__["scalar"] = _PBHE_CUDA.mesh1d_scalar_get
+    if _newclass:
+        scalar = _swig_property(_PBHE_CUDA.mesh1d_scalar_get, _PBHE_CUDA.mesh1d_scalar_set)
+    __swig_setmethods__["ndims"] = _PBHE_CUDA.mesh1d_ndims_set
+    __swig_getmethods__["ndims"] = _PBHE_CUDA.mesh1d_ndims_get
+    if _newclass:
+        ndims = _swig_property(_PBHE_CUDA.mesh1d_ndims_get, _PBHE_CUDA.mesh1d_ndims_set)
+    __swig_setmethods__["usesSharedData"] = _PBHE_CUDA.mesh1d_usesSharedData_set
+    __swig_getmethods__["usesSharedData"] = _PBHE_CUDA.mesh1d_usesSharedData_get
+    if _newclass:
+        usesSharedData = _swig_property(_PBHE_CUDA.mesh1d_usesSharedData_get, _PBHE_CUDA.mesh1d_usesSharedData_set)
+
+    def __init__(self, *args):
+        this = _PBHE_CUDA.new_mesh1d(*args)
+        try:
+            self.this.append(this)
+        except:
+            self.this = this
+    __swig_destroy__ = _PBHE_CUDA.delete_mesh1d
+    __del__ = lambda self: None
+
+    def setndims(self, num):
+        return _PBHE_CUDA.mesh1d_setndims(self, num)
+
+    def setdims(self, dims):
+        return _PBHE_CUDA.mesh1d_setdims(self, dims)
+    __swig_setmethods__["isRowMaj"] = _PBHE_CUDA.mesh1d_isRowMaj_set
+    __swig_getmethods__["isRowMaj"] = _PBHE_CUDA.mesh1d_isRowMaj_get
+    if _newclass:
+        isRowMaj = _swig_property(_PBHE_CUDA.mesh1d_isRowMaj_get, _PBHE_CUDA.mesh1d_isRowMaj_set)
+
+    def getndims(self):
+        return _PBHE_CUDA.mesh1d_getndims(self)
+
+    def getdims(self, dims):
+        return _PBHE_CUDA.mesh1d_getdims(self, dims)
+
+    def setres(self, dres):
+        return _PBHE_CUDA.mesh1d_setres(self, dres)
+
+    def getres(self, dres):
+        return _PBHE_CUDA.mesh1d_getres(self, dres)
+
+    def clear(self):
+        return _PBHE_CUDA.mesh1d_clear(self)
+
+    def setToScalar(self, value):
+        return _PBHE_CUDA.mesh1d_setToScalar(self, value)
+
+    def useSharedData(self, dims, ptr2meshdata, resolution):
+        return _PBHE_CUDA.mesh1d_useSharedData(self, dims, ptr2meshdata, resolution)
+
+    def val(self, idx):
+        return _PBHE_CUDA.mesh1d_val(self, idx)
+mesh1d_swigregister = _PBHE_CUDA.mesh1d_swigregister
+mesh1d_swigregister(mesh1d)
+
+class mesh3d(mesh1d):
+    __swig_setmethods__ = {}
+    for _s in [mesh1d]:
+        __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
+    __setattr__ = lambda self, name, value: _swig_setattr(self, mesh3d, name, value)
+    __swig_getmethods__ = {}
+    for _s in [mesh1d]:
+        __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
+    __getattr__ = lambda self, name: _swig_getattr(self, mesh3d, name)
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        this = _PBHE_CUDA.new_mesh3d(*args)
+        try:
+            self.this.append(this)
+        except:
+            self.this = this
+    __swig_destroy__ = _PBHE_CUDA.delete_mesh3d
+    __del__ = lambda self: None
+
+    def index(self, *args):
+        return _PBHE_CUDA.mesh3d_index(self, *args)
+
+    def val(self, *args):
+        return _PBHE_CUDA.mesh3d_val(self, *args)
+
+    def __call__(self, i0, i1, i2):
+        return _PBHE_CUDA.mesh3d___call__(self, i0, i1, i2)
+
+    def getval(self, i0, i1, i2):
+        return _PBHE_CUDA.mesh3d_getval(self, i0, i1, i2)
+
+    def setval(self, val, i0, i1, i2):
+        return _PBHE_CUDA.mesh3d_setval(self, val, i0, i1, i2)
+mesh3d_swigregister = _PBHE_CUDA.mesh3d_swigregister
+mesh3d_swigregister(mesh3d)
+
+class mesh4d(mesh1d):
+    __swig_setmethods__ = {}
+    for _s in [mesh1d]:
+        __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
+    __setattr__ = lambda self, name, value: _swig_setattr(self, mesh4d, name, value)
+    __swig_getmethods__ = {}
+    for _s in [mesh1d]:
+        __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
+    __getattr__ = lambda self, name: _swig_getattr(self, mesh4d, name)
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        this = _PBHE_CUDA.new_mesh4d(*args)
+        try:
+            self.this.append(this)
+        except:
+            self.this = this
+    __swig_destroy__ = _PBHE_CUDA.delete_mesh4d
+    __del__ = lambda self: None
+
+    def index(self, *args):
+        return _PBHE_CUDA.mesh4d_index(self, *args)
+
+    def val(self, *args):
+        return _PBHE_CUDA.mesh4d_val(self, *args)
+
+    def __call__(self, i0, i1, i2, i3):
+        return _PBHE_CUDA.mesh4d___call__(self, i0, i1, i2, i3)
+
+    def getval(self, i0, i1, i2, i3):
+        return _PBHE_CUDA.mesh4d_getval(self, i0, i1, i2, i3)
+
+    def setval(self, val, i0, i1, i2, i3):
+        return _PBHE_CUDA.mesh4d_setval(self, val, i0, i1, i2, i3)
+
+    def getpage(self, i0):
+        return _PBHE_CUDA.mesh4d_getpage(self, i0)
+mesh4d_swigregister = _PBHE_CUDA.mesh4d_swigregister
+mesh4d_swigregister(mesh4d)
+
+class mesh34d(mesh4d):
+    __swig_setmethods__ = {}
+    for _s in [mesh4d]:
+        __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
+    __setattr__ = lambda self, name, value: _swig_setattr(self, mesh34d, name, value)
+    __swig_getmethods__ = {}
+    for _s in [mesh4d]:
+        __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
+    __getattr__ = lambda self, name: _swig_getattr(self, mesh34d, name)
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        this = _PBHE_CUDA.new_mesh34d(*args)
+        try:
+            self.this.append(this)
+        except:
+            self.this = this
+    __swig_destroy__ = _PBHE_CUDA.delete_mesh34d
+    __del__ = lambda self: None
+
+    def index(self, *args):
+        return _PBHE_CUDA.mesh34d_index(self, *args)
+
+    def val(self, idx):
+        return _PBHE_CUDA.mesh34d_val(self, idx)
+mesh34d_swigregister = _PBHE_CUDA.mesh34d_swigregister
+mesh34d_swigregister(mesh34d)
+
+
+def Create_Global_GPU_Session64(nt, nx, ny, nz):
+    """Set-up memory reuse between for the PBHE calculation. numpy.float64"""
+    return _PBHE_CUDA.Create_Global_GPU_Session64(nt, nx, ny, nz)
+
+def Create_Global_GPU_Session32(nt, nx, ny, nz):
+    """Set-up memory reuse between for the PBHE calculation. numpy.float32"""
+    return _PBHE_CUDA.Create_Global_GPU_Session32(nt, nx, ny, nz)
+
+def ResetGPU():
+    """Reset all GPU memory."""
+    return _PBHE_CUDA.ResetGPU()
 
 def Pennes_GPU_SliceDims(nx, ny, nz, INPLACE_ARRAY1):
     """Get the blockDims.x, and blockDims.y that will be used in the Pennes_2ndOrder codes for the nx,ny,nz volume"""
     return _PBHE_CUDA.Pennes_GPU_SliceDims(nx, ny, nz, INPLACE_ARRAY1)
+
+def Pennes_2ndOrder_GPU32(temp4d, tdot3d, kt3d, rhoCp3d, Dtxyz, Tb, perfRate, nt, nx, ny, nz, bcMode):
+    """Single-precision CUDA-enabled solution to bioheat equation. Input arrays are numpy.float32"""
+    return _PBHE_CUDA.Pennes_2ndOrder_GPU32(temp4d, tdot3d, kt3d, rhoCp3d, Dtxyz, Tb, perfRate, nt, nx, ny, nz, bcMode)
+
+def Pennes_2ndOrder_GPU32_mesh(useFreeflow, dt, dx, dy, dz, T, Tdot_source, kt0, rho_Cp, Tblood, perfusionrate, ta_i=0, tb_i=-1):
+    """
+    Single-precision CUDA-enabled solution to bioheat equation. Input arrays are numpy.float32
+    Single-precision CUDA-enabled solution to bioheat equation. Input arrays are numpy.float32
+    Single-precision CUDA-enabled solution to bioheat equation. Input arrays are numpy.float32
+    """
+    return _PBHE_CUDA.Pennes_2ndOrder_GPU32_mesh(useFreeflow, dt, dx, dy, dz, T, Tdot_source, kt0, rho_Cp, Tblood, perfusionrate, ta_i, tb_i)
 
 def Pennes_2ndOrder_GPU64(temp4d, tdot3d, kt3d, rhoCp3d, Dtxyz, Tb, perfRate, nt, nx, ny, nz, bcMode):
     """Double-precision CUDA-enabled solution to bioheat equation. Input arrays are numpy.float64"""
@@ -468,18 +492,6 @@ def Pennes_2ndOrder_GPU64_mesh(useFreeflow, dt, dx, dy, dz, T, Tdot_source, kt0,
     Double-precision CUDA-enabled solution to bioheat equation. Input arrays are numpy.float64
     """
     return _PBHE_CUDA.Pennes_2ndOrder_GPU64_mesh(useFreeflow, dt, dx, dy, dz, T, Tdot_source, kt0, rho_Cp, Tblood, perfusionrate, ta_i, tb_i)
-
-def Pennes_2ndOrder_GPU32(temp4d, tdot3d, kt3d, rhoCp3d, Dtxyz, Tb, perfRate, nt, nx, ny, nz, bcMode):
-    """Single-precision CUDA-enabled solution to bioheat equation. Input arrays are numpy.float"""
-    return _PBHE_CUDA.Pennes_2ndOrder_GPU32(temp4d, tdot3d, kt3d, rhoCp3d, Dtxyz, Tb, perfRate, nt, nx, ny, nz, bcMode)
-
-def Pennes_2ndOrder_GPU32_mesh(useFreeflow, dt, dx, dy, dz, T, Tdot_source, kt0, rho_Cp, Tblood, perfusionrate, ta_i=0, tb_i=-1):
-    """
-    Single-precision CUDA-enabled solution to bioheat equation. Input arrays are numpy.float
-    Single-precision CUDA-enabled solution to bioheat equation. Input arrays are numpy.float
-    Single-precision CUDA-enabled solution to bioheat equation. Input arrays are numpy.float
-    """
-    return _PBHE_CUDA.Pennes_2ndOrder_GPU32_mesh(useFreeflow, dt, dx, dy, dz, T, Tdot_source, kt0, rho_Cp, Tblood, perfusionrate, ta_i, tb_i)
 
 def ShareMemoryMesh3(IN_ARRAY3, res, infunc):
     return _PBHE_CUDA.ShareMemoryMesh3(IN_ARRAY3, res, infunc)
@@ -506,4 +518,5 @@ def ShareMemoryMesh4_f(IN_ARRAY4, res, infunc):
 ShareMemoryMesh4_f = _PBHE_CUDA.ShareMemoryMesh4_f
 # This file is compatible with both classic and new-style classes.
 
+cvar = _PBHE_CUDA.cvar
 

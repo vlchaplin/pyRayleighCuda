@@ -28,6 +28,13 @@ def test():
     obj=PBHEswig.mesh1d()
     return obj
 
+def isarray(a):
+    try:
+        shp = a.shape
+        return True
+    except:
+        return False
+
 def contstruct_circ_sonication_points( maxR_mm, deltaR_mm, z_mm, avgSpd, dwellSec, waitSec ):
     """
     (coords_mm, nturns, num_sonications_per_turn) = contstruct_circ_sonication_points(...)
@@ -67,7 +74,23 @@ def contstruct_circ_sonication_points( maxR_mm, deltaR_mm, z_mm, avgSpd, dwellSe
         
     return (focalpoint_coords_mm, nturns, num_sonications_per_turn)
 
-def calc_heating(simPhysGrid,T,Tdot,Tmesh,Tdotmesh,kmesh,rhoCpmesh, duration, CEM, Rbase, Ntbuff=None, perfRate=0.0, perfTemp=37.0, T0=None, CEMinit=None, Tmax=None, Freeflow=0, verbose=False, GPU=False):
+def countSonications(maxR_mm, deltaR_mm, z_mm, avgSpd, dwellSec, waitSec):
+    """
+    Return the number of sonications in a single pass.
+    """
+    param_tuple = (maxR_mm, deltaR_mm, z_mm, avgSpd, dwellSec, waitSec)
+    (junk,junk, nn)=contstruct_circ_sonication_points(*param_tuple)
+    return sum(nn)
+
+def trajTotalTime(maxR_mm, deltaR_mm, z_mm, avgSpd, dwellSec, waitSec):
+    """
+    Return the total time of the sonication pass (including dwell + wait)
+    """
+    (junk,junk, nn)=contstruct_circ_sonication_points(maxR_mm, deltaR_mm, z_mm, avgSpd, dwellSec, waitSec)
+    return sum(nn)*(dwellSec + waitSec) - waitSec
+
+
+def calc_heating(simPhysGrid,T,Tdot,Tmesh,Tdotmesh,kmesh,rhoCpmesh, duration, CEM, Rbase, Ntbuff=None, perfRate=0.0, perfTemp=37.0, Tavg=False, voxmask=None, T0=None, CEMinit=None, Tmax=None, Freeflow=0, verbose=False, GPU=False):
     
     """
     simPhysGrid is a dict with the following keys:
@@ -90,8 +113,13 @@ def calc_heating(simPhysGrid,T,Tdot,Tmesh,Tdotmesh,kmesh,rhoCpmesh, duration, CE
     'CEMinit' - modify CEM to be this before doing the calculation.
     'Tmax' - if a 3D array is passed in via this keyword, it will contain the maximum temperature reached in each voxel. 
     'Freeflow' - 0 or 1.  0 means fixed temperature boundaries.  1 means heat is allowed to flow out (adiabatic condition).
+    
+    Tavg=False , or True.
+    voxmask = 3d mask of voxels for averaging temperature
         
-    return is (time, Tmax), where 'time' is the actual duration of that was calculated
+    return is (time, Tmax, timeList, TavgList), where 'time' is the actual duration of that was calculated
+    
+    If Tavg=True, ti
     """
     
 
@@ -99,10 +127,13 @@ def calc_heating(simPhysGrid,T,Tdot,Tmesh,Tdotmesh,kmesh,rhoCpmesh, duration, CE
     #Tdot = simPhysGrid['Tdot']
     #Tmesh = simPhysGrid['Tmesh']
     #Tdotmesh= simPhysGrid['Tdotmesh']
-    #kmesh= simPhysGrid['kmesh']
-    #rhoCpmesh = simPhysGrid['rhoCpmesh']
+    k3d= simPhysGrid['kt']
+    rhoCp3d = simPhysGrid['rhoCp']
     
     (dt,dx,dy,dz) = simPhysGrid['dtxyz']
+    (nt,nx,ny,nz) = T.shape
+    
+    #Dtxyz = np.array([dt,dx,dy,dz])
     
     if T0 is not None:
         if isarray(T0):
@@ -125,6 +156,17 @@ def calc_heating(simPhysGrid,T,Tdot,Tmesh,Tdotmesh,kmesh,rhoCpmesh, duration, CE
         
     tstep=dt*buffsize
     
+    record_temporal=False
+    timeList=None
+    TavgList=None
+    if (Tavg) and voxmask is not None:
+        record_temporal=True
+        timeList=[]
+        if Tavg:
+            TavgList=[]
+        else:
+            TavgList=None
+        
     
     while time<duration :
         #print("here 2", flush=True)
@@ -133,6 +175,8 @@ def calc_heating(simPhysGrid,T,Tdot,Tmesh,Tdotmesh,kmesh,rhoCpmesh, duration, CE
         
         if (time + tstep > duration):
             buffsize = math.ceil((duration-time)/dt)
+            if (buffsize > nt):
+                buffsize=nt
             tstep = dt*buffsize
             
         #print (buffsize, T.shape[0], flush=True)
@@ -143,9 +187,11 @@ def calc_heating(simPhysGrid,T,Tdot,Tmesh,Tdotmesh,kmesh,rhoCpmesh, duration, CE
             PBHEswig.pbheSolve(Freeflow,dt,dx,dy,dz, Tmesh, Tdotmesh, kmesh, rhoCpmesh, perfTemp, perfRate,0,buffsize-1 )
         else:
             if T.dtype == np.float64:
-                PBHE_CUDA.Pennes_2ndOrder_GPU64_mesh(Freeflow,dt,dx,dy,dz, Tmesh, Tdotmesh, kmesh, rhoCpmesh, perfTemp, perfRate,0,buffsize-1 )
+                #PBHE_CUDA.Pennes_2ndOrder_GPU64_mesh(Freeflow,dt,dx,dy,dz, Tmesh, Tdotmesh, kmesh, rhoCpmesh, perfTemp, perfRate,0,buffsize-1 )
+                PBHE_CUDA.Pennes_2ndOrder_GPU64(T, Tdot, k3d, rhoCp3d, simPhysGrid['dtxyz'], perfTemp,perfRate,buffsize,nx,ny,nz,Freeflow)
             elif T.dtype == np.float32:
-                PBHE_CUDA.Pennes_2ndOrder_GPU32_mesh(Freeflow,dt,dx,dy,dz, Tmesh, Tdotmesh, kmesh, rhoCpmesh, perfTemp, perfRate,0,buffsize-1 )
+                PBHE_CUDA.Pennes_2ndOrder_GPU32(T, Tdot, k3d, rhoCp3d, simPhysGrid['dtxyz'], perfTemp,perfRate,buffsize,nx,ny,nz,Freeflow)
+                #PBHE_CUDA.Pennes_2ndOrder_GPU32_mesh(Freeflow,dt,dx,dy,dz, Tmesh, Tdotmesh, kmesh, rhoCpmesh, perfTemp, perfRate,0,buffsize-1 )
             
         Rbase[:]=4
         Rbase[np.where(T[0] > 43.0, True, False)] = 2
@@ -159,6 +205,12 @@ def calc_heating(simPhysGrid,T,Tdot,Tmesh,Tdotmesh,kmesh,rhoCpmesh, duration, CE
         
         #print("here 3", flush=True)
         
+        if record_temporal:
+            timeList.append(time+tstep)
+            if Tavg:
+                TavgList.append(np.mean( T[buffsize-1][voxmask], axis=(1,2,3) ))
+                
+        
         ti+=1
         time+=tstep
         T[0] = T[buffsize-1]
@@ -169,7 +221,7 @@ def calc_heating(simPhysGrid,T,Tdot,Tmesh,Tdotmesh,kmesh,rhoCpmesh, duration, CE
         update = np.where(T[buffsize-1] > Tmax, True, False)
         Tmax[update] = T[buffsize-1][update]
         
-    return (time, Tmax)
+    return (time, Tmax, timeList, TavgList)
 
 
 
@@ -288,3 +340,124 @@ def plot_simfile_std(fname, fig=None, ypidx=None, CEMmin=0, CEMmax=240.0):
     
     del simdata
     
+    
+    
+    
+    
+    
+    
+    
+    
+def write_xyz_simulation_coords(f, gxp=None,gyp=None,gzp=None,xrp=None,yrp=None,zrp=None, roiON=None, roiOFF=None, roiEXTRA=None):
+                                
+    if gxp is not None:
+        dset = f.create_dataset("geom/gridx", data=gxp)
+        if xrp is not None:
+            dset.attrs['xp']=xrp
+        f.flush()
+
+    if gyp is not None:
+        dset = f.create_dataset("geom/gridy", data=gyp)
+        if yrp is not None:
+            dset.attrs['yp']=yrp
+        f.flush()
+
+    if gzp is not None:
+        dset = f.create_dataset("geom/gridz", data=gzp)
+        if zrp is not None:
+            dset.attrs['zp']=zrp
+        f.flush()
+    
+    if roiON is not None:
+        dset = f.create_dataset("geom/ROION", data=roiON)
+        f.flush()
+
+    if roiOFF is not None:
+        dset = f.create_dataset("geom/ROIOFF", data=roiOFF)
+        f.flush()
+        
+    if roiEXTRA is not None:
+        dset = f.create_dataset("geom/ROIEXTRA", data=roiEXTRA)
+        f.flush()
+
+    return f
+
+def write_parameter_space(f, sim_result, SetOfParamArrays, NamesOfParams, units=None, scoringfunc=None):
+    """
+    Write the parameter space definition for the param_grid.
+     * SetOfParamArrays is a list or array of vectors representing the sampled across each dimension.
+     * NamesOfParams is a list of strings with the name of each parameter
+     * 'units=' is an optional keyword containing the parameter unit definition
+    E.g., 
+    p0 = np.arange(0.2, 0.3, 0.05 ) #speed
+    p1 = np.arange(3.0, 9.0, 1.0 )  #dwell
+    p2 = np.arange(2.0, 6.0, 1.0 )  #wait
+    ...
+    paramvecs = [ p0, p1, p2, ...]
+    names = ["speed", "dwell", "wait"]
+    units = ["mm/sec","sec","sec"]
+    
+    write_parameter_space(f, paramvecs, names, units=units)
+    
+    """
+
+    Ndims = len(sim_result.shape)
+        
+    if Ndims >0:
+        dset = f.create_dataset("param_grid",data=sim_result)
+        f.flush()
+    else:
+        return
+    
+    if type(SetOfParamArrays) == list:
+        tupleOfParams = tuple(SetOfParamArrays)
+    elif type(SetOfParamArrays) == np.ndarray:
+        tupleOfParams = tuple(SetOfParamArrays.tolist())
+    
+    #param_grid = np.meshgrid( *tupleOfParams , indexing='ij')
+    
+    param_dims = list(map( lambda *arg: len(*arg) , tupleOfParams))
+    
+    dset.attrs['Ndims']=Ndims
+    dset.attrs['dims']=param_dims
+        
+    if scoringfunc is not None:
+        dset.attrs['scoringfunc']=scoringfunc
+    
+    for n in range(0,Ndims):
+        pname = "p%d" % n
+        dset.attrs[pname]=SetOfParamArrays[n]
+        
+        dset.attrs[("%sname" % pname)]=NamesOfParams[n]
+        if units is not None:
+            dset.attrs[("%sunit" % pname)]=units[n]
+
+        f.flush()
+
+    return f
+
+
+def read_parameter_space(f,dset=None):
+    """
+    Return a list of arrays containing the parameter space points.
+    This can be used to construct a mesh-style grid like
+    
+    setOfParamArrays = read_parameter_space(f)
+    param_grid = np.meshgrid( *tuple(setOfParamArrays) , indexing='ij')
+    
+    Paramter names should be stored in dset.attrs['..']
+    
+    """
+    if dset is None:
+        dset = f['param_grid']
+    
+    Ndims = len(SetOfParamArrays)
+        
+    Ndims = dset.attrs['Ndims']
+
+    SetOfParamArrays=[]
+    for n in range(0,Ndims):
+        pname = "p%d" % n
+        SetOfParamArrays.append(dset.attrs[pname])
+
+    return SetOfParamArrays
