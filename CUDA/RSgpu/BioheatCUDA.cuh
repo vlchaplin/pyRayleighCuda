@@ -16,7 +16,7 @@
 #define BIOHEAT_CUH
 
 #define FDRadius 1
-#define MAX_NUMELLS_SHARED_ARRAY 600
+#define MAX_NUMELLS_SHARED_ARRAY 2000
 
 #ifndef ROWMAJ2d
 #define ROWMAJ2d(i,j,Ni,Nj) ( (i)*Nj + (j) )
@@ -171,8 +171,8 @@ __global__ void Pennes_2ndOrder_cuda_kernel(
 			else
 				voxel = ROWMAJ3d(vi, vj, vk + 1, nx, ny, nz);
 
-			Tvals_shared[s] = temp3D_ti[outvoxel];
-			kHeat_shared[s] = kt3D[outvoxel];
+			Tvals_shared[s] = temp3D_ti[voxel];
+			kHeat_shared[s] = kt3D[voxel];
 		}
 
 	}
@@ -460,8 +460,8 @@ __global__ void Pennes_2ndOrder_cuda_kernel_singleslice(
 			else
 				voxel = ROWMAJ3d(vi, vj, vk + 1, nx, ny, nz);
 
-			Tvals_shared[s] = temp3D_ti[outvoxel];
-			kHeat_shared[s] = kt3D[outvoxel];
+			Tvals_shared[s] = temp3D_ti[voxel];
+			kHeat_shared[s] = kt3D[voxel];
 		}
 
 	}

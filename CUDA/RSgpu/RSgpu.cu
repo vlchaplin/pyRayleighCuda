@@ -27,10 +27,10 @@ bool RSgpu_CalcPressureField(
 	gpureal * u_real, gpureal * u_imag, gpureal * coefficients,
 	gpureal * ux, gpureal * uy, gpureal * uz,
 	gpureal * unormalX, gpureal * unormalY, gpureal * unormalZ,
-	int Nells)
+	int Nells, size_t numBlocks)
 
 {
-	size_t numBlocks;
+
 	size_t threadsPerBlock;
 
 	int targetDevice = 0;
@@ -52,8 +52,22 @@ bool RSgpu_CalcPressureField(
 
 	threadsPerBlock = THREADS_PER_BLOCK;
 	//numBlocks = globalMaxThreads / threadsPerBlock;
-	numBlocks = numVoxelsToCompute / threadsPerBlock + 1;
-	//numBlocks = 1024;
+
+	if (numBlocks == 0)
+	{
+		numBlocks = numVoxelsToCompute / threadsPerBlock + 1;
+
+		if (Nells > 256) {
+			numBlocks = 512;
+		}
+		if (Nells >= 1024) {
+			numBlocks = 256;
+		}
+		if (Nells >= 2048) {
+			numBlocks = 64;
+		}
+	}
+
 	numVoxPerKernel = 1+ numVoxelsToCompute / (numBlocks*threadsPerBlock);
 	
 	if (numVoxPerKernel == 1)
@@ -61,9 +75,8 @@ bool RSgpu_CalcPressureField(
 	else
 		threadToVoxWrap = numBlocks*threadsPerBlock;
 
+	
 	std::cout << "#blocks = " << numBlocks << ", #threads per block = " << threadsPerBlock << std::endl;
-	std::cout << "Max # threads = " << globalMaxThreads << std::endl;
-	std::cout << "# grid voxels = " << numVoxelsToCompute << std::endl;
 	std::cout << "voxels to compute per kernel: " << numVoxPerKernel << std::endl;
 	std::cout << "thread-to-voxel wrapping: " << threadToVoxWrap << std::endl;
 	
@@ -77,11 +90,11 @@ bool RSgpu_CalcPressureField(
 	size_t coeffiecientSize = Nells*typeSize;
 	size_t transducerDefSize = transducerPosSize + transducerVecSize + transducerEncSize + coeffiecientSize;
 
-	size_t availableMem = (globalMem - transducerDefSize);
-	std::cout << "Compute grid size = " << computeGridSize / 1024 << " kb " << std::endl;
-	std::cout << "Available mem size = " << availableMem / 1024 << " kb " << std::endl;
+	//size_t availableMem = (globalMem - transducerDefSize);
+	//std::cout << "Compute grid size = " << computeGridSize / 1024 << " kb " << std::endl;
+	//std::cout << "Available mem size = " << availableMem / 1024 << " kb " << std::endl;
 
-	std::cout << "Allocating GPU memory..." << std::endl;
+	//std::cout << "Allocating GPU memory..." << std::endl;
 	gpureal *d_xp, *d_yp, *d_zp, *d_coeff, *d_uRe, *d_uIm, *d_pRe, *d_pIm, *d_uX, *d_uY, *d_uZ, *d_uvX, *d_uvY, *d_uvZ;
 
 	//Allocate
@@ -126,15 +139,15 @@ bool RSgpu_CalcPressureField(
 
 
 
-	std::cout << "Launching kernel..." << std::endl;
+	//std::cout << "Launching kernel..." << std::endl;
 	
 	unsigned long w = 0;
 	unsigned long offset = 0;
 
-	
+
 	for (w = 0; w < numVoxPerKernel; w++)
 	{
-		std::cout << "Voxel chunk " << w+1 << std::endl;
+		std::cout << "RS Voxel chunk " << w + 1 << " / " << numVoxPerKernel << std::endl;
 		CalculatePressureMeshKernel << < numBlocks, threadsPerBlock >> > (
 			d_pRe, d_pIm, kr,
 			d_xp, dimx, d_yp, dimy, d_zp, dimz,
@@ -174,11 +187,11 @@ bool RSgpu_CalcPressureField(
 	//checkCudaErrors(cudaDeviceSynchronize());
 	//Copy result
 	
-	std::cout << "Copying output to host memory..." << std::endl;
+	//std::cout << "Copying output to host memory..." << std::endl;
 	checkCudaErrors(cudaMemcpy(p_Re, d_pRe, computeGridSize, cudaMemcpyDeviceToHost));
 	checkCudaErrors(cudaMemcpy(p_Im, d_pIm, computeGridSize, cudaMemcpyDeviceToHost));
 
-	std::cout << "Complete" << std::endl;
+	//std::cout << "Complete" << std::endl;
 
 	//d_xp, d_yp, d_zp, d_coeff, d_uRe, d_uIm, d_pRe, d_pIm, d_uX, d_uY, d_uZ, d_uvX, d_uvY, d_uvZ
 	checkCudaErrors(cudaFree(d_xp));
@@ -196,7 +209,7 @@ bool RSgpu_CalcPressureField(
 	checkCudaErrors(cudaFree(d_uvY));
 	checkCudaErrors(cudaFree(d_uvZ));
 	
-	checkCudaErrors(cudaDeviceReset());
+	//checkCudaErrors(cudaDeviceReset());
 
 	return true;
 }

@@ -28,7 +28,7 @@ bool RSgpu_CalcPressureField(
 	gpureal * u_real, gpureal * u_imag, gpureal * coefficients,
 	gpureal * ux, gpureal * uy, gpureal * uz,
 	gpureal * unormalX, gpureal * unormalY, gpureal * unormalZ,
-	int Nells);
+	int Nells, size_t numBlocks=0);
 
 
 

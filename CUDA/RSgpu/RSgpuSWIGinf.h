@@ -21,7 +21,8 @@ void RSgpuCalcField(
 	gpureal * uz, int Nuz,
 	gpureal * uvx, int Nuvx,
 	gpureal * uvy, int Nuvy,
-	gpureal * uvz, int Nuvz
+	gpureal * uvz, int Nuvz,
+	int numGPUBlocks=0
 	);
 
 #endif
