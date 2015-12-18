@@ -236,7 +236,9 @@ roiExtra = np.logical_or( roiExtra,
                     )
                 )
 
-
+roiOnTarget = geom.roiGen([[0,0,0.14]], lambda x,y,z: geom.inEllipse(x,y,z, 0.01, 0.01,0.017), gxp, gyp, gzp)
+roiExtra = geom.roiGen([[0,0,0.14]], lambda x,y,z: geom.inEllipse(x,y,z,0.02,0.02,0.04), gxp, gyp, gzp )
+roiOffTarget = np.logical_and( roiExtra, np.logical_not(roiOnTarget))
 
 
 #this would be useful only if in an interactive session
@@ -315,7 +317,7 @@ unvecs = np.apply_along_axis(lambda x: x / np.sqrt(np.sum(x**2)), 1, [0.0,0.0,0.
 uamp0 = np.ones(N) / N
 
 if use_gpu:
-    P0 = transducers.calc_pressure_field_cuda(k0, geom.translate3vecs(uxyz, np.array([0, 0, 0 ]) ), unvecs, uamp0, xrp, yrp, zrp)
+    P0 = transducers.calc_pressure_field_cuda(k0, uxyz, unvecs, uamp0, xrp, yrp, zrp, subsampN=10, subsampDiam=0.0033, ROC=0.14)
 else:
     P0 = sonalleve.calc_pressure_field(k0, geom.translate3vecs(uxyz, np.array([0, 0, 0 ]) ), uamp0, xrp, yrp, zrp)
     
@@ -337,7 +339,7 @@ pxyz=ring;
 print('Proceeding with simulation...', flush=True)
 
 #run_simulation_4  -  (speed, dwell, wait, Ispta)
-def run_simulation_4( param_vec, verbose=False, show=False, Npass=1, T0=37.0 ):
+def run_simulation_4( param_vec, verbose=False, show=False, Npass=1, T0=37.0, calc_Tmax=False, ):
     """
     param_vec = [speed (mm/s), dwell (s), wait (s), I0 (W/m^2) ]
     """
@@ -360,6 +362,11 @@ def run_simulation_4( param_vec, verbose=False, show=False, Npass=1, T0=37.0 ):
     
     #elapsedTime = ablation_utils.calc_heating( simPhysGrid, duration, CEM, Rbase, perfRate=perfRate, perfTemp=37.0, Freeflow=flowBCs)
     
+    if calc_Tmax:
+        Tmax = np.zeros_like(T[0])
+    else:
+        Tmax=None
+    
     T[0][:] = T0
     CEM[:] = 0
     sonicate=True
@@ -380,7 +387,7 @@ def run_simulation_4( param_vec, verbose=False, show=False, Npass=1, T0=37.0 ):
             if verbose:
                 print ('sonication %d' % (n+1), end='\n' )
             if use_gpu:
-                P1 = transducers.calc_pressure_field_cuda(k0, uxyz, unvecs, pass_relative_amplitudes[n], xrp, yrp, zrp)
+                P1 = transducers.calc_pressure_field_cuda(k0, uxyz, unvecs, pass_relative_amplitudes[n], xrp, yrp, zrp, subsampN=10, subsampDiam=0.0033, ROC=0.14, gpublocks=512 )
             else:
                 P1 = sonalleve.calc_pressure_field(k0, uxyz, pass_relative_amplitudes[n], xrp, yrp, zrp)
                 
@@ -395,12 +402,17 @@ def run_simulation_4( param_vec, verbose=False, show=False, Npass=1, T0=37.0 ):
             Tdot[:] = 0.0
             ablation_utils.calc_heating(simPhysGrid,T,Tdot,Tmesh,Tdotmesh,kmesh,rhoCpmesh,wait, CEM, Rbase, perfRate=perfRate, perfTemp=37.0, Freeflow=flowBCs, GPU=use_gpu , Ntbuff=Nt)
             
-            
+            if calc_Tmax:
+                #update = np.where(T[0] > Tmax, True, False)
+                update = T[0] > Tmax
+                Tmax[update] = T[0][update]
             
             
         passnum+=1
         #rotate sonication points
         focalpoint_coords_mm = focalpoint_coords_mm.dot(Rn)
+        
+        return Tmax
         
 numTargetVox = np.sum(roiOnTarget)
 def VolumeObjective_4(param_vec, verbose=False, show=False, Npass=1, T0=37.0 ):
@@ -412,6 +424,21 @@ def VolumeObjective_4(param_vec, verbose=False, show=False, Npass=1, T0=37.0 ):
     value = ( np.sum(CEM[roiExtra] >= 240.0) - numTargetVox )**2
     print (param_vec, " -> ", value, flush=True)
     return value
+
+def VolumeTempObjective_4(param_vec, verbose=False, show=False, Npass=1, T0=37.0 ):
+    """
+    param_vec = [speed (mm/s), dwell (s), wait (s), I0 (W/m^2) ]
+    """
+    
+    Tmax=run_simulation_4( param_vec, verbose=verbose, show=show, Npass=Npass, T0=T0, calc_Tmax=True)
+    value = ( np.sum(CEM[roiExtra] >= 240.0) - numTargetVox )**2
+    
+    duration = ablation_utils.trajTotalTime(maxR_mm, turnspace_mm, 0, param_vec[0], param_vec[1], param_vec[2])
+    
+    onRate=np.mean(Tmax[roiOnTarget]) - T0
+    offRate=np.mean(Tmax[roiOffTarget]) - T0
+    print (param_vec, " -> ", value, onRate, offRate, flush=True)
+    return (value, onRate, offRate)
  
 def CEMObjective_4( param_vec, verbose=False, show=False, Npass=1, T0=37.0 ):
     """

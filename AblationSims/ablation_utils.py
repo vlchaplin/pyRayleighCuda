@@ -89,6 +89,10 @@ def trajTotalTime(maxR_mm, deltaR_mm, z_mm, avgSpd, dwellSec, waitSec):
     (junk,junk, nn)=contstruct_circ_sonication_points(maxR_mm, deltaR_mm, z_mm, avgSpd, dwellSec, waitSec)
     return sum(nn)*(dwellSec + waitSec) - waitSec
 
+#def trajectorySonication(trajectorySpec, simPhysGrid, perfRate=0.0, perfTemp=37.0, Tavg=False, voxmask=None, T0=None, CEMinit=None, Tmax=None, Freeflow=0, verbose=False, GPU=False):
+    
+    
+    
 
 def calc_heating(simPhysGrid,T,Tdot,Tmesh,Tdotmesh,kmesh,rhoCpmesh, duration, CEM, Rbase, Ntbuff=None, perfRate=0.0, perfTemp=37.0, Tavg=False, voxmask=None, T0=None, CEMinit=None, Tmax=None, Freeflow=0, verbose=False, GPU=False):
     

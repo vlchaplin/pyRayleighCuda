@@ -145,3 +145,28 @@ def equilateral_tri(d, z=0.0):
 def cross(d, z=0.0):
     return numpy.array([[0,0,z], [d, 0, z], [0, d, z], [-d, 0, z], [0, -d, z] ])
 
+
+def inSphere(x,y,z,r=0.005):
+    """
+    Determine wether point (x,y,z) lies in the ellipsoid specified by r= and centered on the origin.
+    Returns boolean
+    """
+    return numpy.sqrt(x**2 + y**2 + z**2)<=r
+    
+def inEllipse(x,y,z,a=0.005,b=0.005,c=0.005):
+    """
+    Determine wether point (x,y,z) lies in the ellipsoid specified by (a=,b=,c=) and centered on the origin.
+    Returns boolean
+    """
+    return numpy.sqrt((x/a)**2 + (y/b)**2 + (z/c)**2)<=1.0
+    
+def roiGen(focalPattern, isContainedFunc, gxp, gyp, gzp):
+    """
+    focalPattern is an (m x 3) array
+    """
+    nf = len(focalPattern)
+    mask=numpy.zeros_like(gxp,dtype=bool)
+    for i in range(0,nf):
+        mask= numpy.logical_or( mask, isContainedFunc(gxp - focalPattern[i][0], gyp - focalPattern[i][1], gzp - focalPattern[i][2]) )
+    return mask
+
