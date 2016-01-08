@@ -339,7 +339,7 @@ pxyz=ring;
 print('Proceeding with simulation...', flush=True)
 
 #run_simulation_4  -  (speed, dwell, wait, Ispta)
-def run_simulation_4( param_vec, verbose=False, show=False, Npass=1, T0=37.0, calc_Tmax=False, ):
+def run_simulation_4( param_vec, verbose=False, show=False, Npass=1, T0=37.0, calc_Tmax=False, subsampN=None ):
     """
     param_vec = [speed (mm/s), dwell (s), wait (s), I0 (W/m^2) ]
     """
@@ -370,7 +370,7 @@ def run_simulation_4( param_vec, verbose=False, show=False, Npass=1, T0=37.0, ca
     T[0][:] = T0
     CEM[:] = 0
     sonicate=True
-    angle = pi/10
+    angle = pi/(Npass+1)
     Rn = geom.getRotZYZarray(angle,0,0)
     passnum=1
     while (passnum<=Npass):
@@ -385,9 +385,9 @@ def run_simulation_4( param_vec, verbose=False, show=False, Npass=1, T0=37.0, ca
         for n in range(0,num_sonications_total,1):
             
             if verbose:
-                print ('sonication %d' % (n+1), end='\n' )
+                print ('sonication %d / %d' % (n+1, num_sonications_total), end='\n' )
             if use_gpu:
-                P1 = transducers.calc_pressure_field_cuda(k0, uxyz, unvecs, pass_relative_amplitudes[n], xrp, yrp, zrp, subsampN=10, subsampDiam=0.0033, ROC=0.14, gpublocks=512 )
+                P1 = transducers.calc_pressure_field_cuda(k0, uxyz, unvecs, pass_relative_amplitudes[n], xrp, yrp, zrp, subsampN=subsampN, subsampDiam=0.0033, ROC=0.14, gpublocks=512 )
             else:
                 P1 = sonalleve.calc_pressure_field(k0, uxyz, pass_relative_amplitudes[n], xrp, yrp, zrp)
                 
@@ -412,25 +412,27 @@ def run_simulation_4( param_vec, verbose=False, show=False, Npass=1, T0=37.0, ca
         #rotate sonication points
         focalpoint_coords_mm = focalpoint_coords_mm.dot(Rn)
         
-        return Tmax
+    return Tmax
         
+        
+
 numTargetVox = np.sum(roiOnTarget)
-def VolumeObjective_4(param_vec, verbose=False, show=False, Npass=1, T0=37.0 ):
+def VolumeObjective_4(param_vec, verbose=False, show=False, Npass=1, T0=37.0, subsampN=None ):
     """
     param_vec = [speed (mm/s), dwell (s), wait (s), I0 (W/m^2) ]
     """
     
-    run_simulation_4( param_vec, verbose=verbose, show=show, Npass=Npass, T0=T0)
+    run_simulation_4( param_vec, verbose=verbose, show=show, Npass=Npass, T0=T0, subsampN=subsampN)
     value = ( np.sum(CEM[roiExtra] >= 240.0) - numTargetVox )**2
     print (param_vec, " -> ", value, flush=True)
     return value
 
-def VolumeTempObjective_4(param_vec, verbose=False, show=False, Npass=1, T0=37.0 ):
+def VolumeTempObjective_4(param_vec, verbose=False, show=False, Npass=1, T0=37.0, subsampN=None ):
     """
     param_vec = [speed (mm/s), dwell (s), wait (s), I0 (W/m^2) ]
     """
     
-    Tmax=run_simulation_4( param_vec, verbose=verbose, show=show, Npass=Npass, T0=T0, calc_Tmax=True)
+    Tmax=run_simulation_4( param_vec, verbose=verbose, show=show, Npass=Npass, T0=T0, calc_Tmax=True, subsampN=subsampN)
     value = ( np.sum(CEM[roiExtra] >= 240.0) - numTargetVox )**2
     
     duration = ablation_utils.trajTotalTime(maxR_mm, turnspace_mm, 0, param_vec[0], param_vec[1], param_vec[2])
@@ -440,11 +442,11 @@ def VolumeTempObjective_4(param_vec, verbose=False, show=False, Npass=1, T0=37.0
     print (param_vec, " -> ", value, onRate, offRate, flush=True)
     return (value, onRate, offRate)
  
-def CEMObjective_4( param_vec, verbose=False, show=False, Npass=1, T0=37.0 ):
+def CEMObjective_4( param_vec, verbose=False, show=False, Npass=1, T0=37.0, subsampN=None ):
     """
     param_vec = [speed (mm/s), dwell (s), wait (s), I0 (W/m^2) ]
     """
-    run_simulation_4( param_vec, verbose=verbose, show=show, Npass=Npass, T0=T0)
+    run_simulation_4( param_vec, verbose=verbose, show=show, Npass=Npass, T0=T0, subsampN=subsampN)
     value = np.mean( (CEM[roiOnTarget] - 240.0)**2 )
     print (param_vec, " -> ", value, flush=True)
     return value

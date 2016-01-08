@@ -14,6 +14,10 @@ import PBHEswig
 sys.path.append('C:\\Users\\Vandiver\\Documents\\HiFU\\code\\CUDA\\RSgpu\\Release')
 import PBHE_CUDA
 
+import transducers
+import sonalleve
+import geom
+
 # simPhysGrid params
 # 'Tmesh' - corresponding 4d mesh object
 # 'Tdotmesh' - 3d mesh object
@@ -74,6 +78,7 @@ def contstruct_circ_sonication_points( maxR_mm, deltaR_mm, z_mm, avgSpd, dwellSe
         
     return (focalpoint_coords_mm, nturns, num_sonications_per_turn)
 
+
 def countSonications(maxR_mm, deltaR_mm, z_mm, avgSpd, dwellSec, waitSec):
     """
     Return the number of sonications in a single pass.
@@ -82,6 +87,7 @@ def countSonications(maxR_mm, deltaR_mm, z_mm, avgSpd, dwellSec, waitSec):
     (junk,junk, nn)=contstruct_circ_sonication_points(*param_tuple)
     return sum(nn)
 
+
 def trajTotalTime(maxR_mm, deltaR_mm, z_mm, avgSpd, dwellSec, waitSec):
     """
     Return the total time of the sonication pass (including dwell + wait)
@@ -89,12 +95,214 @@ def trajTotalTime(maxR_mm, deltaR_mm, z_mm, avgSpd, dwellSec, waitSec):
     (junk,junk, nn)=contstruct_circ_sonication_points(maxR_mm, deltaR_mm, z_mm, avgSpd, dwellSec, waitSec)
     return sum(nn)*(dwellSec + waitSec) - waitSec
 
-#def trajectorySonication(trajectorySpec, simPhysGrid, perfRate=0.0, perfTemp=37.0, Tavg=False, voxmask=None, T0=None, CEMinit=None, Tmax=None, Freeflow=0, verbose=False, GPU=False):
+
+def trajSumEnergy(xrp,yrp,zrp,maxR_mm, deltaR_mm, z_mm, avgSpd, dwellSec, waitSec, L1renorm=1, Npass=1, k0=4895.98855, uxyz=None, unvecs=None, pxyz=None, use_gpu=False, subsampN=None, verbose=False ):
     
+    if uxyz is None:
+        uxyz = sonalleve.get_sonalleve_xdc_vecs()
+    if pxyz is None:
+        pxyz = [[0,0,0]]
+        
+    M = len(pxyz)
+    N = uxyz.shape[0]
+    
+    Nx=len(xrp); Ny = len(yrp); Nz=len(zrp);
+    
+    Itot = np.zeros([Nx,Ny,Nz])
+    
+    (focalpoint_coords_mm, nturns, num_sonications_per_turn) = contstruct_circ_sonication_points(maxR_mm, deltaR_mm, z_mm, avgSpd, dwellSec, waitSec)
+    
+    num_sonications_total = np.sum(num_sonications_per_turn,dtype=int)
+    
+    passnum=1
+    while (passnum<=Npass):
+        
+        pass_relative_amplitudes = np.zeros([num_sonications_total, N], dtype=complex)
+        for n in range(0,num_sonications_total,1):
+            pass_relative_amplitudes[n] = transducers.get_focused_element_vals(k0, uxyz, pxyz + focalpoint_coords_mm[n]*1e-3, np.ones([M]), L1renorm=L1renorm )
+ 
+        for n in range(0,num_sonications_total,1):
+            
+            if verbose:
+                print( '\rPass %d/%d, %d%%' % (passnum, Npass, float(n+1)/num_sonications_total *100.0), end=' ',  flush=True)
+            
+            if use_gpu:
+                P1 = transducers.calc_pressure_field_cuda(k0, uxyz, unvecs, pass_relative_amplitudes[n], xrp, yrp, zrp, subsampN=subsampN, subsampDiam=0.0033, ROC=0.14, gpublocks=512 )
+            else:
+                P1 = sonalleve.calc_pressure_field(k0, uxyz, pass_relative_amplitudes[n], xrp, yrp, zrp)
+
+            Itot += (dwellSec*np.abs(P1)**2)
+        
+        passnum+=1
+        
+    return Itot
+    
+    
+    
+def trajectorySonication(trajectorySpec, simPhysGrid, perfRate=0.0, perfTemp=37.0,
+                        L1renorm=1, Npass=1, k0=4895.98855, Tavg=False, voxmask=None, tzero=0.0, PathRotMat=None,
+                        uxyz=None, unvecs=None, pxyz=None, use_gpu=False, CEM=None,Rbase=None, RSkeys={}, PBkeys={}, **kwargs):
+    
+    """
+    trajectorySpec = [maxR_mm, deltaR_mm, z_mm, speed (mm/s), dwell (s), wait (s) ]
+    pxyz= pass an Mx3 array for a multi-focus beam geometry. Typically z=0 in these vectors.  The pxyz is shifted to the focal point coords and at the z_mm plane in trajectory spec.
+    """
+    (maxR_mm, deltaR_mm, z_mm, avgSpd, dwellSec, waitSec) = trajectorySpec
+    
+    if uxyz is None:
+        uxyz = sonalleve.get_sonalleve_xdc_vecs()
+    if pxyz is None:
+        pxyz = [[0,0,0]]
+    if unvecs is None:
+        unvecs=[0,0,0.14] - uxyz
+        
+    M = len(pxyz)
+    N = uxyz.shape[0]
+    
+    (focalpoint_coords_mm, nturns, num_sonications_per_turn) = contstruct_circ_sonication_points(maxR_mm, deltaR_mm, z_mm, avgSpd, dwellSec, waitSec)
+    
+    num_sonications = np.sum(num_sonications_per_turn,dtype=int)
+    num_sonications_total = Npass*num_sonications
+    num_vectors = 2*num_sonications_total
+    
+    passnum=1
+    angle = 2*math.pi/(Npass)
+    Rn = geom.getRotZYZarray(angle,0,0)
+    
+    amplitudes = np.zeros([num_vectors, N], dtype=complex)
+    
+    timeEdges = np.zeros(num_vectors+1) + tzero
+    
+    if PathRotMat is not None:
+        focalpoint_coords_mm = (focalpoint_coords_mm - [0.0, 0.0, z_mm]).dot(PathRotMat) + [0.0, 0.0, z_mm]
+    
+    while (passnum<=Npass):
+        
+        for n in range(0,num_sonications,1):
+            #sonication index
+            si = n + num_sonications*(passnum-1)
+            timeEdges[2*si+1] = timeEdges[2*si] + dwellSec
+            timeEdges[2*si+2] = timeEdges[2*si+1] + waitSec
+            amplitudes[2*si] = transducers.get_focused_element_vals(k0, uxyz, pxyz + focalpoint_coords_mm[n]*1e-3, np.ones([M]), L1renorm=L1renorm )
+            amplitudes[2*si+1][:] = 0
+        
+        passnum+=1
+        focalpoint_coords_mm = focalpoint_coords_mm.dot(Rn)
+        
+    tstarts = timeEdges[0:-1]
+    tstops = timeEdges[1:]
+    CEM = sonicate4D(simPhysGrid,tstarts, tstops, amplitudes, uxyz, unvecs, use_gpu=use_gpu, CEM=CEM, Rbase=Rbase, RSkeys=RSkeys, PBkeys=PBkeys, **kwargs)
+        
+    return (timeEdges,focalpoint_coords_mm,CEM)
+
+
+def sonicate4D(simPhysGrid, tstarts, tstops, uamplitudes, uxyz, unvecs, alpha_acc=1, use_gpu=False, CEM=None,Rbase=None, verbose=False, RSkeys={}, PBkeys={} ):
+    """
+    Returns CEM.
+    uxyz - an Nx3 or kk x N x 3
+    subsampN=subsampN, subsampDiam=0.0033, ROC=0.14, gpublocks=512
+    """
+    xrp = simPhysGrid['xrp']
+    yrp = simPhysGrid['yrp']
+    zrp = simPhysGrid['zrp']
+    
+    T = simPhysGrid['T']
+    Tdot = simPhysGrid['Tdot']
+    Tmesh = simPhysGrid['Tmesh']
+    Tdotmesh= simPhysGrid['Tdotmesh']
+    rhoCpmesh = simPhysGrid['rhoCpmesh']
+    kmesh = simPhysGrid['kmesh']
+    k3d= simPhysGrid['kt']
+    rhoCp3d = simPhysGrid['rhoCp']
+    
+    rho=simPhysGrid['rho']
+    c0=simPhysGrid['c0']
+    k0=simPhysGrid['k0']
+    
+    (dt,dx,dy,dz) = simPhysGrid['dtxyz']
+    (nt,nx,ny,nz) = T.shape
+    
+    dataType = T.dtype.type
+    
+    if CEM is None:
+        CEM = np.zeros([nx,ny,nz])
+        
+    if Rbase is None:
+        Rbase = np.zeros([nx,ny,nz])
+    
+    if type(uamplitudes)==list:
+        ka=len(uamplitudes)
+    elif uamplitudes.ndim == 2:
+        ka = uamplitudes.shape[0]
+    else:
+        ka=1
+        uamplitudes=[uamplitudes]
+    
+    if type(uxyz)==list:
+        kk=len(uxyz)
+        N=uxyz[0].shape[0]
+    elif uxyz.ndim == 3:
+        kk = uxyz.shape[0]
+        N = uxyz.shape[1]
+    else:
+        kk=1
+        N = uxyz.shape[0]
+        uxyz=[uxyz]
+    
+    if type(unvecs)==list:
+        kv=len(unvecs)
+    elif unvecs.ndim == 3:
+        kv = unvecs.shape[0]
+    else:
+        kv=1
+        unvecs=[unvecs]
+        
+    nnt = len(tstarts)
+    
+    doFieldUpdate=np.zeros(nnt,dtype=bool)
+    
+    doFieldUpdate[0]=True
+    a=0
+    for ti in range(1,nnt):
+        b=(ti % kk) + (ti % kv) + (ti % ka)
+        if a!=b:
+            doFieldUpdate[ti]=True
+        a=b
+        
+    Tinit = T[0].copy()
+    
+    for ti in range(0,nnt):
+        
+        if verbose:
+            print( '\r%3d/%3d, %d%%' % (ti, nnt, float(ti)/nnt *100.0), end=' ',  flush=True)
+        
+        if doFieldUpdate[ti]:
+            
+            if np.sum( np.abs(uamplitudes[ti % ka]) ) < 1.0:
+                Tdot[:]=0
+            else:
+                if use_gpu:
+
+                    P1 = transducers.calc_pressure_field_cuda(k0, uxyz[ti % kk], unvecs[ti % kv], uamplitudes[ti % ka], xrp, yrp, zrp, **RSkeys )
+                else:
+                    P1 = transducers.calc_pressure_field(k0, uxyz[ti % kk], uamplitudes[ti % ka], xrp, yrp, zrp, **RSkeys )
+                
+                I1 = np.abs(P1)**2 / (2.0*rho*c0)
+                Tdot[:] = dataType(2.0*alpha_acc*I1 / rhoCp3d)
+        
+        duration = tstops[ti] - tstarts[ti]
+        calc_heating(simPhysGrid, T, Tdot, Tmesh, Tdotmesh, kmesh, rhoCpmesh, duration, CEM, Rbase, GPU=use_gpu, interpoffset=tstarts[ti], **PBkeys)
+        
+    if verbose:
+        print( '\r%3d/%3d, %d%%' % (ti+1, nnt, float(ti+1)/nnt *100.0), end=' ',  flush=True)   
+    return CEM
     
     
 
-def calc_heating(simPhysGrid,T,Tdot,Tmesh,Tdotmesh,kmesh,rhoCpmesh, duration, CEM, Rbase, Ntbuff=None, perfRate=0.0, perfTemp=37.0, Tavg=False, voxmask=None, T0=None, CEMinit=None, Tmax=None, Freeflow=0, verbose=False, GPU=False):
+def calc_heating(simPhysGrid,T,Tdot,Tmesh,Tdotmesh,kmesh,rhoCpmesh, duration, CEM, Rbase,
+                 interpTimes=None, interpolatedTemp=None, interpoffset=0.0, interpmask=None, interpFunc=None,
+                 Ntbuff=None, perfRate=0.0, perfTemp=37.0, Tavg=False, voxmask=None,
+                 T0=None, CEMinit=None, Tmax=None, Freeflow=0, verbose=False, GPU=False):
     
     """
     simPhysGrid is a dict with the following keys:
@@ -154,7 +362,7 @@ def calc_heating(simPhysGrid,T,Tdot,Tmesh,Tdotmesh,kmesh,rhoCpmesh, duration, CE
     time=0
     ti=0
     if Ntbuff is None:
-        buffsize=10
+        buffsize=nt
     else:
         buffsize=Ntbuff
         
@@ -171,6 +379,18 @@ def calc_heating(simPhysGrid,T,Tdot,Tmesh,Tdotmesh,kmesh,rhoCpmesh, duration, CE
         else:
             TavgList=None
         
+    if interpTimes is not None:
+        numInterp = len(interpTimes)
+        kk=0;
+        
+        interpMode=0
+        if interpmask is not None:
+            interpMode+=2
+        if interpFunc is not None:
+            interpMode+=4
+        
+    else:
+        numInterp=0
     
     while time<duration :
         #print("here 2", flush=True)
@@ -183,10 +403,6 @@ def calc_heating(simPhysGrid,T,Tdot,Tmesh,Tdotmesh,kmesh,rhoCpmesh, duration, CE
                 buffsize=nt
             tstep = dt*buffsize
             
-        #print (buffsize, T.shape[0], flush=True)
-        
-        #PBHE_CUDA.Pennes_2ndOrder_GPU64_mesh(Freeflow,dt,dx,dy,dz, Tmesh, Tdotmesh, kmesh, rhoCpmesh, perfTemp, perfRate,0,buffsize-1 )
-        
         if not GPU:
             PBHEswig.pbheSolve(Freeflow,dt,dx,dy,dz, Tmesh, Tdotmesh, kmesh, rhoCpmesh, perfTemp, perfRate,0,buffsize-1 )
         else:
@@ -199,21 +415,75 @@ def calc_heating(simPhysGrid,T,Tdot,Tmesh,Tdotmesh,kmesh,rhoCpmesh, duration, CE
             
         Rbase[:]=4
         Rbase[np.where(T[0] > 43.0, True, False)] = 2
-        #print(T.shape)
-        #print ("1 %f, %f" % (np.max(T), np.max(Tdot)), end=' ok \n', flush=True)
-        #update = np.where(T[buffsize-1] > Tmax, True, False)
-        #Tmax[update] = T[buffsize-1][update]
 
         #time integrate to get the thermal dose
         CEM[:] += (dt/60.0)*np.sum( Rbase**(T[0:buffsize]-43), 0  )
         
-        #print("here 3", flush=True)
+        #if interpolating some output, compute at interpolated points
+        #Since this routine uses time from dt*(0:Nt-1) instead of an absolute time,
+        if numInterp>0:
+            ii = 0
+            while( kk < numInterp  ):
+                ta=time + ii*dt + interpoffset
+                tb=ta+dt
+                tk = interpTimes[kk] 
+                if tk < ta:
+                    kk+=1
+                    continue
+                if tk > tb:
+                    ii+=1
+                    continue
+                
+            
+                
+                #if the interpolation point is in the interior of the input time series
+                if ii < buffsize-1:   
+                    u = (tk - ta)/(tb-ta)
+                    
+                    if interpMode:
+                        
+                        if interpMode == 2:
+                            interpolatedTemp[kk] = T[ii][interpmask]*(1-u) + T[ii+1][interpmask]*(u)
+                        elif interpMode == 4:
+                            interpFunc.idx=kk
+                            interpolatedTemp[kk] = interpFunc( T[ii]*(1-u) + T[ii+1]*(u) )
+                        elif interpMode == 6:
+                            interpFunc.idx=kk
+                            interpolatedTemp[kk] = interpFunc( T[ii][interpmask]*(1-u) + T[ii+1][interpmask]*(u) )
+                            
+                        
+                    else:
+                        interpolatedTemp[kk] = T[ii]*(1-u) + T[ii+1]*(u)
+                
+                #if the interpolation point is equal to the final input time     
+                elif ii==buffsize-1:
+                    if interpMode: 
+                        if interpMode == 2:
+                            interpolatedTemp[kk] = T[ii][interpmask]
+                        elif interpMode == 4:
+                            interpFunc.idx=kk
+                            interpolatedTemp[kk] = interpFunc( T[ii] )
+                        elif interpMode == 6:
+                            interpFunc.idx=kk
+                            interpolatedTemp[kk] = interpFunc( T[ii][interpmask] )  
+                    else:
+                        interpolatedTemp[kk] = T[ii]
+                       
+                    #print("kk = %d, ii = %d, tk = %f, ta = %f (break)" %(kk,ii,tk,ta)) 
+                    break
+                
+                #print("kk = %d, ii = %d, tk = %f, ta = %f " %(kk,ii,tk,ta))
+                
+                kk+=1
+                
         
         if record_temporal:
             timeList.append(time+tstep)
             if Tavg:
                 TavgList.append(np.mean( T[buffsize-1][voxmask], axis=(1,2,3) ))
                 
+        
+        
         
         ti+=1
         time+=tstep
