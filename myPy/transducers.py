@@ -203,6 +203,7 @@ def calc_pressure_field_cuda(kwavenum, upos, unormals, uamp, xarray, yarray, zar
     ure = numpy.real(uamp)
     uim = numpy.imag(uamp)
 
+    unormals = numpy.apply_along_axis(lambda x: x / numpy.sqrt(numpy.sum(x**2)), 1, unormals.copy() )
     
     if subsampN is not None and subsampDiam is not None:
         

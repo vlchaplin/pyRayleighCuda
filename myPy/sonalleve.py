@@ -31,8 +31,12 @@ def get_sonalleve_xdc_vecs(file=None):
     R = geom.getRotZYZarray(0,-math.pi/2.0,0)
     
     return v.dot(R)
-    
-    
+
+def get_sonalleve_xdc_normals(file=None):
+
+    uxyz = get_sonalleve_xdc_vecs(file=file)
+    unvecs = numpy.apply_along_axis(lambda x: x / numpy.sqrt(numpy.sum(x**2)), 1, [0.0,0.0,0.14] - uxyz )
+    return unvecs
 
 
 def get_focused_element_vals(kwavenum, xyzVecs, focalPoints, focalPvals):

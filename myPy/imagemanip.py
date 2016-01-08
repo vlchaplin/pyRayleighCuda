@@ -42,7 +42,7 @@ def get1DshiftFilter(originalEdges, newEdges):
 
 def shiftImageRegular3D(originalIm, edgeX, edgeY, edgeZ, shift ):
     
-   # Nx = len(edgeX)-1
+   # Nx = len(edgeX)-1 
    # Ny = len(edgeY)-1
    # Nz = len(edgeZ)-1
     

@@ -127,6 +127,10 @@ def rot(matrix,v):
     return u
     
 def ring(d,n, z=0.0, rot=0):
+    """
+        d - diameter
+        n - number of points equi-spaced on the ring perimeter
+    """
     dphi = 2.0*pi/n;
     phis = numpy.arange(0.0,2*pi,dphi) + rot
     vecs = numpy.zeros([n,3]);
