@@ -137,7 +137,58 @@ def trajSumEnergy(xrp,yrp,zrp,maxR_mm, deltaR_mm, z_mm, avgSpd, dwellSec, waitSe
         
     return Itot
     
+def trajectorySettings(trajectorySpec,  doRotation=True,
+                        L1renorm=1, Npass=1, k0=4895.98855, tzero=0.0, PathRotMat=None,
+                        uxyz=None, pxyz=None,  **kwargs):
+
+    """
+    Returns (timeEdges,amplitudes). There are 2 points per sonication: 1 dwell, 1 wait
     
+    trajectorySpec = [maxR_mm, deltaR_mm, z_mm, speed (mm/s), dwell (s), wait (s) ]
+    pxyz= pass an Mx3 array for a multi-focus beam geometry. Typically z=0 in these vectors.  The pxyz is shifted to the focal point coords and at the z_mm plane in trajectory spec.
+    """
+    (maxR_mm, deltaR_mm, z_mm, avgSpd, dwellSec, waitSec) = trajectorySpec
+    
+    if uxyz is None:
+        uxyz = sonalleve.get_sonalleve_xdc_vecs()
+    if pxyz is None:
+        pxyz = [[0,0,0]]
+        
+    M = len(pxyz)
+    N = uxyz.shape[0]
+    
+    (focalpoint_coords_mm, nturns, num_sonications_per_turn) = contstruct_circ_sonication_points(maxR_mm, deltaR_mm, z_mm, avgSpd, dwellSec, waitSec)
+    
+    num_sonications = np.sum(num_sonications_per_turn,dtype=int)
+    num_sonications_total = Npass*num_sonications
+    num_vectors = 2*num_sonications_total
+    
+    passnum=1
+    angle = 2*math.pi/(Npass)
+    Rn = geom.getRotZYZarray(angle,0,0)
+    
+    amplitudes = np.zeros([num_vectors, N], dtype=complex)
+    timeEdges = np.zeros(num_vectors+1) + tzero
+    
+    if PathRotMat is not None:
+        focalpoint_coords_mm = (focalpoint_coords_mm - [0.0, 0.0, z_mm]).dot(PathRotMat) + [0.0, 0.0, z_mm]
+    
+    while (passnum<=Npass):
+        
+        for n in range(0,num_sonications,1):
+            #sonication index
+            si = n + num_sonications*(passnum-1)
+            timeEdges[2*si+1] = timeEdges[2*si] + dwellSec
+            timeEdges[2*si+2] = timeEdges[2*si+1] + waitSec
+            amplitudes[2*si] = transducers.get_focused_element_vals(k0, uxyz, pxyz + focalpoint_coords_mm[n]*1e-3, np.ones([M]), L1renorm=L1renorm )
+            amplitudes[2*si+1][:] = 0
+        
+        passnum+=1
+        if doRotation:
+            focalpoint_coords_mm = focalpoint_coords_mm.dot(Rn)
+        
+    return (timeEdges,amplitudes)
+
     
 def trajectorySonication(trajectorySpec, simPhysGrid, perfRate=0.0, perfTemp=37.0,
                         L1renorm=1, Npass=1, k0=4895.98855, Tavg=False, voxmask=None, tzero=0.0, PathRotMat=None,
@@ -170,7 +221,6 @@ def trajectorySonication(trajectorySpec, simPhysGrid, perfRate=0.0, perfTemp=37.
     Rn = geom.getRotZYZarray(angle,0,0)
     
     amplitudes = np.zeros([num_vectors, N], dtype=complex)
-    
     timeEdges = np.zeros(num_vectors+1) + tzero
     
     if PathRotMat is not None:
@@ -423,7 +473,7 @@ def calc_heating(simPhysGrid,T,Tdot,Tmesh,Tdotmesh,kmesh,rhoCpmesh, duration, CE
         #Since this routine uses time from dt*(0:Nt-1) instead of an absolute time,
         if numInterp>0:
             ii = 0
-            while( kk < numInterp  ):
+            while( kk < numInterp and ii < buffsize  ):
                 ta=time + ii*dt + interpoffset
                 tb=ta+dt
                 tk = interpTimes[kk] 
@@ -469,10 +519,10 @@ def calc_heating(simPhysGrid,T,Tdot,Tmesh,Tdotmesh,kmesh,rhoCpmesh, duration, CE
                     else:
                         interpolatedTemp[kk] = T[ii]
                        
-                    #print("kk = %d, ii = %d, tk = %f, ta = %f (break)" %(kk,ii,tk,ta)) 
+                    #print("kk = %d, ii = %d, tk = %f, ta = %f, Tn[kk] = %f (break)" %(kk,ii,tk,ta, interpolatedTemp[kk])) 
                     break
                 
-                #print("kk = %d, ii = %d, tk = %f, ta = %f " %(kk,ii,tk,ta))
+                #print("kk = %d, ii = %d, tk = %f, ta = %f, Tn[kk] = %f" %(kk,ii,tk,ta, interpolatedTemp[kk]))
                 
                 kk+=1
                 
