@@ -125,6 +125,48 @@ def cart2sphere_deg(x,y,z):
 def rot(matrix,v):
     u=numpy.array(list(map ( lambda vec: matrix.dot(vec), v)))
     return u
+
+def rotate_mesh_volume(Rotmat, mxx, myy, mzz, rotxx=None, rotyy=None, rotzz=None, translate=[0.0,0.0,0.0]):
+    """
+    Input meshgrid vertices. Returns (rotx, roty, rotz) mesh
+    mxx,myy can be 3D or 2D arrays. If 2D, then mzz must be a scalar. If 3D, mzz must have the same shape.
+    e.g.,
+        2D case:
+        mx,my=np.meshgrid(x,y)
+        z=0.0
+        rx,ry,rz = rotate_mesh_volume(mx,my,z)
+        
+        3D case:
+        mx,my,mz=np.meshgrid(x,y,z)
+        rx,ry,rz = rotate_mesh_volume(mx,my,mz)
+        
+    translate = 3-element array or list to apply after rotation
+    """
+    if rotxx is None:
+        rotxx = numpy.zeros_like(mxx)
+    if rotyy is None:
+        rotyy = numpy.zeros_like(mxx)
+    if rotzz is None:
+        rotzz = numpy.zeros_like(mxx)
+    
+    if not( type(mzz)==list or type(mzz)==numpy.ndarray) :
+        mzz=[mzz]
+        
+    
+    nv=len(mxx.flat)
+    
+    if mxx.ndim == 2 or len(mzz)==1:
+        
+        for i in range(nv):
+            rotxx.flat[i], rotyy.flat[i], rotzz.flat[i] = Rotmat.dot( [ mxx.flat[i], myy.flat[i], mzz[0] ] ) + translate
+            
+    else:
+        for i in range(nv):
+            rotxx.flat[i], rotyy.flat[i], rotzz.flat[i] = Rotmat.dot( [ mxx.flat[i], myy.flat[i], mzz.flat[i] ] ) + translate
+    
+    return (rotxx,rotyy,rotzz)
+    
+
     
 def ring(d,n, z=0.0, rot=0):
     """
@@ -163,7 +205,40 @@ def inEllipse(x,y,z,a=0.005,b=0.005,c=0.005):
     Returns boolean
     """
     return numpy.sqrt((x/a)**2 + (y/b)**2 + (z/c)**2)<=1.0
+
+def inCuboid(x,y,z,xw,yw,zw):
+    """
+    Determine wether point (x,y,z) lies in the cuboid with sides of width xw,yw,zw and centered on the origin.
+    Returns boolean
+    """
     
+    #return ( x>=-xw/2.0 and x<=xw/2.0 and y>=-yw/2.0 and y<=yw/2.0 and  z>=-zw/2.0 and z<=zw/2.0 )
+    return numpy.logical_and( x>=-xw/2.0, x<=xw/2.0, numpy.logical_and( y>=-yw/2.0, y<=yw/2.0 , numpy.logical_and( z>=-zw/2.0, z<=zw/2.0 ) ) )
+
+def inCuboidBounds(x,y,z,xr=None,yr=None,zr=None):
+    """
+    Determine wether point (x,y,z) lies in the cuboid with sides of width xw,yw,zw and centered on the origin.
+    Returns boolean
+    """
+    
+    if xr is not None:
+        xsel = numpy.logical_and( x>=xr[0], x<=xr[1] )
+    else:
+        xsel = True
+        
+    if yr is not None:
+        ysel = numpy.logical_and( y>=yr[0], y<=yr[1] )
+    else:
+        ysel = True
+    
+    if zr is not None:
+        zsel = numpy.logical_and( z>=zr[0], z<=zr[1] )
+    else:
+        zsel = True
+    
+    #return ( x>=-xw/2.0 and x<=xw/2.0 and y>=-yw/2.0 and y<=yw/2.0 and  z>=-zw/2.0 and z<=zw/2.0 )
+    return numpy.logical_and( xsel, numpy.logical_and(ysel , zsel) )
+
 def roiGen(focalPattern, isContainedFunc, gxp, gyp, gzp):
     """
     focalPattern is an (m x 3) array
