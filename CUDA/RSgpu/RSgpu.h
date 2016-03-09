@@ -22,6 +22,7 @@ memsize_t getDeviceGlobalMemSize(int targetDevice = 0);
 
 void CudaTestInf(int blocks, int threads);
 
+
 bool RSgpu_CalcPressureField(
 	gpureal * p_Re, gpureal * p_Im, gpureal kr,
 	gpureal * xpoints, int dimx, gpureal * ypoints, int dimy, gpureal * zpoints, int dimz,
@@ -30,6 +31,17 @@ bool RSgpu_CalcPressureField(
 	gpureal * unormalX, gpureal * unormalY, gpureal * unormalZ,
 	int Nells, size_t numBlocks=0);
 
+//! RSgpu_CalcPressurePoints.
+/*!
+Calculate the pressure on the set of input points.  locs_x, locs_y, locs_z must have the same size
+*/
+bool RSgpu_CalcPressurePoints(
+	gpureal * p_Re, gpureal * p_Im, gpureal kr,
+	gpureal * loc_x, gpureal * loc_y, gpureal * loc_z, int nlocs,
+	gpureal * u_real, gpureal * u_imag, gpureal * coefficients,
+	gpureal * ux, gpureal * uy, gpureal * uz,
+	gpureal * unormalX, gpureal * unormalY, gpureal * unormalZ,
+	int Nells, size_t numBlocks = 0);
 
 
 #endif
