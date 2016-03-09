@@ -101,6 +101,20 @@ def RSgpuCalcField(kr, pre, pim, xp, yp, zp, u_real, u_imag, coeffs, ux, uy, uz,
     Calculate the ndgrid style {xp X yp X zp} pressure field
     """
     return _RSgpuPySwig.RSgpuCalcField(kr, pre, pim, xp, yp, zp, u_real, u_imag, coeffs, ux, uy, uz, uvx, uvy, uvz, numGPUBlocks)
+
+def RSgpuCalcOnPoints(kr, pre, pim, locx, locy, locz, u_real, u_imag, coeffs, ux, uy, uz, uvx, uvy, uvz, numGPUBlocks=0):
+    """
+    Calculate the pressure field at points with vertices {locx,locy,locz}. locs are interpreted to be a flattened meshgrid. Input pressure arrays should be 3-D.
+    Calculate the pressure field at points with vertices {locx,locy,locz}. locs are interpreted to be a flattened meshgrid. Input pressure arrays should be 3-D.
+    """
+    return _RSgpuPySwig.RSgpuCalcOnPoints(kr, pre, pim, locx, locy, locz, u_real, u_imag, coeffs, ux, uy, uz, uvx, uvy, uvz, numGPUBlocks)
+
+def RSgpuCalcOnPoints1D(kr, pre1d, pim1d, locx, locy, locz, u_real, u_imag, coeffs, ux, uy, uz, uvx, uvy, uvz, numGPUBlocks=0):
+    """
+    Calculate the pressure field at points with vertices {locx,locy,locz}--arrays should be the same length. Input pressure arrays should be 1-D.
+    Calculate the pressure field at points with vertices {locx,locy,locz}--arrays should be the same length. Input pressure arrays should be 1-D.
+    """
+    return _RSgpuPySwig.RSgpuCalcOnPoints1D(kr, pre1d, pim1d, locx, locy, locz, u_real, u_imag, coeffs, ux, uy, uz, uvx, uvy, uvz, numGPUBlocks)
 # This file is compatible with both classic and new-style classes.
 
 
