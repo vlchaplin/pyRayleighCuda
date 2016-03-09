@@ -126,10 +126,13 @@ def rot(matrix,v):
     u=numpy.array(list(map ( lambda vec: matrix.dot(vec), v)))
     return u
 
-def rotate_mesh_volume(Rotmat, mxx, myy, mzz, rotxx=None, rotyy=None, rotzz=None, translate=[0.0,0.0,0.0]):
+def rotate_mesh_volume(Rotmat, mxx, myy, mzz, rotxx=None, rotyy=None, rotzz=None, translate=[0.0,0.0,0.0], squeeze=True):
     """
     Input meshgrid vertices. Returns (rotx, roty, rotz) mesh
     mxx,myy can be 3D or 2D arrays. If 2D, then mzz must be a scalar. If 3D, mzz must have the same shape.
+    
+    If squeeze=True, then when any dimension of the mesh is=1 (effectively a 2D mesh in 3D space), the resulting mesh have numpy.squeeze applied.
+    
     e.g.,
         2D case:
         mx,my=np.meshgrid(x,y)
@@ -155,7 +158,7 @@ def rotate_mesh_volume(Rotmat, mxx, myy, mzz, rotxx=None, rotyy=None, rotzz=None
     
     nv=len(mxx.flat)
     
-    if mxx.ndim == 2 or len(mzz)==1:
+    if mxx.ndim == 2 or (len(mzz)==1 and mxx.shape[0] != 1):
         
         for i in range(nv):
             rotxx.flat[i], rotyy.flat[i], rotzz.flat[i] = Rotmat.dot( [ mxx.flat[i], myy.flat[i], mzz[0] ] ) + translate
@@ -164,7 +167,10 @@ def rotate_mesh_volume(Rotmat, mxx, myy, mzz, rotxx=None, rotyy=None, rotzz=None
         for i in range(nv):
             rotxx.flat[i], rotyy.flat[i], rotzz.flat[i] = Rotmat.dot( [ mxx.flat[i], myy.flat[i], mzz.flat[i] ] ) + translate
     
-    return (rotxx,rotyy,rotzz)
+    if squeeze:
+        return tuple(map(numpy.squeeze, (rotxx,rotyy,rotzz) ))
+    else:
+        return (rotxx,rotyy,rotzz)
     
 
     
