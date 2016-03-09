@@ -59,8 +59,8 @@ deltaTseries1(mask) = deltaTseries1(mask) + 2*pi*angle2tempFactor;
 mask = (deltaTseries2/angle2tempFactor) <= -0.8*pi;
 deltaTseries2(mask) = deltaTseries2(mask) + 2*pi*angle2tempFactor;
 
-T01 = 25;
-T02 = 25;
+T01 = 22;
+T02 = 22;
 % calc cem
 rbase1 = 4.0*ones(size(deltaTseries1));
 rbase2 = 4.0*ones(size(deltaTseries2));

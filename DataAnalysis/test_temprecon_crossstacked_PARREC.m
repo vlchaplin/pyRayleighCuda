@@ -29,12 +29,12 @@ file = [dir,'\Caskey_999_08_01_14.49.12_(TemperatureMapping_CLEAR).PAR'];
 %dir = 'C:\Users\Vandiver\Data\sonalleve\Hifu_20150924\phant1';
 %file = [dir,'\Caskey_20150924_WIP_TemperatureMapping_CLEAR_7_1.PAR'];
 % 
-% dir = 'C:\Users\Vandiver\Data\sonalleve\Hifu_20150924\egg1';
-% file = [dir,'\Caskey_20150924_WIP_TempMapEgg1_CLEAR_18_1.PAR'];
-%file = [dir,'\Caskey_20150924_WIP_TempMapEgg1_CLEAR_20_1.PAR'];
+dir = 'C:\Users\Vandiver\Data\sonalleve\Hifu_20150924\egg1';
+%file = [dir,'\Caskey_20150924_WIP_TempMapEgg1_CLEAR_18_1.PAR'];
+file = [dir,'\Caskey_20150924_WIP_TempMapEgg1_CLEAR_20_1.PAR'];
 % 
 % dir = 'C:\Users\Vandiver\Data\sonalleve\Hifu_20150924\egg2';
-% file = [dir,'\Caskey_20150924_WIP_TempMapEgg2_CLEAR_30_1.PAR'];
+% file = [dir,'\Caskey_20150924_WIP_TempMapEgg2_CLEAR_27_1.PAR'];
 % 
 
 %dir = 'C:\Users\Vandiver\Data\sonalleve\Hifu_20150926';
@@ -48,13 +48,26 @@ file = [dir,'\Caskey_999_08_01_14.49.12_(TemperatureMapping_CLEAR).PAR'];
 % %file = [dir,'\Caskey_20150926_WIP_TMap_Mult_B_40W_CLEAR_7_1.PAR'];
 
 
-dir = 'C:\Users\Vandiver\Data\sonalleve\HifuEggAg_20160211';
+%dir = 'C:\Users\Vandiver\Data\sonalleve\HifuEggAg_20160211';
+%file = [dir,'\Caskey_20160211_WIP_TemperatureMapping_CLEAR_10_1.PAR'];
 %file = [dir,'\Caskey_20160211_WIP_Temp_MultiTrajA_60W_CLEAR_13_1.PAR'];
+%file = [dir,'\Caskey_20160211_WIP_Temp_MultiTrajA_100W_CLEAR_15_1.PAR'];
 %file = [dir,'\Caskey_20160211_WIP_Tmap_MultiFocStatic_120W_CLEAR_23_1.PAR'];
 %file = [dir,'\Caskey_20160211_WIP_Tmap_MultiFocStatic_100W_CLEAR_22_1.PAR'];
-file = [dir,'\Caskey_20160211_WIP_Tmap_SingleFocStatic_40W_CLEAR_18_1.PAR'];
+%file = [dir,'\Caskey_20160211_WIP_Tmap_SingleFocStatic_40W_CLEAR_18_1.PAR'];
 
+% dir='C:\Users\Vandiver\Data\sonalleve\HifuMed_20160217\';
+% file = [dir,'Caskey_20160217_WIP_TemperatureMapping_CLEAR_3_1.PAR'];
+% file = [dir,'Caskey_20160217_WIP_TemperatureMapping_CLEAR_11_1.PAR'];
  
+dir='C:\Users\Vandiver\Data\sonalleve\HifuNanos_20160223\';
+file = [dir,'scan20_TempTrans_20160223.PAR'];
+
+dir='C:\Users\Vandiver\Data\sonalleve\HifuVol_20160223B\';
+file = [dir,'scan14_TempTrans_20160223B.PAR'];
+
+
+
 %whether they are mag & phase or real and imaginary
 is_RI_image = 0;
 flipSliceDir=0;
@@ -119,19 +132,22 @@ mask = (deltaTseries/angle2tempFactor) <= -0.2*pi;
 deltaTseriesCorr = deltaTseries;
 deltaTseriesCorr(mask) = deltaTseriesCorr(mask) + 2*pi*angle2tempFactor;
 
+
 T0=22;
 rbase = 4.0*ones(size(deltaTseries));
 rbase( (T0+deltaTseriesCorr) > 43.0 ) = 2.0;
 
 cem = cumsum( rbase.^((T0+deltaTseriesCorr) - 43.0),4 ) .* repmat( reshape(dyntimes/60.0,[1 1 1 ndynamics]), [im.Dims(1:3) 1]) ;
 
+disp(im.Dims)
+
 %%
 figure(1);
 clf;
 hold on;
 dn=ndynamics;
-%dn=4;
-slicenum=4;
+%dn=12;
+slicenum=8;
 minC=0; maxC=30;
 %axis1_mm, axis0_mm, 
 magImGray = cat(3,im.Data(:,:,slicenum,1,dn),im.Data(:,:,slicenum,1,dn),im.Data(:,:,slicenum,1,dn));
@@ -144,10 +160,18 @@ use_mm_scale=0
 if use_mm_scale
     imagesc(axis1_mm, axis0_mm, magImGray);
     imagesc(axis1_mm, axis0_mm,deltaTseriesCorr(:,:,slicenum,dn), 'AlphaDataMapping', 'none', 'AlphaData', mask, [minC maxC]);
+    
 else
     imagesc(magImGray);
     imagesc(deltaTseriesCorr(:,:,slicenum,dn), 'AlphaDataMapping', 'none', 'AlphaData', mask, [minC maxC]);
 end
+% mask2=mask;
+% mag2=magImGray;
+% temp2=deltaTseriesCorr(:,:,slicenum,dn);
+
+% imagesc(mag2);
+% imagesc(temp2, 'AlphaDataMapping', 'none', 'AlphaData', mask2, [minC maxC]);
+
 %set(gca, 'YDir', 'Reverse');
 % 
 % figure(2);
@@ -164,7 +188,7 @@ dynamicsToPlot = 1:ndynamics;
 %dynamicsToPlot = 1:30;
 %dynamicsToPlot=ndynamics-4:ndynamics;
 
-slicenum=4;
+slicenum=9;
 colormap('hot');
 clear('movie2DFrames');
 movie2DFrames(length(dynamicsToPlot)) = struct('cdata',[],'colormap',[]);
@@ -178,7 +202,7 @@ for di=1:length(dynamicsToPlot)
     dn=dynamicsToPlot(di);
     deltaTstack = deltaTseriesCorr(:,:,:,dn);
     
-    mask=grayMask & (squeeze(deltaTseriesCorr(:,:,slicenum,dn)) > 5.0);
+    mask=grayMask & (squeeze(deltaTseriesCorr(:,:,slicenum,dn)) > 1.0);
     
     if di==1 
         set(gcf,'Color', 'white');
@@ -267,13 +291,13 @@ idx0 = 70:88;
 idx1 = 66:78;
 % 
 % %2015-09-24  egg 1
-sliceset = [2:12];
-idx0 = 74:88;
+sliceset = [4:12];
+idx0 = 70:88;
 idx1 = 68:76;
 % 
 % %2015-09-24  egg 2
 % sliceset = [4:12];
-% idx0 = 66:82;
+% idx0 = 64:82;
 % idx1 = 68:76;
 
 % %2015-09-26  phantom 1
@@ -282,27 +306,65 @@ idx1 = 68:76;
 % idx1 = 105:118;
 
 % %2016-02-11  egg agar
-sliceset = [1:8];
-idx0 = 74:88;
-idx1 = 68:76;
+% sliceset = [1:8];
+% idx0 = 74:88;
+% idx1 = 68:76;
 
-sliceset = [1:im.Dims(3)];
-idx0 = 74:88;
-idx1 = 68:76;
+% sliceset = [7:10];
+% idx0 = 65:75;
+% idx1 = 70:76;
+
+% sliceset = [6:11];
+% idx0 = 60:81;
+% idx1 = 68:78;
+% 
+% sliceset = [6:8];
+% idx0 = 41:48;
+% idx1 = 51:57;
+
+sliceset = [4:7];
+idx0 = 70:85;
+idx1 = 55:65;
+idx1 = 75:85;
+
+
+sliceset = [7:9];
+idx0 = 60:73;
+idx1 = 66:71;
+
+
+roiM_mm = 35.0;
+roiP_mm = 20.0;
+roiS_mm = 20.0;
+
+center_vox = [69,69,8];
+idx0 = (center_vox(1) - round(0.5*roiM_mm/im.Spc(1))):(center_vox(1) + round(0.5*roiM_mm/im.Spc(1)));
+idx1 = (center_vox(2) - round(0.5*roiP_mm/im.Spc(2))):(center_vox(2) + round(0.5*roiP_mm/im.Spc(2)));
+sliceset = (center_vox(3) - round(0.5*roiS_mm/im.Spc(3))):(center_vox(3) + round(0.5*roiS_mm/im.Spc(3)));
 
 lesionVol = squeeze(sum(sum(sum(cem(idx0, idx1, sliceset,:) >= 240.0,1),2),3));
 
 avgTcurve = squeeze(mean(mean(mean(deltaTseriesCorr(idx0, idx1, sliceset,:),1),2),3));
 
 maxTcurve = squeeze(max(max(max(deltaTseriesCorr(idx0, idx1, sliceset,:), [],1), [],2), [],3 ));
-sthresh = find( cumsum(avgTcurve) > 0.5 );
+maxTcurveUnCorr = squeeze(max(max(max(deltaTseries(idx0, idx1, sliceset,:), [],1), [],2), [],3 ));
+sthresh = find( cumsum(maxTcurve) > 0.5 );
 
 figure(5);
+
+startFloatIdx = sthresh(1) + ( 0.5 - maxTcurve(sthresh(1)-1) )*( 1.0 ) / ( maxTcurve(sthresh(1)) - maxTcurve(sthresh(1)-1) );
+startOffset = dyntimes(sthresh(1)-1) + ( dyntimes(sthresh(1)) - dyntimes(sthresh(1)-1) )*(startFloatIdx-floor(startFloatIdx));
+subplot(121);
 hold on;
 plot(dyntimes - dyntimes(sthresh(1)-1), avgTcurve);
-%plot(dyntimes - dyntimes(sthresh(1)-1), maxTcurve);
 xlabel('sec', 'FontSize', 18);
-ylabel('\DeltaT (^oC)', 'FontSize', 18);
+ylabel('avg \DeltaT (^oC)', 'FontSize', 18);
+subplot(122);
+hold on;
+plot(dyntimes - startOffset, maxTcurve);
+plot(dyntimes - startOffset, maxTcurveUnCorr,'k:');
+xlabel('sec', 'FontSize', 18);
+ylabel('max \DeltaT (^oC)', 'FontSize', 18);
 
 
 %dlmwrite('C:\Users\Vandiver\Data\sonalleve\BatchAnalysis\curves\9-24-15_egg1_scan18.txt', [dyntimes - dyntimes(sthresh(1)-1) avgTcurve],'\t');
@@ -347,7 +409,7 @@ magmean = mean(magstack,3);
 magmean = magmean/max(magmean(:));
 
 dynidx = ndynamics;
-dynidx = 59;
+dynidx = 15;
 deltaTstack = max( deltaTseriesCorr(idx0range, idx1range, slices, 1:dynidx),[], 4);
 deltaTstack( magstack < 0.15 ) = 0.0;
 deltaTstack = permute(deltaTstack,[2 1 3]);
@@ -389,7 +451,7 @@ set(p2, 'Clipping', 'on', 'FaceColor', 'yellow', 'EdgeColor', 'none','FaceAlpha'
     'SpecularStrength', 1.0, 'SpecularExponent', 5, 'BackFaceLighting', 'unlit' ...
     );
 
-cval3 = 10;
+cval3 = 5;
 p3=patch( isosurface( tx, ty, tz, deltaTstack, cval3 ) );
 isonormals(tx, ty, tz, deltaTstack,p3);
 set(p3, 'Clipping', 'on', 'FaceColor', 'blue', 'EdgeColor', 'none','FaceAlpha',0.2, ...
@@ -424,7 +486,7 @@ if tstartidx == 0
 end
 tstart=dyntimes(tstartidx);
 
-expdate='2015-06-28';
+expdate='2016-02-23';
 
 [fdir,fbase,fext]=fileparts(file);
 [query,err] = sprintf( 'insert or ignore into data (fid,file,path,date,isRI,start0,end0,start1,end1,start2,end2,tstartidx,tstart) \n values ( (select max(fid)+1 from data), "%s", "%s", "%s" ,%d,%d,%d,%d,%d,%d,%d,%d,%f);' ...

@@ -86,6 +86,10 @@ files_to_plot = {...
 %     'Caskey_GPh2_99999_WIP_TemperatureMapping_CLEAR_8_1.PAR',...
 %     'Caskey_GPh2_99999_WIP_TemperatureMapping_CLEAR_12_1.PAR'};
 
+files_to_plot = {...
+    'Caskey_20160211_WIP_Temp_MultiTrajA_60W_CLEAR_13_1.PAR',...
+    'Caskey_20160211_WIP_Temp_MultiTrajA_100W_CLEAR_15_1.PAR'};
+
 %files_to_compare={'QA_phantom_20150628\Caskey_9999_WIP_TemperatureMapping_CLEAR_7_1.PAR'};
 dbid = mksqlite(0,'open',db);
 
@@ -148,7 +152,7 @@ for fn=1:length(files_to_plot)
         t0idx = qrydata.tstartidx;
     end
     
-    T0=25;
+    T0=displaydata.T0;
     rbase = 4.0*ones(size(deltaTseries));
     rbase( (T0+deltaTseries) > 43.0 ) = 2.0;
     cem = cumsum( rbase.^((T0+deltaTseries) - 43.0),4 ) .* repmat( reshape(dyntimes/60.0,[1 1 1 length(dyntimes)]), [im.Dims(1:3) 1] ) ;

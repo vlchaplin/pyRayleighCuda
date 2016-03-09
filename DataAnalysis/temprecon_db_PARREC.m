@@ -113,12 +113,16 @@ db = 'C:\Users\Vandiver\Data\sonalleve\sonalleve.db';
 dbid = mksqlite(0,'open',db);
 %singMultSetQry=['select file, groups.gid, tmp.gsize, condition from groups join (select gid, count(*) as gsize from groups where fid IN (select fid from data where quality==0) group by gid) as tmp ON groups.gid==tmp.gid where tmp.gsize ==2'];
 
+setQry=['select file from data where date = "2016-02-23"';];
 %dataSetFromdb =mksqlite(dbid, singMultSetQry);
+dataSetFromdb =mksqlite(dbid, setQry);
 
-%files_to_compare = {dataSetFromdb.file};
+files_to_compare = {dataSetFromdb.file};
 
-%mksqlite(dbid,'close');
+mksqlite(dbid,'close');
 %%
+
+dbid = mksqlite(0,'open',db);
 
 
 TFig=figure(1);
@@ -351,8 +355,8 @@ for n=1:nPairs
     outfilename1=fileNames{2*n-1};
     outfilename2=fileNames{2*n};
     
-    outfilename1=[outpath  outfilename1 '_single.txt'];
-    outfilename2=[outpath  outfilename2 '_multi.txt'];
+    outfilename1=[outpath  outfilename1 '_s.txt'];
+    outfilename2=[outpath  outfilename2 '_m.txt'];
     
     dlmwrite(outfilename1, [t tempInterp1],'\t');
     dlmwrite(outfilename2, [t tempInterp2],'\t');
