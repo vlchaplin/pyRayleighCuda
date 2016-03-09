@@ -186,6 +186,9 @@ def calc_pressure_field(kwavenum, upos, uamp, xarray, yarray, zarray):
 def calc_pressure_field_cuda(kwavenum, upos, unormals, uamp, xarray, yarray, zarray, gpublocks=0,subsampN=None, subsampDiam=None, ROC=None):
     """
     Same as calc_pressure_field() but use the CUDA-enabled version compiled in the RSgpuPySwig libary.
+    
+    Computed pressure P[i,j,k] corresponds to that at position x,y,z={xarray[i], yarray[j], zarray[k]}
+    
     upos is [N x 3]
     unormals is [N x 3]
     Returned field is complex, with dimensions Nx, Ny, Nz.
@@ -217,3 +220,107 @@ def calc_pressure_field_cuda(kwavenum, upos, unormals, uamp, xarray, yarray, zar
     RSgpuPySwig.RSgpuCalcField(kwavenum, Pre, Pim, xarray, yarray, zarray, ure, uim, coeffs, upos[:,0], upos[:,1], upos[:,2], unormals[:,0], unormals[:,1], unormals[:,2], gpublocks)
            
     return Pre + 1j*Pim
+
+
+def calc_pressure_profile_cuda(kwavenum, upos, unormals, uamp, xvalues, yvalues, zvalues, gpublocks=0,subsampN=None, subsampDiam=None, ROC=None):
+    """
+    Same as calc_pressure_profile() but use the CUDA-enabled version compiled in the RSgpuPySwig libary.
+    
+    Computed pressure P[i] corresponds to that at position x,y,z={xvalues[i], yvalues[i], zvalues[i]}
+    
+    upos is [N x 3]
+    unormals is [N x 3]
+    
+    xvalues, yvalues, zvalues should be same length
+    
+    Returned field is complex
+    """
+    nx = len(xvalues)
+    ny = len(yvalues)
+    nz = len(zvalues)
+    
+    N = len(uamp)
+    
+    if (nx != ny) or (nx != nz) or (ny != nz):
+        return -1
+    
+    Pre = numpy.zeros([nx]);
+    Pim = numpy.zeros([nx]);
+    
+    coeffs = numpy.ones([N])
+    ure = numpy.real(uamp)
+    uim = numpy.imag(uamp)
+
+    unormals = numpy.apply_along_axis(lambda x: x / numpy.sqrt(numpy.sum(x**2)), 1, unormals.copy() )
+    
+    if subsampN is not None and subsampDiam is not None:
+        
+        ( vxyz, ns, (ure,uim,unormals,coeffs) )=subsample_transducer_array(upos, subsampDiam, subsampN,
+                                                                 unormvecs=unormals, ROC=ROC, arrays_to_grow=[ure,uim,unormals,coeffs])  
+        upos=vxyz
+        coeffs/=ns
+
+    #print( upos.shape, unormals.shape, coeffs.shape, ure.shape, uim.shape)
+    
+    RSgpuPySwig.RSgpuCalcOnPoints1D(kwavenum, Pre, Pim, xvalues, yvalues, zvalues, ure, uim, coeffs, upos[:,0], upos[:,1], upos[:,2], unormals[:,0], unormals[:,1], unormals[:,2], gpublocks)
+    
+          
+    return Pre + 1j*Pim
+
+
+def calc_pressure_mesh3D_cuda(kwavenum, upos, unormals, uamp, mxxx, myyy, mzzz, gpublocks=0,subsampN=None, subsampDiam=None, ROC=None):
+    """
+    Same method used in calc_pressure_profile_cuda, except input coorinates are in equally-shaped 3D arrays, similar to those returned by meshgrid.
+    The returned pressure has the same shape.  Computed pressure P[i,j,k] corresponds to that at position x,y,z={mxxx[i,j,k], myyy[i,j,k], mzzz[i,j,k]}
+    
+    upos is [N x 3] array of transducer element positions
+    unormals is [N x 3]  array of transducer element normal vectors
+    
+    Example: if xp,yp,zp are 1D arrays, the format of mxxx,myyy,mzzz is like
+    
+        mxxx, myyy, mzzz = numpy.meshgrid(xp,yp,zp, indexing='ij') 
+        P = calc_pressure_mesh3D_cuda(k0, u, un, mxxx,myyy,mzzz,...)    
+    
+    The returned pressure has dimensions len(xp) x len(yp) x len(zp)
+    
+    The above example is equivalent to:
+    
+        P = calc_pressure_field_cuda(k0, u, un, xp, yp, zp, ...)
+    
+    The _mesh3D_ routine is useful in the possible case of non-cartesian grids, not generated
+    by meshgrid.
+    
+    Returned field is complex
+    """
+    nx = numpy.product(mxxx.shape)
+    ny = numpy.product(myyy.shape)
+    nz = numpy.product(mzzz.shape)
+    
+    N = len(uamp)
+    
+    if (nx != ny) or (nx != nz) or (ny != nz):
+        return -1
+    
+    Pre = numpy.zeros(mxxx.shape);
+    Pim = numpy.zeros(mxxx.shape);
+    
+    coeffs = numpy.ones([N])
+    ure = numpy.real(uamp)
+    uim = numpy.imag(uamp)
+
+    unormals = numpy.apply_along_axis(lambda x: x / numpy.sqrt(numpy.sum(x**2)), 1, unormals.copy() )
+    
+    if subsampN is not None and subsampDiam is not None:
+        
+        ( vxyz, ns, (ure,uim,unormals,coeffs) )=subsample_transducer_array(upos, subsampDiam, subsampN,
+                                                                 unormvecs=unormals, ROC=ROC, arrays_to_grow=[ure,uim,unormals,coeffs])  
+        upos=vxyz
+        coeffs/=ns
+
+    #print( upos.shape, unormals.shape, coeffs.shape, ure.shape, uim.shape)
+    
+    RSgpuPySwig.RSgpuCalcOnPoints(kwavenum, Pre, Pim, mxxx.flatten(), myyy.flatten(), mzzz.flatten(), ure, uim, coeffs, upos[:,0], upos[:,1], upos[:,2], unormals[:,0], unormals[:,1], unormals[:,2], gpublocks)
+    
+          
+    return Pre + 1j*Pim
+
