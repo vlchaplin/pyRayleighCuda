@@ -157,7 +157,7 @@ def minimize( Fobj, x0init, dxinit, aInit, dxTolerance, MAX=100, evaldict=None, 
         
         #PATTERN MOVE
         exploreWithinPatternMove_FAIL_cnt=0
-        while(1):
+        while(count <= MAX):
             print("#PATTERN MOVE ", exploreWithinPatternMove_FAIL_cnt)
             
             if exploreWithinPatternMove_FAIL_cnt > exploreWithinPatternMove_FAIL_MAX:
@@ -189,6 +189,8 @@ def minimize( Fobj, x0init, dxinit, aInit, dxTolerance, MAX=100, evaldict=None, 
                 F1 = F2
                 #goto PATTERN MOVE
                 exploreWithinPatternMove_FAIL_cnt+=1
+                count+=1
+                
                 
                 continue
             

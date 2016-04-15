@@ -62,7 +62,7 @@ def shiftImageRegular3D(originalIm, edgeX, edgeY, edgeZ, shift ):
     
     return Im3
     
-def NDrebin( NDorig, inputAxisLocations, outputAxisLocations ):
+def NDrebin( NDorig, inputAxisLocations, outputAxisLocations, preserve_norm=True ):
     """
     Rebin the n-dimensional numpy array 'NDorig'
     :param NDorig: An n-dimensional numpy array
@@ -87,7 +87,7 @@ def NDrebin( NDorig, inputAxisLocations, outputAxisLocations ):
     
     filters = []
     for ax in range(nd):
-        filters[ax] = calc_bin2bin_AvgFilter( inputAxisLocations[ax], outputAxisLocations[ax] )
+        filters[ax] = calc_bin2bin_Filter( inputAxisLocations[ax], outputAxisLocations[ax],preserve_norm=preserve_norm )
         
     for ax in range(nd-1, -1, -1):
         
@@ -95,7 +95,7 @@ def NDrebin( NDorig, inputAxisLocations, outputAxisLocations ):
         
     return newArray, filters
     
-def calc_bin2bin_AvgFilter( X, Y ):
+def calc_bin2bin_Filter( X, Y, preserve_norm=True ):
     """
     
     Computes an average / normalization-preserving operator
@@ -206,7 +206,15 @@ def calc_bin2bin_AvgFilter( X, Y ):
             up_y=True
             continue;
         
+    if not preserve_norm:
+        for m in range(M):
+            F[m,:] /= np.abs(Y[m+1] - Y[m])
+            
+        for n in range(N):
+            F[:,n] *= np.abs(X[n+1] - X[n])
+        
     return F
+
 
 
 

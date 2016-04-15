@@ -90,6 +90,187 @@ except AttributeError:
     _newclass = 0
 
 
+class mesh1d_f(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, mesh1d_f, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, mesh1d_f, name)
+    __repr__ = _swig_repr
+    __swig_setmethods__["d"] = _PBHEswig.mesh1d_f_d_set
+    __swig_getmethods__["d"] = _PBHEswig.mesh1d_f_d_get
+    if _newclass:
+        d = _swig_property(_PBHEswig.mesh1d_f_d_get, _PBHEswig.mesh1d_f_d_set)
+    __swig_setmethods__["ds"] = _PBHEswig.mesh1d_f_ds_set
+    __swig_getmethods__["ds"] = _PBHEswig.mesh1d_f_ds_get
+    if _newclass:
+        ds = _swig_property(_PBHEswig.mesh1d_f_ds_get, _PBHEswig.mesh1d_f_ds_set)
+    __swig_setmethods__["data"] = _PBHEswig.mesh1d_f_data_set
+    __swig_getmethods__["data"] = _PBHEswig.mesh1d_f_data_get
+    if _newclass:
+        data = _swig_property(_PBHEswig.mesh1d_f_data_get, _PBHEswig.mesh1d_f_data_set)
+    __swig_setmethods__["scalar"] = _PBHEswig.mesh1d_f_scalar_set
+    __swig_getmethods__["scalar"] = _PBHEswig.mesh1d_f_scalar_get
+    if _newclass:
+        scalar = _swig_property(_PBHEswig.mesh1d_f_scalar_get, _PBHEswig.mesh1d_f_scalar_set)
+    __swig_setmethods__["ndims"] = _PBHEswig.mesh1d_f_ndims_set
+    __swig_getmethods__["ndims"] = _PBHEswig.mesh1d_f_ndims_get
+    if _newclass:
+        ndims = _swig_property(_PBHEswig.mesh1d_f_ndims_get, _PBHEswig.mesh1d_f_ndims_set)
+    __swig_setmethods__["usesSharedData"] = _PBHEswig.mesh1d_f_usesSharedData_set
+    __swig_getmethods__["usesSharedData"] = _PBHEswig.mesh1d_f_usesSharedData_get
+    if _newclass:
+        usesSharedData = _swig_property(_PBHEswig.mesh1d_f_usesSharedData_get, _PBHEswig.mesh1d_f_usesSharedData_set)
+
+    def __init__(self, *args):
+        this = _PBHEswig.new_mesh1d_f(*args)
+        try:
+            self.this.append(this)
+        except:
+            self.this = this
+    __swig_destroy__ = _PBHEswig.delete_mesh1d_f
+    __del__ = lambda self: None
+
+    def setndims(self, num):
+        return _PBHEswig.mesh1d_f_setndims(self, num)
+
+    def setdims(self, dims):
+        return _PBHEswig.mesh1d_f_setdims(self, dims)
+    __swig_setmethods__["isRowMaj"] = _PBHEswig.mesh1d_f_isRowMaj_set
+    __swig_getmethods__["isRowMaj"] = _PBHEswig.mesh1d_f_isRowMaj_get
+    if _newclass:
+        isRowMaj = _swig_property(_PBHEswig.mesh1d_f_isRowMaj_get, _PBHEswig.mesh1d_f_isRowMaj_set)
+
+    def getndims(self):
+        return _PBHEswig.mesh1d_f_getndims(self)
+
+    def getdims(self, dims):
+        return _PBHEswig.mesh1d_f_getdims(self, dims)
+
+    def setres(self, dres):
+        return _PBHEswig.mesh1d_f_setres(self, dres)
+
+    def getres(self, dres):
+        return _PBHEswig.mesh1d_f_getres(self, dres)
+
+    def clear(self):
+        return _PBHEswig.mesh1d_f_clear(self)
+
+    def setToScalar(self, value):
+        return _PBHEswig.mesh1d_f_setToScalar(self, value)
+
+    def useSharedData(self, dims, ptr2meshdata, resolution):
+        return _PBHEswig.mesh1d_f_useSharedData(self, dims, ptr2meshdata, resolution)
+
+    def val(self, idx):
+        return _PBHEswig.mesh1d_f_val(self, idx)
+mesh1d_f_swigregister = _PBHEswig.mesh1d_f_swigregister
+mesh1d_f_swigregister(mesh1d_f)
+
+class mesh3d_f(mesh1d_f):
+    __swig_setmethods__ = {}
+    for _s in [mesh1d_f]:
+        __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
+    __setattr__ = lambda self, name, value: _swig_setattr(self, mesh3d_f, name, value)
+    __swig_getmethods__ = {}
+    for _s in [mesh1d_f]:
+        __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
+    __getattr__ = lambda self, name: _swig_getattr(self, mesh3d_f, name)
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        this = _PBHEswig.new_mesh3d_f(*args)
+        try:
+            self.this.append(this)
+        except:
+            self.this = this
+    __swig_destroy__ = _PBHEswig.delete_mesh3d_f
+    __del__ = lambda self: None
+
+    def index(self, *args):
+        return _PBHEswig.mesh3d_f_index(self, *args)
+
+    def val(self, *args):
+        return _PBHEswig.mesh3d_f_val(self, *args)
+
+    def __call__(self, i0, i1, i2):
+        return _PBHEswig.mesh3d_f___call__(self, i0, i1, i2)
+
+    def getval(self, i0, i1, i2):
+        return _PBHEswig.mesh3d_f_getval(self, i0, i1, i2)
+
+    def setval(self, val, i0, i1, i2):
+        return _PBHEswig.mesh3d_f_setval(self, val, i0, i1, i2)
+mesh3d_f_swigregister = _PBHEswig.mesh3d_f_swigregister
+mesh3d_f_swigregister(mesh3d_f)
+
+class mesh4d_f(mesh1d_f):
+    __swig_setmethods__ = {}
+    for _s in [mesh1d_f]:
+        __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
+    __setattr__ = lambda self, name, value: _swig_setattr(self, mesh4d_f, name, value)
+    __swig_getmethods__ = {}
+    for _s in [mesh1d_f]:
+        __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
+    __getattr__ = lambda self, name: _swig_getattr(self, mesh4d_f, name)
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        this = _PBHEswig.new_mesh4d_f(*args)
+        try:
+            self.this.append(this)
+        except:
+            self.this = this
+    __swig_destroy__ = _PBHEswig.delete_mesh4d_f
+    __del__ = lambda self: None
+
+    def index(self, *args):
+        return _PBHEswig.mesh4d_f_index(self, *args)
+
+    def val(self, *args):
+        return _PBHEswig.mesh4d_f_val(self, *args)
+
+    def __call__(self, i0, i1, i2, i3):
+        return _PBHEswig.mesh4d_f___call__(self, i0, i1, i2, i3)
+
+    def getval(self, i0, i1, i2, i3):
+        return _PBHEswig.mesh4d_f_getval(self, i0, i1, i2, i3)
+
+    def setval(self, val, i0, i1, i2, i3):
+        return _PBHEswig.mesh4d_f_setval(self, val, i0, i1, i2, i3)
+
+    def getpage(self, i0):
+        return _PBHEswig.mesh4d_f_getpage(self, i0)
+mesh4d_f_swigregister = _PBHEswig.mesh4d_f_swigregister
+mesh4d_f_swigregister(mesh4d_f)
+
+class mesh34d_f(mesh4d_f):
+    __swig_setmethods__ = {}
+    for _s in [mesh4d_f]:
+        __swig_setmethods__.update(getattr(_s, '__swig_setmethods__', {}))
+    __setattr__ = lambda self, name, value: _swig_setattr(self, mesh34d_f, name, value)
+    __swig_getmethods__ = {}
+    for _s in [mesh4d_f]:
+        __swig_getmethods__.update(getattr(_s, '__swig_getmethods__', {}))
+    __getattr__ = lambda self, name: _swig_getattr(self, mesh34d_f, name)
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        this = _PBHEswig.new_mesh34d_f(*args)
+        try:
+            self.this.append(this)
+        except:
+            self.this = this
+    __swig_destroy__ = _PBHEswig.delete_mesh34d_f
+    __del__ = lambda self: None
+
+    def index(self, *args):
+        return _PBHEswig.mesh34d_f_index(self, *args)
+
+    def val(self, idx):
+        return _PBHEswig.mesh34d_f_val(self, idx)
+mesh34d_f_swigregister = _PBHEswig.mesh34d_f_swigregister
+mesh34d_f_swigregister(mesh34d_f)
+
 class mesh1d(_object):
     __swig_setmethods__ = {}
     __setattr__ = lambda self, name, value: _swig_setattr(self, mesh1d, name, value)
@@ -280,6 +461,22 @@ def testintarr(invec):
     return _PBHEswig.testintarr(invec)
 testintarr = _PBHEswig.testintarr
 
+def pbheSolve_f(useFreeflow, dt, dx, dy, dz, T, Tdot_source, kt0, rho_Cp, Tblood, perfusionrate, ta_i=0, tb_i=-1):
+    """
+    pbheSolve_f(freeFlow, dt,dx,dy,dz, mesh4d_f T, mesh4d_f Tdot, mesh3d_f k, mesh3d_f rho_Cp, Tblood, perfusionRate, [ti1, ti2]  ) -> updates T
+    pbheSolve_f(freeFlow, dt,dx,dy,dz, mesh4d_f T, mesh4d_f Tdot, mesh3d_f k, mesh3d_f rho_Cp, Tblood, perfusionRate, [ti1, ti2]  ) -> updates T
+    pbheSolve_f(freeFlow, dt,dx,dy,dz, mesh4d_f T, mesh4d_f Tdot, mesh3d_f k, mesh3d_f rho_Cp, Tblood, perfusionRate, [ti1, ti2]  ) -> updates T
+    """
+    return _PBHEswig.pbheSolve_f(useFreeflow, dt, dx, dy, dz, T, Tdot_source, kt0, rho_Cp, Tblood, perfusionrate, ta_i, tb_i)
+
+def pbheSolve(useFreeflow, dt, dx, dy, dz, T, Tdot_source, kt0, rho_Cp, Tblood, perfusionrate, ta_i=0, tb_i=-1):
+    """
+    pbheSolve(freeFlow, dt,dx,dy,dz, mesh4d T, mesh4d Tdot, mesh3d k, mesh3d rho_Cp, Tblood, perfusionRate, [ti1, ti2]  ) -> updates T
+    pbheSolve(freeFlow, dt,dx,dy,dz, mesh4d T, mesh4d Tdot, mesh3d k, mesh3d rho_Cp, Tblood, perfusionRate, [ti1, ti2]  ) -> updates T
+    pbheSolve(freeFlow, dt,dx,dy,dz, mesh4d T, mesh4d Tdot, mesh3d k, mesh3d rho_Cp, Tblood, perfusionRate, [ti1, ti2]  ) -> updates T
+    """
+    return _PBHEswig.pbheSolve(useFreeflow, dt, dx, dy, dz, T, Tdot_source, kt0, rho_Cp, Tblood, perfusionrate, ta_i, tb_i)
+
 def ShareMemoryMesh3(IN_ARRAY3, res, infunc):
     return _PBHEswig.ShareMemoryMesh3(IN_ARRAY3, res, infunc)
 ShareMemoryMesh3 = _PBHEswig.ShareMemoryMesh3
@@ -292,13 +489,17 @@ def ShareMemoryMesh4(IN_ARRAY4, res, infunc):
     return _PBHEswig.ShareMemoryMesh4(IN_ARRAY4, res, infunc)
 ShareMemoryMesh4 = _PBHEswig.ShareMemoryMesh4
 
-def pbheSolve(useFreeflow, dt, dx, dy, dz, T, Tdot_source, kt0, rho_Cp, Tblood, perfusionrate, ta_i=0, tb_i=-1):
-    """
-    pbheSolve(freeFlow, dt,dx,dy,dz, mesh4d T, mesh4d Tdot, mesh3d k, mesh3d rho_Cp, Tblood, perfusionRate, [ti1, ti2]  ) -> updates T
-    pbheSolve(freeFlow, dt,dx,dy,dz, mesh4d T, mesh4d Tdot, mesh3d k, mesh3d rho_Cp, Tblood, perfusionRate, [ti1, ti2]  ) -> updates T
-    pbheSolve(freeFlow, dt,dx,dy,dz, mesh4d T, mesh4d Tdot, mesh3d k, mesh3d rho_Cp, Tblood, perfusionRate, [ti1, ti2]  ) -> updates T
-    """
-    return _PBHEswig.pbheSolve(useFreeflow, dt, dx, dy, dz, T, Tdot_source, kt0, rho_Cp, Tblood, perfusionrate, ta_i, tb_i)
+def ShareMemoryMesh3_f(IN_ARRAY3, res, infunc):
+    return _PBHEswig.ShareMemoryMesh3_f(IN_ARRAY3, res, infunc)
+ShareMemoryMesh3_f = _PBHEswig.ShareMemoryMesh3_f
+
+def ShareMemoryMesh34_f(IN_ARRAY3, res, infunc):
+    return _PBHEswig.ShareMemoryMesh34_f(IN_ARRAY3, res, infunc)
+ShareMemoryMesh34_f = _PBHEswig.ShareMemoryMesh34_f
+
+def ShareMemoryMesh4_f(IN_ARRAY4, res, infunc):
+    return _PBHEswig.ShareMemoryMesh4_f(IN_ARRAY4, res, infunc)
+ShareMemoryMesh4_f = _PBHEswig.ShareMemoryMesh4_f
 # This file is compatible with both classic and new-style classes.
 
 

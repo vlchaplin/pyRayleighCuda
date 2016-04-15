@@ -38,6 +38,150 @@ def isarray(a):
         return True
     except:
         return False
+    
+def makeSimPhysGrid(dtype=np.float32,nx=64,ny=64,nz=64,nt=30, dt=0.1, xr=[-2.0, 2.0], yr=[-2.0,2.0], zr=[11., 17.], rho=1000.0, Cp=3700.0,ktherm=0.6, c0=1540,f0=1.2e6):
+    """
+    
+    Grid spacing will be dx=(xr[-1] - xr[0])/(nx-1), same for dy,dz.
+    Total duration of a grid will be nt*dt
+    
+    Kwargs:
+        dtype: numpy.float32 or numpy float64
+        dt: (seconds)
+        xr: (cm)
+        yr: (cm)
+        zr: (cm)
+        Cp: heat capacitance (J/(kg*K))
+        rho: density (kg/m^3)
+        ktherm:  thermal conductivity (W/(m*K))
+        
+    """
+    
+    dataType=dtype
+
+    T=np.zeros([nt,nx,ny,nz],dtype=dataType)
+    Tdot=np.zeros([nx,ny,nz],dtype=dataType) 
+    kdiff=np.zeros([nx,ny,nz],dtype=dataType)
+    rhoCp=np.zeros([nx,ny,nz],dtype=dataType)
+    
+    CEM=np.zeros([nx,ny,nz],dtype=dataType)
+    CEM0=np.zeros_like(CEM)
+    
+    xrp = 1e-2*np.linspace(xr[0],xr[1], nx, dtype=dataType)
+    yrp = 1e-2*np.linspace(yr[0],yr[1], ny, dtype=dataType)
+    zrp = 1e-2*np.linspace(zr[0],zr[1], nz, dtype=dataType)
+    dx=xrp[1]-xrp[0]
+    dy=yrp[1]-yrp[0]
+    dz=zrp[1]-zrp[0]
+    #dt=0.1
+    
+    k0 = 2*math.pi*f0/c0
+    #zplane=0.14
+    #focplaneZpix=np.where(np.logical_and( (zrp[1:-1]-zplane>=0) , (zrp[0:-2]-zplane<0) ))[0][0]
+    
+    res = np.array([dt,dx,dy,dz],dtype=dataType)
+    
+    kdiff[:]=ktherm
+    rhoCp[:]= rho*Cp
+    
+    if dataType == np.float32:
+        Tmesh = PBHE_CUDA.mesh4d_f()
+        Tdotmesh = PBHE_CUDA.mesh34d_f();
+        kmesh = PBHE_CUDA.mesh3d_f();
+        rhoCpmesh = PBHE_CUDA.mesh3d_f();
+    
+    
+        PBHE_CUDA.ShareMemoryMesh4_f(T, res, Tmesh)
+        PBHE_CUDA.ShareMemoryMesh34_f(Tdot, res, Tdotmesh)
+        PBHE_CUDA.ShareMemoryMesh3_f(kdiff, res[1:4], kmesh)
+        PBHE_CUDA.ShareMemoryMesh3_f(rhoCp, res[1:4], rhoCpmesh)
+    else:
+        Tmesh = PBHE_CUDA.mesh4d()
+        Tdotmesh = PBHE_CUDA.mesh34d();
+        kmesh = PBHE_CUDA.mesh3d();
+        rhoCpmesh = PBHE_CUDA.mesh3d();
+    
+        PBHE_CUDA.ShareMemoryMesh4(T, res, Tmesh)
+        PBHE_CUDA.ShareMemoryMesh34(Tdot, res, Tdotmesh)
+        PBHE_CUDA.ShareMemoryMesh3(kdiff, res[1:4], kmesh)
+        PBHE_CUDA.ShareMemoryMesh3(rhoCp, res[1:4], rhoCpmesh)
+        
+    #gxp,gyp,gzp = np.meshgrid(xrp, yrp, zrp, sparse=False, indexing='ij')
+    #calcGridDist= lambda rr: np.sqrt((gxp-rr[0])**2 + (gyp-rr[1])**2 + (gzp-rr[2])**2)
+    
+    simPhysGrid = {'T':T,'Tdot':Tdot,'Tmesh':Tmesh,'Tdotmesh':Tdotmesh,'kmesh': kmesh, 'rhoCpmesh':rhoCpmesh, 'kt': kdiff, 'rhoCp': rhoCp}
+    simPhysGrid['dtxyz'] = res
+    simPhysGrid['c0']=c0
+    simPhysGrid['rho']=rho
+    simPhysGrid['k0']=k0
+    simPhysGrid['xrp']=xrp
+    simPhysGrid['yrp']=yrp
+    simPhysGrid['zrp']=zrp
+    
+    xrp = simPhysGrid['xrp']
+    yrp = simPhysGrid['yrp']
+    zrp = simPhysGrid['zrp']
+    
+    return simPhysGrid
+
+def kohler_trajectories( maxR_mm, z_mm ):
+    
+    """
+    
+    maxR_mm must be either 4,8,12,16
+    z_mm is the plane of the trajectory (typically z_mm=140)
+    
+    Returns (coords_mm, nturns, num_sonications_per_turn)
+    """
+    
+    #Nppt = {}
+    #Nppt["4"]=8
+    #Nppt["8"]=16
+    #Nppt["12"]=24
+    #Nppt["16"]=32
+    Nppt=[8, 16, 24, 32]
+    
+    if abs(math.floor(maxR_mm/4.0) - maxR_mm/4.0) > 1e-7:
+        raise ValueError
+    else:
+        maxR_mmstr="%d"%maxR_mm
+    
+    nnt = 0
+    if maxR_mmstr == "4":
+        nnt = 1 
+    if maxR_mmstr == "8":
+        nnt = 2
+    if maxR_mmstr == "12":
+        nnt = 3
+    if maxR_mmstr == "16":
+        nnt = 4
+    
+    num_sonications_per_turn = np.array(Nppt[0:nnt])
+    focalpoint_coords_mm = np.zeros([np.sum(num_sonications_per_turn), 3])
+    turn_radii_mm = np.linspace(4.0,maxR_mm,nnt)
+    
+    turnIdxStart=0;
+    for n in range(0,nnt):
+        ns = num_sonications_per_turn[n]
+        dphi = (2.0*math.pi/ns)*(ns/2.0 -1)
+        #phis = np.arange(1,ns+1)*(2.0*math.pi/ns) + 0.5*(2.0*math.pi/ns)
+        phis = np.arange(0,ns)*dphi
+        x = turn_radii_mm[n]*np.cos(phis)
+        y = turn_radii_mm[n]*np.sin(phis)
+        z = z_mm*np.ones(ns);
+        
+        i = turnIdxStart
+        
+        focalpoint_coords_mm[i:(i+ns),0] = x;
+        focalpoint_coords_mm[i:(i+ns),1] = y;
+        focalpoint_coords_mm[i:(i+ns),2] = z;
+        
+        turnIdxStart += ns
+    
+
+    return (focalpoint_coords_mm, nnt, num_sonications_per_turn)
+
+
 
 def contstruct_circ_sonication_points( maxR_mm, deltaR_mm, z_mm, avgSpd, dwellSec, waitSec ):
     """
@@ -137,17 +281,22 @@ def trajSumEnergy(xrp,yrp,zrp,maxR_mm, deltaR_mm, z_mm, avgSpd, dwellSec, waitSe
         
     return Itot
     
-def trajectorySettings(trajectorySpec,  doRotation=True,
-                        L1renorm=1, Npass=1, k0=4895.98855, tzero=0.0, PathRotMat=None,
+def trajectorySettings(trajectorySpec,  doRotation=True, use_kohler_traj=False, AlternatePhases=False,
+                        L1renorm=None, L2renorm=None, Npass=1, k0=4895.98855, tzero=0.0, PathRotMat=None,
                         uxyz=None, pxyz=None,  **kwargs):
 
     """
     Returns (timeEdges,amplitudes). There are 2 points per sonication: 1 dwell, 1 wait
     
     trajectorySpec = [maxR_mm, deltaR_mm, z_mm, speed (mm/s), dwell (s), wait (s) ]
+    
+    if use_kohler_traj=True, and trajectorySpec is a two-element list:
+         trajectorySpec = [maxR_mm, z_mm], in which case deltaR_mm=4 and the other params are zero
+    
+    
     pxyz= pass an Mx3 array for a multi-focus beam geometry. Typically z=0 in these vectors.  The pxyz is shifted to the focal point coords and at the z_mm plane in trajectory spec.
     """
-    (maxR_mm, deltaR_mm, z_mm, avgSpd, dwellSec, waitSec) = trajectorySpec
+    #(maxR_mm, deltaR_mm, z_mm, avgSpd, dwellSec, waitSec) = trajectorySpec
     
     if uxyz is None:
         uxyz = sonalleve.get_sonalleve_xdc_vecs()
@@ -157,7 +306,23 @@ def trajectorySettings(trajectorySpec,  doRotation=True,
     M = len(pxyz)
     N = uxyz.shape[0]
     
-    (focalpoint_coords_mm, nturns, num_sonications_per_turn) = contstruct_circ_sonication_points(maxR_mm, deltaR_mm, z_mm, avgSpd, dwellSec, waitSec)
+    if L1renorm is None and L2renorm is None:
+        L1renorm=1
+        
+    if use_kohler_traj:
+        if len(trajectorySpec)==2:
+            maxR_mm = trajectorySpec[0]
+            z_mm = trajectorySpec[1]
+            (deltaR_mm, avgSpd, dwellSec, waitSec) = [4.0, 0, 0, 0]
+        else:
+            (maxR_mm, deltaR_mm, z_mm, avgSpd, dwellSec, waitSec) = trajectorySpec
+        
+        (focalpoint_coords_mm, nturns, num_sonications_per_turn) = kohler_trajectories(maxR_mm, z_mm)
+        
+    else:
+        (maxR_mm, deltaR_mm, z_mm, avgSpd, dwellSec, waitSec) = trajectorySpec
+        (focalpoint_coords_mm, nturns, num_sonications_per_turn) = contstruct_circ_sonication_points(maxR_mm, deltaR_mm, z_mm, avgSpd, dwellSec, waitSec)
+    
     
     num_sonications = np.sum(num_sonications_per_turn,dtype=int)
     num_sonications_total = Npass*num_sonications
@@ -180,7 +345,7 @@ def trajectorySettings(trajectorySpec,  doRotation=True,
             si = n + num_sonications*(passnum-1)
             timeEdges[2*si+1] = timeEdges[2*si] + dwellSec
             timeEdges[2*si+2] = timeEdges[2*si+1] + waitSec
-            amplitudes[2*si] = transducers.get_focused_element_vals(k0, uxyz, pxyz + focalpoint_coords_mm[n]*1e-3, np.ones([M]), L1renorm=L1renorm )
+            amplitudes[2*si] = transducers.get_focused_element_vals(k0, uxyz, pxyz + focalpoint_coords_mm[n]*1e-3, np.ones([M]), L1renorm=L1renorm, L2renorm=L2renorm, AlternatePhases=AlternatePhases )
             amplitudes[2*si+1][:] = 0
         
         passnum+=1
@@ -190,8 +355,9 @@ def trajectorySettings(trajectorySpec,  doRotation=True,
     return (timeEdges,amplitudes)
 
     
-def trajectorySonication(trajectorySpec, simPhysGrid, perfRate=0.0, perfTemp=37.0,
-                        L1renorm=1, Npass=1, k0=4895.98855, Tavg=False, voxmask=None, tzero=0.0, PathRotMat=None,
+def trajectorySonication(trajectorySpec, simPhysGrid, perfRate=0.0, perfTemp=37.0, AlternatePhases=False,
+                        L1renorm=None, L2renorm=None, Npass=1, k0=4895.98855, Tavg=False, voxmask=None, tzero=0.0, PathRotMat=None,
+                        use_kohler_traj=False,
                         uxyz=None, unvecs=None, pxyz=None, use_gpu=False, CEM=None,Rbase=None, RSkeys={}, PBkeys={}, **kwargs):
     
     """
@@ -207,10 +373,17 @@ def trajectorySonication(trajectorySpec, simPhysGrid, perfRate=0.0, perfTemp=37.
     if unvecs is None:
         unvecs=[0,0,0.14] - uxyz
         
+    if L1renorm is None and L2renorm is None:
+        L1renorm=1
+        
+        
     M = len(pxyz)
     N = uxyz.shape[0]
     
-    (focalpoint_coords_mm, nturns, num_sonications_per_turn) = contstruct_circ_sonication_points(maxR_mm, deltaR_mm, z_mm, avgSpd, dwellSec, waitSec)
+    if use_kohler_traj:
+            (focalpoint_coords_mm, nturns, num_sonications_per_turn) = kohler_trajectories(maxR_mm, z_mm)
+    else:
+        (focalpoint_coords_mm, nturns, num_sonications_per_turn) = contstruct_circ_sonication_points(maxR_mm, deltaR_mm, z_mm, avgSpd, dwellSec, waitSec)
     
     num_sonications = np.sum(num_sonications_per_turn,dtype=int)
     num_sonications_total = Npass*num_sonications
@@ -233,7 +406,7 @@ def trajectorySonication(trajectorySpec, simPhysGrid, perfRate=0.0, perfTemp=37.
             si = n + num_sonications*(passnum-1)
             timeEdges[2*si+1] = timeEdges[2*si] + dwellSec
             timeEdges[2*si+2] = timeEdges[2*si+1] + waitSec
-            amplitudes[2*si] = transducers.get_focused_element_vals(k0, uxyz, pxyz + focalpoint_coords_mm[n]*1e-3, np.ones([M]), L1renorm=L1renorm )
+            amplitudes[2*si] = transducers.get_focused_element_vals(k0, uxyz, pxyz + focalpoint_coords_mm[n]*1e-3, np.ones([M]), L1renorm=L1renorm, L2renorm=L2renorm, AlternatePhases=AlternatePhases )
             amplitudes[2*si+1][:] = 0
         
         passnum+=1
@@ -246,7 +419,7 @@ def trajectorySonication(trajectorySpec, simPhysGrid, perfRate=0.0, perfTemp=37.
     return (timeEdges,focalpoint_coords_mm,CEM)
 
 
-def sonicate4D(simPhysGrid, tstarts, tstops, uamplitudes, uxyz, unvecs, alpha_acc=1, use_gpu=False, CEM=None,Rbase=None, verbose=False, RSkeys={}, PBkeys={} ):
+def sonicate4D(simPhysGrid, tstarts, tstops, uamplitudes, uxyz, unvecs, calcField=True, alpha_acc=1, use_gpu=False, CEM=None,Rbase=None, verbose=False, RSkeys={}, PBkeys={} ):
     """
     Returns CEM.
     uxyz - an Nx3 or kk x N x 3
@@ -311,15 +484,22 @@ def sonicate4D(simPhysGrid, tstarts, tstops, uamplitudes, uxyz, unvecs, alpha_ac
     
     doFieldUpdate=np.zeros(nnt,dtype=bool)
     
-    doFieldUpdate[0]=True
-    a=0
-    for ti in range(1,nnt):
-        b=(ti % kk) + (ti % kv) + (ti % ka)
-        if a!=b:
-            doFieldUpdate[ti]=True
-        a=b
-        
+    if calcField:
+        doFieldUpdate[0]=True
+        a=0
+        for ti in range(1,nnt):
+            b=(ti % kk) + (ti % kv) + (ti % ka)
+            if a!=b:
+                doFieldUpdate[ti]=True
+            a=b
+            
     Tinit = T[0].copy()
+    
+    PBHEgpu=use_gpu
+    if 'GPU' in PBkeys:
+        PBHEgpu=PBkeys['GPU']
+    else:
+        PBkeys['GPU']=PBHEgpu
     
     for ti in range(0,nnt):
         
@@ -341,7 +521,7 @@ def sonicate4D(simPhysGrid, tstarts, tstops, uamplitudes, uxyz, unvecs, alpha_ac
                 Tdot[:] = dataType(2.0*alpha_acc*I1 / rhoCp3d)
         
         duration = tstops[ti] - tstarts[ti]
-        calc_heating(simPhysGrid, T, Tdot, Tmesh, Tdotmesh, kmesh, rhoCpmesh, duration, CEM, Rbase, GPU=use_gpu, interpoffset=tstarts[ti], **PBkeys)
+        calc_heating(simPhysGrid, T, Tdot, Tmesh, Tdotmesh, kmesh, rhoCpmesh, duration, CEM, Rbase, interpoffset=tstarts[ti], **PBkeys)
         
     if verbose:
         print( '\r%3d/%3d, %d%%' % (ti+1, nnt, float(ti+1)/nnt *100.0), end=' ',  flush=True)   
@@ -352,7 +532,7 @@ def sonicate4D(simPhysGrid, tstarts, tstops, uamplitudes, uxyz, unvecs, alpha_ac
 def calc_heating(simPhysGrid,T,Tdot,Tmesh,Tdotmesh,kmesh,rhoCpmesh, duration, CEM, Rbase,
                  interpTimes=None, interpolatedTemp=None, interpoffset=0.0, interpmask=None, interpFunc=None,
                  Ntbuff=None, perfRate=0.0, perfTemp=37.0, Tavg=False, voxmask=None,
-                 T0=None, CEMinit=None, Tmax=None, Freeflow=0, verbose=False, GPU=False):
+                 T0=None, CEMinit=None, Tmax=None, Freeflow=0, verbose=False, GPU=False, useSimGrid=False):
     
     """
     simPhysGrid is a dict with the following keys:
@@ -384,11 +564,12 @@ def calc_heating(simPhysGrid,T,Tdot,Tmesh,Tdotmesh,kmesh,rhoCpmesh, duration, CE
     If Tavg=True, ti
     """
     
-
-    #T = simPhysGrid['T']
-    #Tdot = simPhysGrid['Tdot']
-    #Tmesh = simPhysGrid['Tmesh']
-    #Tdotmesh= simPhysGrid['Tdotmesh']
+    if useSimGrid:
+        T = simPhysGrid['T']
+        Tdot = simPhysGrid['Tdot']
+        Tmesh = simPhysGrid['Tmesh']
+        Tdotmesh= simPhysGrid['Tdotmesh']
+    
     k3d= simPhysGrid['kt']
     rhoCp3d = simPhysGrid['rhoCp']
     
@@ -454,7 +635,10 @@ def calc_heating(simPhysGrid,T,Tdot,Tmesh,Tdotmesh,kmesh,rhoCpmesh, duration, CE
             tstep = dt*buffsize
             
         if not GPU:
-            PBHEswig.pbheSolve(Freeflow,dt,dx,dy,dz, Tmesh, Tdotmesh, kmesh, rhoCpmesh, perfTemp, perfRate,0,buffsize-1 )
+            if T.dtype == np.float64:
+                PBHEswig.pbheSolve(Freeflow,dt,dx,dy,dz, Tmesh, Tdotmesh, kmesh, rhoCpmesh, perfTemp, perfRate,0,buffsize-1 )
+            elif T.dtype == np.float32:
+                PBHEswig.pbheSolve_f(Freeflow,float(dt),float(dx),float(dy),float(dz), Tmesh, Tdotmesh, kmesh, rhoCpmesh, perfTemp, perfRate,0,buffsize-1 )
         else:
             if T.dtype == np.float64:
                 #PBHE_CUDA.Pennes_2ndOrder_GPU64_mesh(Freeflow,dt,dx,dy,dz, Tmesh, Tdotmesh, kmesh, rhoCpmesh, perfTemp, perfRate,0,buffsize-1 )
@@ -721,7 +905,7 @@ def write_parameter_space(f, sim_result, SetOfParamArrays, NamesOfParams, units=
     names = ["speed", "dwell", "wait"]
     units = ["mm/sec","sec","sec"]
     
-    write_parameter_space(f, paramvecs, names, units=units)
+    write_parameter_space(f, results_ndgrid, paramvecs, names, units=units)
     
     """
 
@@ -737,6 +921,8 @@ def write_parameter_space(f, sim_result, SetOfParamArrays, NamesOfParams, units=
         tupleOfParams = tuple(SetOfParamArrays)
     elif type(SetOfParamArrays) == np.ndarray:
         tupleOfParams = tuple(SetOfParamArrays.tolist())
+    elif type(SetOfParamArrays) == tuple:
+        tupleOfParams = SetOfParamArrays
     
     #param_grid = np.meshgrid( *tupleOfParams , indexing='ij')
     

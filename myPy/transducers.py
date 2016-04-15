@@ -10,12 +10,15 @@ import sys
 sys.path.append('C:\\Users\\Vandiver\\Documents\\HiFU\\code\\CUDA\\RSgpu\\Release')
 import RSgpuPySwig
 
-def get_focused_element_vals(kwavenum, xyzVecs, focalPoints, focalPvals, L1renorm=None, L2renorm=None):
+def get_focused_element_vals(kwavenum, xyzVecs, focalPoints, focalPvals, L1renorm=None, L2renorm=None, AlternatePhases=False):
     
     M = len(focalPvals)
     N = len(xyzVecs)
     
     H = 1j*numpy.zeros( [M,N] )
+    
+    if AlternatePhases:
+        focalPvals = focalPvals.copy()*numpy.exp(1j*numpy.arange(0,M)*pi)
     
     for m in range(0,M):
         
