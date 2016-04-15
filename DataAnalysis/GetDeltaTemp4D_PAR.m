@@ -33,9 +33,14 @@ function [ deltaTseries, axis0_mm, axis1_mm, slice_axis_mm, dyntimes, im ] = Get
     dyn_time_col=32;
 
 
-    dyntimes = im.Parms.tags(1:2*im.Dims(3):im.Dims(5)*im.Dims(3)*2, dyn_time_col);
-
-    [dyntimes,dynamicIdxReorder] = sort(dyntimes);
+%     dyntimes = im.Parms.tags(1:2*im.Dims(3):im.Dims(5)*im.Dims(3)*2, dyn_time_col);
+% 
+%     [dyntimes,dynamicIdxReorder] = sort(dyntimes);
+%     
+    dyninds = im.Parms.tags(:, 3);
+    [dyninds,dynamicIdxReorder] = sort(dyninds);
+    dyntimes = im.Parms.tags(dynamicIdxReorder, dyn_time_col);
+    dyntimes=unique(dyntimes);
 
     %im.Data = im.Data(:,:,:,:,dynamicIdxReorder);
     
