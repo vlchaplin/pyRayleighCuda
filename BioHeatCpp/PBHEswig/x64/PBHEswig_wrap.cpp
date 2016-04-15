@@ -2967,19 +2967,21 @@ SWIG_Python_NonDynamicSetAttr(PyObject *obj, PyObject *name, PyObject *value) {
 
 /* -------- TYPES TABLE (BEGIN) -------- */
 
-#define SWIGTYPE_p_MESH_T swig_types[0]
-#define SWIGTYPE_p_MeshFunction3DT_MESH_T_t swig_types[1]
-#define SWIGTYPE_p_MeshFunction3DT_double_t swig_types[2]
-#define SWIGTYPE_p_MeshFunction4DT_MESH_T_t swig_types[3]
-#define SWIGTYPE_p_MeshFunction4DT_double_t swig_types[4]
-#define SWIGTYPE_p_MeshFunctionPseudo4DT_double_t swig_types[5]
+#define SWIGTYPE_p_MeshFunction3DT_double_t swig_types[0]
+#define SWIGTYPE_p_MeshFunction3DT_float_t swig_types[1]
+#define SWIGTYPE_p_MeshFunction4DT_double_t swig_types[2]
+#define SWIGTYPE_p_MeshFunction4DT_float_t swig_types[3]
+#define SWIGTYPE_p_MeshFunctionPseudo4DT_double_t swig_types[4]
+#define SWIGTYPE_p_MeshFunctionPseudo4DT_float_t swig_types[5]
 #define SWIGTYPE_p_MeshFunctionT_double_t swig_types[6]
-#define SWIGTYPE_p_char swig_types[7]
-#define SWIGTYPE_p_double swig_types[8]
-#define SWIGTYPE_p_long swig_types[9]
-#define SWIGTYPE_p_p_long swig_types[10]
-static swig_type_info *swig_types[12];
-static swig_module_info swig_module = {swig_types, 11, 0, 0, 0, 0};
+#define SWIGTYPE_p_MeshFunctionT_float_t swig_types[7]
+#define SWIGTYPE_p_char swig_types[8]
+#define SWIGTYPE_p_double swig_types[9]
+#define SWIGTYPE_p_float swig_types[10]
+#define SWIGTYPE_p_long swig_types[11]
+#define SWIGTYPE_p_p_long swig_types[12]
+static swig_type_info *swig_types[14];
+static swig_module_info swig_module = {swig_types, 13, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -3104,6 +3106,33 @@ namespace swig {
 #include <numpy/arrayobject.h>
 
 
+#include <float.h>
+
+
+#include <math.h>
+
+
+/* Getting isfinite working pre C99 across multiple platforms is non-trivial. Users can provide SWIG_isfinite on older platforms. */
+#ifndef SWIG_isfinite
+# if defined(isfinite)
+#  define SWIG_isfinite(X) (isfinite(X))
+# elif defined(_MSC_VER)
+#  define SWIG_isfinite(X) (_finite(X))
+# elif defined(__sun) && defined(__SVR4)
+#  include <ieeefp.h>
+#  define SWIG_isfinite(X) (finite(X))
+# endif
+#endif
+
+
+/* Accept infinite as a valid float value unless we are unable to check if a value is finite */
+#ifdef SWIG_isfinite
+# define SWIG_Float_Overflow_Check(X) ((X < -FLT_MAX || X > FLT_MAX) && SWIG_isfinite(X))
+#else
+# define SWIG_Float_Overflow_Check(X) ((X < -FLT_MAX || X > FLT_MAX))
+#endif
+
+
 SWIGINTERN int
 SWIG_AsVal_double (PyObject *obj, double *val)
 {
@@ -3148,13 +3177,30 @@ SWIG_AsVal_double (PyObject *obj, double *val)
 }
 
 
+SWIGINTERN int
+SWIG_AsVal_float (PyObject * obj, float *val)
+{
+  double v;
+  int res = SWIG_AsVal_double (obj, &v);
+  if (SWIG_IsOK(res)) {
+    if (SWIG_Float_Overflow_Check(v)) {
+      return SWIG_OverflowError;
+    } else {
+      if (val) *val = static_cast< float >(v);
+    }
+  }  
+  return res;
+}
+
+
   #define SWIG_From_double   PyFloat_FromDouble 
 
 
-#include <float.h>
-
-
-#include <math.h>
+SWIGINTERNINLINE PyObject *
+SWIG_From_float  (float value)
+{    
+  return SWIG_From_double  (value);
+}
 
 
 SWIGINTERNINLINE int
@@ -3727,6 +3773,2514 @@ SWIG_AsVal_int (PyObject * obj, int *val)
 #ifdef __cplusplus
 extern "C" {
 #endif
+SWIGINTERN PyObject *_wrap_mesh1d_f_d_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction< float > *arg1 = (MeshFunction< float > *) 0 ;
+  long *arg2 = (long *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:mesh1d_f_d_set",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunctionT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh1d_f_d_set" "', argument " "1"" of type '" "MeshFunction< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction< float > * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_long, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "mesh1d_f_d_set" "', argument " "2"" of type '" "long *""'"); 
+  }
+  arg2 = reinterpret_cast< long * >(argp2);
+  if (arg1) (arg1)->d = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh1d_f_d_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction< float > *arg1 = (MeshFunction< float > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  long *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:mesh1d_f_d_get",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunctionT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh1d_f_d_get" "', argument " "1"" of type '" "MeshFunction< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction< float > * >(argp1);
+  result = (long *) ((arg1)->d);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_long, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh1d_f_ds_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction< float > *arg1 = (MeshFunction< float > *) 0 ;
+  float *arg2 = (float *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:mesh1d_f_ds_set",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunctionT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh1d_f_ds_set" "', argument " "1"" of type '" "MeshFunction< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction< float > * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_float, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "mesh1d_f_ds_set" "', argument " "2"" of type '" "float *""'"); 
+  }
+  arg2 = reinterpret_cast< float * >(argp2);
+  if (arg1) (arg1)->ds = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh1d_f_ds_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction< float > *arg1 = (MeshFunction< float > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  float *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:mesh1d_f_ds_get",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunctionT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh1d_f_ds_get" "', argument " "1"" of type '" "MeshFunction< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction< float > * >(argp1);
+  result = (float *) ((arg1)->ds);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_float, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh1d_f_data_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction< float > *arg1 = (MeshFunction< float > *) 0 ;
+  float *arg2 = (float *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:mesh1d_f_data_set",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunctionT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh1d_f_data_set" "', argument " "1"" of type '" "MeshFunction< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction< float > * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_float, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "mesh1d_f_data_set" "', argument " "2"" of type '" "float *""'"); 
+  }
+  arg2 = reinterpret_cast< float * >(argp2);
+  if (arg1) (arg1)->data = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh1d_f_data_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction< float > *arg1 = (MeshFunction< float > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  float *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:mesh1d_f_data_get",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunctionT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh1d_f_data_get" "', argument " "1"" of type '" "MeshFunction< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction< float > * >(argp1);
+  result = (float *) ((arg1)->data);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_float, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh1d_f_scalar_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction< float > *arg1 = (MeshFunction< float > *) 0 ;
+  float arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  float val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:mesh1d_f_scalar_set",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunctionT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh1d_f_scalar_set" "', argument " "1"" of type '" "MeshFunction< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction< float > * >(argp1);
+  ecode2 = SWIG_AsVal_float(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "mesh1d_f_scalar_set" "', argument " "2"" of type '" "float""'");
+  } 
+  arg2 = static_cast< float >(val2);
+  if (arg1) (arg1)->scalar = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh1d_f_scalar_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction< float > *arg1 = (MeshFunction< float > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  float result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:mesh1d_f_scalar_get",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunctionT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh1d_f_scalar_get" "', argument " "1"" of type '" "MeshFunction< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction< float > * >(argp1);
+  result = (float) ((arg1)->scalar);
+  resultobj = SWIG_From_float(static_cast< float >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh1d_f_ndims_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction< float > *arg1 = (MeshFunction< float > *) 0 ;
+  long arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  long val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:mesh1d_f_ndims_set",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunctionT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh1d_f_ndims_set" "', argument " "1"" of type '" "MeshFunction< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction< float > * >(argp1);
+  ecode2 = SWIG_AsVal_long(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "mesh1d_f_ndims_set" "', argument " "2"" of type '" "long""'");
+  } 
+  arg2 = static_cast< long >(val2);
+  if (arg1) (arg1)->ndims = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh1d_f_ndims_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction< float > *arg1 = (MeshFunction< float > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  long result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:mesh1d_f_ndims_get",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunctionT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh1d_f_ndims_get" "', argument " "1"" of type '" "MeshFunction< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction< float > * >(argp1);
+  result = (long) ((arg1)->ndims);
+  resultobj = SWIG_From_long(static_cast< long >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh1d_f_usesSharedData_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction< float > *arg1 = (MeshFunction< float > *) 0 ;
+  bool arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  bool val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:mesh1d_f_usesSharedData_set",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunctionT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh1d_f_usesSharedData_set" "', argument " "1"" of type '" "MeshFunction< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction< float > * >(argp1);
+  ecode2 = SWIG_AsVal_bool(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "mesh1d_f_usesSharedData_set" "', argument " "2"" of type '" "bool""'");
+  } 
+  arg2 = static_cast< bool >(val2);
+  if (arg1) (arg1)->usesSharedData = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh1d_f_usesSharedData_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction< float > *arg1 = (MeshFunction< float > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  bool result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:mesh1d_f_usesSharedData_get",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunctionT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh1d_f_usesSharedData_get" "', argument " "1"" of type '" "MeshFunction< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction< float > * >(argp1);
+  result = (bool) ((arg1)->usesSharedData);
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_mesh1d_f__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction< float > *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)":new_mesh1d_f")) SWIG_fail;
+  result = (MeshFunction< float > *)new MeshFunction< float >();
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_MeshFunctionT_float_t, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_mesh1d_f__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  long arg1 ;
+  long val1 ;
+  int ecode1 = 0 ;
+  PyObject * obj0 = 0 ;
+  MeshFunction< float > *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:new_mesh1d_f",&obj0)) SWIG_fail;
+  ecode1 = SWIG_AsVal_long(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_mesh1d_f" "', argument " "1"" of type '" "long""'");
+  } 
+  arg1 = static_cast< long >(val1);
+  result = (MeshFunction< float > *)new MeshFunction< float >(arg1);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_MeshFunctionT_float_t, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_mesh1d_f(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[2] = {
+    0
+  };
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 1) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 0) {
+    return _wrap_new_mesh1d_f__SWIG_0(self, args);
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      int res = SWIG_AsVal_long(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      return _wrap_new_mesh1d_f__SWIG_1(self, args);
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'new_mesh1d_f'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    MeshFunction< float >::MeshFunction()\n"
+    "    MeshFunction< float >::MeshFunction(long)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_mesh1d_f(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction< float > *arg1 = (MeshFunction< float > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_mesh1d_f",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunctionT_float_t, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_mesh1d_f" "', argument " "1"" of type '" "MeshFunction< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction< float > * >(argp1);
+  delete arg1;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh1d_f_setndims(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction< float > *arg1 = (MeshFunction< float > *) 0 ;
+  long arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  long val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:mesh1d_f_setndims",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunctionT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh1d_f_setndims" "', argument " "1"" of type '" "MeshFunction< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction< float > * >(argp1);
+  ecode2 = SWIG_AsVal_long(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "mesh1d_f_setndims" "', argument " "2"" of type '" "long""'");
+  } 
+  arg2 = static_cast< long >(val2);
+  (arg1)->setndims(arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh1d_f_setdims(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction< float > *arg1 = (MeshFunction< float > *) 0 ;
+  long *arg2 = (long *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:mesh1d_f_setdims",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunctionT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh1d_f_setdims" "', argument " "1"" of type '" "MeshFunction< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction< float > * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_long, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "mesh1d_f_setdims" "', argument " "2"" of type '" "long *""'"); 
+  }
+  arg2 = reinterpret_cast< long * >(argp2);
+  (arg1)->setdims(arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh1d_f_isRowMaj_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction< float > *arg1 = (MeshFunction< float > *) 0 ;
+  bool arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  bool val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:mesh1d_f_isRowMaj_set",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunctionT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh1d_f_isRowMaj_set" "', argument " "1"" of type '" "MeshFunction< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction< float > * >(argp1);
+  ecode2 = SWIG_AsVal_bool(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "mesh1d_f_isRowMaj_set" "', argument " "2"" of type '" "bool""'");
+  } 
+  arg2 = static_cast< bool >(val2);
+  if (arg1) (arg1)->isRowMaj = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh1d_f_isRowMaj_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction< float > *arg1 = (MeshFunction< float > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  bool result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:mesh1d_f_isRowMaj_get",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunctionT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh1d_f_isRowMaj_get" "', argument " "1"" of type '" "MeshFunction< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction< float > * >(argp1);
+  result = (bool) ((arg1)->isRowMaj);
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh1d_f_getndims(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction< float > *arg1 = (MeshFunction< float > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  long result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:mesh1d_f_getndims",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunctionT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh1d_f_getndims" "', argument " "1"" of type '" "MeshFunction< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction< float > * >(argp1);
+  result = (long)(arg1)->getndims();
+  resultobj = SWIG_From_long(static_cast< long >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh1d_f_getdims(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction< float > *arg1 = (MeshFunction< float > *) 0 ;
+  long *arg2 = (long *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:mesh1d_f_getdims",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunctionT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh1d_f_getdims" "', argument " "1"" of type '" "MeshFunction< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction< float > * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_long, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "mesh1d_f_getdims" "', argument " "2"" of type '" "long *""'"); 
+  }
+  arg2 = reinterpret_cast< long * >(argp2);
+  (arg1)->getdims(arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh1d_f_setres(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction< float > *arg1 = (MeshFunction< float > *) 0 ;
+  float *arg2 = (float *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:mesh1d_f_setres",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunctionT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh1d_f_setres" "', argument " "1"" of type '" "MeshFunction< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction< float > * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_float, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "mesh1d_f_setres" "', argument " "2"" of type '" "float *""'"); 
+  }
+  arg2 = reinterpret_cast< float * >(argp2);
+  (arg1)->setres(arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh1d_f_getres(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction< float > *arg1 = (MeshFunction< float > *) 0 ;
+  float *arg2 = (float *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:mesh1d_f_getres",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunctionT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh1d_f_getres" "', argument " "1"" of type '" "MeshFunction< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction< float > * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_float, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "mesh1d_f_getres" "', argument " "2"" of type '" "float *""'"); 
+  }
+  arg2 = reinterpret_cast< float * >(argp2);
+  (arg1)->getres(arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh1d_f_clear(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction< float > *arg1 = (MeshFunction< float > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:mesh1d_f_clear",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunctionT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh1d_f_clear" "', argument " "1"" of type '" "MeshFunction< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction< float > * >(argp1);
+  (arg1)->clear();
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh1d_f_setToScalar(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction< float > *arg1 = (MeshFunction< float > *) 0 ;
+  float arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  float val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:mesh1d_f_setToScalar",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunctionT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh1d_f_setToScalar" "', argument " "1"" of type '" "MeshFunction< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction< float > * >(argp1);
+  ecode2 = SWIG_AsVal_float(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "mesh1d_f_setToScalar" "', argument " "2"" of type '" "float""'");
+  } 
+  arg2 = static_cast< float >(val2);
+  (arg1)->setToScalar(arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh1d_f_useSharedData(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction< float > *arg1 = (MeshFunction< float > *) 0 ;
+  long *arg2 = (long *) 0 ;
+  float *arg3 = (float *) 0 ;
+  float *arg4 = (float *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  void *argp4 = 0 ;
+  int res4 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOO:mesh1d_f_useSharedData",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunctionT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh1d_f_useSharedData" "', argument " "1"" of type '" "MeshFunction< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction< float > * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_long, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "mesh1d_f_useSharedData" "', argument " "2"" of type '" "long *""'"); 
+  }
+  arg2 = reinterpret_cast< long * >(argp2);
+  res3 = SWIG_ConvertPtr(obj2, &argp3,SWIGTYPE_p_float, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "mesh1d_f_useSharedData" "', argument " "3"" of type '" "float *""'"); 
+  }
+  arg3 = reinterpret_cast< float * >(argp3);
+  res4 = SWIG_ConvertPtr(obj3, &argp4,SWIGTYPE_p_float, 0 |  0 );
+  if (!SWIG_IsOK(res4)) {
+    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "mesh1d_f_useSharedData" "', argument " "4"" of type '" "float *""'"); 
+  }
+  arg4 = reinterpret_cast< float * >(argp4);
+  (arg1)->useSharedData(arg2,arg3,arg4);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh1d_f_val(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction< float > *arg1 = (MeshFunction< float > *) 0 ;
+  long *arg2 = (long *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  float *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:mesh1d_f_val",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunctionT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh1d_f_val" "', argument " "1"" of type '" "MeshFunction< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction< float > * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_long, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "mesh1d_f_val" "', argument " "2"" of type '" "long *""'"); 
+  }
+  arg2 = reinterpret_cast< long * >(argp2);
+  result = (float *) &(arg1)->val(arg2);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_float, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *mesh1d_f_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O:swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_MeshFunctionT_float_t, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *_wrap_new_mesh3d_f__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction3D< float > *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)":new_mesh3d_f")) SWIG_fail;
+  result = (MeshFunction3D< float > *)new MeshFunction3D< float >();
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_MeshFunction3DT_float_t, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_mesh3d_f__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  long arg1 ;
+  long arg2 ;
+  long arg3 ;
+  long val1 ;
+  int ecode1 = 0 ;
+  long val2 ;
+  int ecode2 = 0 ;
+  long val3 ;
+  int ecode3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  MeshFunction3D< float > *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:new_mesh3d_f",&obj0,&obj1,&obj2)) SWIG_fail;
+  ecode1 = SWIG_AsVal_long(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_mesh3d_f" "', argument " "1"" of type '" "long""'");
+  } 
+  arg1 = static_cast< long >(val1);
+  ecode2 = SWIG_AsVal_long(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_mesh3d_f" "', argument " "2"" of type '" "long""'");
+  } 
+  arg2 = static_cast< long >(val2);
+  ecode3 = SWIG_AsVal_long(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "new_mesh3d_f" "', argument " "3"" of type '" "long""'");
+  } 
+  arg3 = static_cast< long >(val3);
+  result = (MeshFunction3D< float > *)new MeshFunction3D< float >(arg1,arg2,arg3);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_MeshFunction3DT_float_t, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_mesh3d_f__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  float *arg1 = (float *) 0 ;
+  long arg2 ;
+  long arg3 ;
+  long arg4 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  long val2 ;
+  int ecode2 = 0 ;
+  long val3 ;
+  int ecode3 = 0 ;
+  long val4 ;
+  int ecode4 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  MeshFunction3D< float > *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOO:new_mesh3d_f",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_float, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_mesh3d_f" "', argument " "1"" of type '" "float *""'"); 
+  }
+  arg1 = reinterpret_cast< float * >(argp1);
+  ecode2 = SWIG_AsVal_long(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_mesh3d_f" "', argument " "2"" of type '" "long""'");
+  } 
+  arg2 = static_cast< long >(val2);
+  ecode3 = SWIG_AsVal_long(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "new_mesh3d_f" "', argument " "3"" of type '" "long""'");
+  } 
+  arg3 = static_cast< long >(val3);
+  ecode4 = SWIG_AsVal_long(obj3, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "new_mesh3d_f" "', argument " "4"" of type '" "long""'");
+  } 
+  arg4 = static_cast< long >(val4);
+  result = (MeshFunction3D< float > *)new MeshFunction3D< float >(arg1,arg2,arg3,arg4);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_MeshFunction3DT_float_t, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_mesh3d_f(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[5] = {
+    0
+  };
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 4) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 0) {
+    return _wrap_new_mesh3d_f__SWIG_0(self, args);
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      int res = SWIG_AsVal_long(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_long(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_long(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          return _wrap_new_mesh3d_f__SWIG_1(self, args);
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_float, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_long(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_long(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          {
+            int res = SWIG_AsVal_long(argv[3], NULL);
+            _v = SWIG_CheckState(res);
+          }
+          if (_v) {
+            return _wrap_new_mesh3d_f__SWIG_2(self, args);
+          }
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'new_mesh3d_f'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    MeshFunction3D< float >::MeshFunction3D()\n"
+    "    MeshFunction3D< float >::MeshFunction3D(long,long,long)\n"
+    "    MeshFunction3D< float >::MeshFunction3D(float *,long,long,long)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_mesh3d_f(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction3D< float > *arg1 = (MeshFunction3D< float > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_mesh3d_f",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunction3DT_float_t, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_mesh3d_f" "', argument " "1"" of type '" "MeshFunction3D< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction3D< float > * >(argp1);
+  delete arg1;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh3d_f_index__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction3D< float > *arg1 = (MeshFunction3D< float > *) 0 ;
+  long *arg2 = 0 ;
+  long *arg3 = 0 ;
+  long *arg4 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  void *argp4 = 0 ;
+  int res4 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  long result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOO:mesh3d_f_index",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunction3DT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh3d_f_index" "', argument " "1"" of type '" "MeshFunction3D< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction3D< float > * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_long,  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "mesh3d_f_index" "', argument " "2"" of type '" "long &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "mesh3d_f_index" "', argument " "2"" of type '" "long &""'"); 
+  }
+  arg2 = reinterpret_cast< long * >(argp2);
+  res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_long,  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "mesh3d_f_index" "', argument " "3"" of type '" "long &""'"); 
+  }
+  if (!argp3) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "mesh3d_f_index" "', argument " "3"" of type '" "long &""'"); 
+  }
+  arg3 = reinterpret_cast< long * >(argp3);
+  res4 = SWIG_ConvertPtr(obj3, &argp4, SWIGTYPE_p_long,  0 );
+  if (!SWIG_IsOK(res4)) {
+    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "mesh3d_f_index" "', argument " "4"" of type '" "long &""'"); 
+  }
+  if (!argp4) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "mesh3d_f_index" "', argument " "4"" of type '" "long &""'"); 
+  }
+  arg4 = reinterpret_cast< long * >(argp4);
+  result = (long)(arg1)->index(*arg2,*arg3,*arg4);
+  resultobj = SWIG_From_long(static_cast< long >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh3d_f_index__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction3D< float > *arg1 = (MeshFunction3D< float > *) 0 ;
+  long **arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  long result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:mesh3d_f_index",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunction3DT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh3d_f_index" "', argument " "1"" of type '" "MeshFunction3D< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction3D< float > * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_p_long,  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "mesh3d_f_index" "', argument " "2"" of type '" "long *&""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "mesh3d_f_index" "', argument " "2"" of type '" "long *&""'"); 
+  }
+  arg2 = reinterpret_cast< long ** >(argp2);
+  result = (long)(arg1)->index(*arg2);
+  resultobj = SWIG_From_long(static_cast< long >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh3d_f_index(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[5] = {
+    0
+  };
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 4) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_MeshFunction3DT_float_t, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_p_long, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap_mesh3d_f_index__SWIG_1(self, args);
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_MeshFunction3DT_float_t, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_long, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        void *vptr = 0;
+        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_long, 0);
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          void *vptr = 0;
+          int res = SWIG_ConvertPtr(argv[3], &vptr, SWIGTYPE_p_long, 0);
+          _v = SWIG_CheckState(res);
+          if (_v) {
+            return _wrap_mesh3d_f_index__SWIG_0(self, args);
+          }
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'mesh3d_f_index'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    MeshFunction3D< float >::index(long &,long &,long &)\n"
+    "    MeshFunction3D< float >::index(long *&)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh3d_f_val__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction3D< float > *arg1 = (MeshFunction3D< float > *) 0 ;
+  long *arg2 = (long *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  float *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:mesh3d_f_val",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunction3DT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh3d_f_val" "', argument " "1"" of type '" "MeshFunction3D< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction3D< float > * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_long, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "mesh3d_f_val" "', argument " "2"" of type '" "long *""'"); 
+  }
+  arg2 = reinterpret_cast< long * >(argp2);
+  result = (float *) &(arg1)->val(arg2);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_float, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh3d_f_val__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction3D< float > *arg1 = (MeshFunction3D< float > *) 0 ;
+  long arg2 ;
+  long arg3 ;
+  long arg4 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  long val2 ;
+  int ecode2 = 0 ;
+  long val3 ;
+  int ecode3 = 0 ;
+  long val4 ;
+  int ecode4 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  float *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOO:mesh3d_f_val",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunction3DT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh3d_f_val" "', argument " "1"" of type '" "MeshFunction3D< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction3D< float > * >(argp1);
+  ecode2 = SWIG_AsVal_long(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "mesh3d_f_val" "', argument " "2"" of type '" "long""'");
+  } 
+  arg2 = static_cast< long >(val2);
+  ecode3 = SWIG_AsVal_long(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "mesh3d_f_val" "', argument " "3"" of type '" "long""'");
+  } 
+  arg3 = static_cast< long >(val3);
+  ecode4 = SWIG_AsVal_long(obj3, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "mesh3d_f_val" "', argument " "4"" of type '" "long""'");
+  } 
+  arg4 = static_cast< long >(val4);
+  result = (float *) &(arg1)->val(arg2,arg3,arg4);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_float, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh3d_f_val(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[5] = {
+    0
+  };
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 4) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_MeshFunction3DT_float_t, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_long, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap_mesh3d_f_val__SWIG_0(self, args);
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_MeshFunction3DT_float_t, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_long(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_long(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          {
+            int res = SWIG_AsVal_long(argv[3], NULL);
+            _v = SWIG_CheckState(res);
+          }
+          if (_v) {
+            return _wrap_mesh3d_f_val__SWIG_1(self, args);
+          }
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'mesh3d_f_val'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    MeshFunction3D< float >::val(long *)\n"
+    "    MeshFunction3D< float >::val(long,long,long)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh3d_f___call__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction3D< float > *arg1 = (MeshFunction3D< float > *) 0 ;
+  long arg2 ;
+  long arg3 ;
+  long arg4 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  long val2 ;
+  int ecode2 = 0 ;
+  long val3 ;
+  int ecode3 = 0 ;
+  long val4 ;
+  int ecode4 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  float *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOO:mesh3d_f___call__",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunction3DT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh3d_f___call__" "', argument " "1"" of type '" "MeshFunction3D< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction3D< float > * >(argp1);
+  ecode2 = SWIG_AsVal_long(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "mesh3d_f___call__" "', argument " "2"" of type '" "long""'");
+  } 
+  arg2 = static_cast< long >(val2);
+  ecode3 = SWIG_AsVal_long(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "mesh3d_f___call__" "', argument " "3"" of type '" "long""'");
+  } 
+  arg3 = static_cast< long >(val3);
+  ecode4 = SWIG_AsVal_long(obj3, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "mesh3d_f___call__" "', argument " "4"" of type '" "long""'");
+  } 
+  arg4 = static_cast< long >(val4);
+  result = (float *) &(arg1)->operator ()(arg2,arg3,arg4);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_float, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh3d_f_getval(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction3D< float > *arg1 = (MeshFunction3D< float > *) 0 ;
+  long arg2 ;
+  long arg3 ;
+  long arg4 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  long val2 ;
+  int ecode2 = 0 ;
+  long val3 ;
+  int ecode3 = 0 ;
+  long val4 ;
+  int ecode4 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  float result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOO:mesh3d_f_getval",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunction3DT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh3d_f_getval" "', argument " "1"" of type '" "MeshFunction3D< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction3D< float > * >(argp1);
+  ecode2 = SWIG_AsVal_long(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "mesh3d_f_getval" "', argument " "2"" of type '" "long""'");
+  } 
+  arg2 = static_cast< long >(val2);
+  ecode3 = SWIG_AsVal_long(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "mesh3d_f_getval" "', argument " "3"" of type '" "long""'");
+  } 
+  arg3 = static_cast< long >(val3);
+  ecode4 = SWIG_AsVal_long(obj3, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "mesh3d_f_getval" "', argument " "4"" of type '" "long""'");
+  } 
+  arg4 = static_cast< long >(val4);
+  result = (float)(arg1)->getval(arg2,arg3,arg4);
+  resultobj = SWIG_From_float(static_cast< float >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh3d_f_setval(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction3D< float > *arg1 = (MeshFunction3D< float > *) 0 ;
+  float arg2 ;
+  long arg3 ;
+  long arg4 ;
+  long arg5 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  float val2 ;
+  int ecode2 = 0 ;
+  long val3 ;
+  int ecode3 = 0 ;
+  long val4 ;
+  int ecode4 = 0 ;
+  long val5 ;
+  int ecode5 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  PyObject * obj4 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOOO:mesh3d_f_setval",&obj0,&obj1,&obj2,&obj3,&obj4)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunction3DT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh3d_f_setval" "', argument " "1"" of type '" "MeshFunction3D< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction3D< float > * >(argp1);
+  ecode2 = SWIG_AsVal_float(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "mesh3d_f_setval" "', argument " "2"" of type '" "float""'");
+  } 
+  arg2 = static_cast< float >(val2);
+  ecode3 = SWIG_AsVal_long(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "mesh3d_f_setval" "', argument " "3"" of type '" "long""'");
+  } 
+  arg3 = static_cast< long >(val3);
+  ecode4 = SWIG_AsVal_long(obj3, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "mesh3d_f_setval" "', argument " "4"" of type '" "long""'");
+  } 
+  arg4 = static_cast< long >(val4);
+  ecode5 = SWIG_AsVal_long(obj4, &val5);
+  if (!SWIG_IsOK(ecode5)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "mesh3d_f_setval" "', argument " "5"" of type '" "long""'");
+  } 
+  arg5 = static_cast< long >(val5);
+  (arg1)->setval(arg2,arg3,arg4,arg5);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *mesh3d_f_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O:swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_MeshFunction3DT_float_t, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *_wrap_new_mesh4d_f__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction4D< float > *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)":new_mesh4d_f")) SWIG_fail;
+  result = (MeshFunction4D< float > *)new MeshFunction4D< float >();
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_MeshFunction4DT_float_t, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_mesh4d_f__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  long arg1 ;
+  long arg2 ;
+  long arg3 ;
+  long arg4 ;
+  long val1 ;
+  int ecode1 = 0 ;
+  long val2 ;
+  int ecode2 = 0 ;
+  long val3 ;
+  int ecode3 = 0 ;
+  long val4 ;
+  int ecode4 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  MeshFunction4D< float > *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOO:new_mesh4d_f",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
+  ecode1 = SWIG_AsVal_long(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_mesh4d_f" "', argument " "1"" of type '" "long""'");
+  } 
+  arg1 = static_cast< long >(val1);
+  ecode2 = SWIG_AsVal_long(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_mesh4d_f" "', argument " "2"" of type '" "long""'");
+  } 
+  arg2 = static_cast< long >(val2);
+  ecode3 = SWIG_AsVal_long(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "new_mesh4d_f" "', argument " "3"" of type '" "long""'");
+  } 
+  arg3 = static_cast< long >(val3);
+  ecode4 = SWIG_AsVal_long(obj3, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "new_mesh4d_f" "', argument " "4"" of type '" "long""'");
+  } 
+  arg4 = static_cast< long >(val4);
+  result = (MeshFunction4D< float > *)new MeshFunction4D< float >(arg1,arg2,arg3,arg4);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_MeshFunction4DT_float_t, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_mesh4d_f(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[5] = {
+    0
+  };
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 4) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 0) {
+    return _wrap_new_mesh4d_f__SWIG_0(self, args);
+  }
+  if (argc == 4) {
+    int _v;
+    {
+      int res = SWIG_AsVal_long(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_long(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_long(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          {
+            int res = SWIG_AsVal_long(argv[3], NULL);
+            _v = SWIG_CheckState(res);
+          }
+          if (_v) {
+            return _wrap_new_mesh4d_f__SWIG_1(self, args);
+          }
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'new_mesh4d_f'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    MeshFunction4D< float >::MeshFunction4D()\n"
+    "    MeshFunction4D< float >::MeshFunction4D(long,long,long,long)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_mesh4d_f(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction4D< float > *arg1 = (MeshFunction4D< float > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_mesh4d_f",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunction4DT_float_t, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_mesh4d_f" "', argument " "1"" of type '" "MeshFunction4D< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction4D< float > * >(argp1);
+  delete arg1;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh4d_f_index__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction4D< float > *arg1 = (MeshFunction4D< float > *) 0 ;
+  long *arg2 = 0 ;
+  long *arg3 = 0 ;
+  long *arg4 = 0 ;
+  long *arg5 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  void *argp4 = 0 ;
+  int res4 = 0 ;
+  void *argp5 = 0 ;
+  int res5 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  PyObject * obj4 = 0 ;
+  long result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOOO:mesh4d_f_index",&obj0,&obj1,&obj2,&obj3,&obj4)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunction4DT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh4d_f_index" "', argument " "1"" of type '" "MeshFunction4D< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction4D< float > * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_long,  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "mesh4d_f_index" "', argument " "2"" of type '" "long &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "mesh4d_f_index" "', argument " "2"" of type '" "long &""'"); 
+  }
+  arg2 = reinterpret_cast< long * >(argp2);
+  res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_long,  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "mesh4d_f_index" "', argument " "3"" of type '" "long &""'"); 
+  }
+  if (!argp3) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "mesh4d_f_index" "', argument " "3"" of type '" "long &""'"); 
+  }
+  arg3 = reinterpret_cast< long * >(argp3);
+  res4 = SWIG_ConvertPtr(obj3, &argp4, SWIGTYPE_p_long,  0 );
+  if (!SWIG_IsOK(res4)) {
+    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "mesh4d_f_index" "', argument " "4"" of type '" "long &""'"); 
+  }
+  if (!argp4) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "mesh4d_f_index" "', argument " "4"" of type '" "long &""'"); 
+  }
+  arg4 = reinterpret_cast< long * >(argp4);
+  res5 = SWIG_ConvertPtr(obj4, &argp5, SWIGTYPE_p_long,  0 );
+  if (!SWIG_IsOK(res5)) {
+    SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "mesh4d_f_index" "', argument " "5"" of type '" "long &""'"); 
+  }
+  if (!argp5) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "mesh4d_f_index" "', argument " "5"" of type '" "long &""'"); 
+  }
+  arg5 = reinterpret_cast< long * >(argp5);
+  result = (long)(arg1)->index(*arg2,*arg3,*arg4,*arg5);
+  resultobj = SWIG_From_long(static_cast< long >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh4d_f_index__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction4D< float > *arg1 = (MeshFunction4D< float > *) 0 ;
+  long **arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  long result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:mesh4d_f_index",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunction4DT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh4d_f_index" "', argument " "1"" of type '" "MeshFunction4D< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction4D< float > * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_p_long,  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "mesh4d_f_index" "', argument " "2"" of type '" "long *&""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "mesh4d_f_index" "', argument " "2"" of type '" "long *&""'"); 
+  }
+  arg2 = reinterpret_cast< long ** >(argp2);
+  result = (long)(arg1)->index(*arg2);
+  resultobj = SWIG_From_long(static_cast< long >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh4d_f_index(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[6] = {
+    0
+  };
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 5) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_MeshFunction4DT_float_t, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_p_long, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap_mesh4d_f_index__SWIG_1(self, args);
+      }
+    }
+  }
+  if (argc == 5) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_MeshFunction4DT_float_t, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_long, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        void *vptr = 0;
+        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_long, 0);
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          void *vptr = 0;
+          int res = SWIG_ConvertPtr(argv[3], &vptr, SWIGTYPE_p_long, 0);
+          _v = SWIG_CheckState(res);
+          if (_v) {
+            void *vptr = 0;
+            int res = SWIG_ConvertPtr(argv[4], &vptr, SWIGTYPE_p_long, 0);
+            _v = SWIG_CheckState(res);
+            if (_v) {
+              return _wrap_mesh4d_f_index__SWIG_0(self, args);
+            }
+          }
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'mesh4d_f_index'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    MeshFunction4D< float >::index(long &,long &,long &,long &)\n"
+    "    MeshFunction4D< float >::index(long *&)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh4d_f_val__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction4D< float > *arg1 = (MeshFunction4D< float > *) 0 ;
+  long *arg2 = (long *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  float *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:mesh4d_f_val",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunction4DT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh4d_f_val" "', argument " "1"" of type '" "MeshFunction4D< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction4D< float > * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_long, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "mesh4d_f_val" "', argument " "2"" of type '" "long *""'"); 
+  }
+  arg2 = reinterpret_cast< long * >(argp2);
+  result = (float *) &(arg1)->val(arg2);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_float, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh4d_f_val__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction4D< float > *arg1 = (MeshFunction4D< float > *) 0 ;
+  long arg2 ;
+  long arg3 ;
+  long arg4 ;
+  long arg5 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  long val2 ;
+  int ecode2 = 0 ;
+  long val3 ;
+  int ecode3 = 0 ;
+  long val4 ;
+  int ecode4 = 0 ;
+  long val5 ;
+  int ecode5 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  PyObject * obj4 = 0 ;
+  float *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOOO:mesh4d_f_val",&obj0,&obj1,&obj2,&obj3,&obj4)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunction4DT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh4d_f_val" "', argument " "1"" of type '" "MeshFunction4D< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction4D< float > * >(argp1);
+  ecode2 = SWIG_AsVal_long(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "mesh4d_f_val" "', argument " "2"" of type '" "long""'");
+  } 
+  arg2 = static_cast< long >(val2);
+  ecode3 = SWIG_AsVal_long(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "mesh4d_f_val" "', argument " "3"" of type '" "long""'");
+  } 
+  arg3 = static_cast< long >(val3);
+  ecode4 = SWIG_AsVal_long(obj3, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "mesh4d_f_val" "', argument " "4"" of type '" "long""'");
+  } 
+  arg4 = static_cast< long >(val4);
+  ecode5 = SWIG_AsVal_long(obj4, &val5);
+  if (!SWIG_IsOK(ecode5)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "mesh4d_f_val" "', argument " "5"" of type '" "long""'");
+  } 
+  arg5 = static_cast< long >(val5);
+  result = (float *) &(arg1)->val(arg2,arg3,arg4,arg5);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_float, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh4d_f_val(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[6] = {
+    0
+  };
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 5) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_MeshFunction4DT_float_t, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_long, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap_mesh4d_f_val__SWIG_0(self, args);
+      }
+    }
+  }
+  if (argc == 5) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_MeshFunction4DT_float_t, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_long(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_long(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          {
+            int res = SWIG_AsVal_long(argv[3], NULL);
+            _v = SWIG_CheckState(res);
+          }
+          if (_v) {
+            {
+              int res = SWIG_AsVal_long(argv[4], NULL);
+              _v = SWIG_CheckState(res);
+            }
+            if (_v) {
+              return _wrap_mesh4d_f_val__SWIG_1(self, args);
+            }
+          }
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'mesh4d_f_val'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    MeshFunction4D< float >::val(long *)\n"
+    "    MeshFunction4D< float >::val(long,long,long,long)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh4d_f___call__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction4D< float > *arg1 = (MeshFunction4D< float > *) 0 ;
+  long arg2 ;
+  long arg3 ;
+  long arg4 ;
+  long arg5 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  long val2 ;
+  int ecode2 = 0 ;
+  long val3 ;
+  int ecode3 = 0 ;
+  long val4 ;
+  int ecode4 = 0 ;
+  long val5 ;
+  int ecode5 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  PyObject * obj4 = 0 ;
+  float *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOOO:mesh4d_f___call__",&obj0,&obj1,&obj2,&obj3,&obj4)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunction4DT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh4d_f___call__" "', argument " "1"" of type '" "MeshFunction4D< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction4D< float > * >(argp1);
+  ecode2 = SWIG_AsVal_long(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "mesh4d_f___call__" "', argument " "2"" of type '" "long""'");
+  } 
+  arg2 = static_cast< long >(val2);
+  ecode3 = SWIG_AsVal_long(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "mesh4d_f___call__" "', argument " "3"" of type '" "long""'");
+  } 
+  arg3 = static_cast< long >(val3);
+  ecode4 = SWIG_AsVal_long(obj3, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "mesh4d_f___call__" "', argument " "4"" of type '" "long""'");
+  } 
+  arg4 = static_cast< long >(val4);
+  ecode5 = SWIG_AsVal_long(obj4, &val5);
+  if (!SWIG_IsOK(ecode5)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "mesh4d_f___call__" "', argument " "5"" of type '" "long""'");
+  } 
+  arg5 = static_cast< long >(val5);
+  result = (float *) &(arg1)->operator ()(arg2,arg3,arg4,arg5);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_float, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh4d_f_getval(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction4D< float > *arg1 = (MeshFunction4D< float > *) 0 ;
+  long arg2 ;
+  long arg3 ;
+  long arg4 ;
+  long arg5 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  long val2 ;
+  int ecode2 = 0 ;
+  long val3 ;
+  int ecode3 = 0 ;
+  long val4 ;
+  int ecode4 = 0 ;
+  long val5 ;
+  int ecode5 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  PyObject * obj4 = 0 ;
+  float result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOOO:mesh4d_f_getval",&obj0,&obj1,&obj2,&obj3,&obj4)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunction4DT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh4d_f_getval" "', argument " "1"" of type '" "MeshFunction4D< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction4D< float > * >(argp1);
+  ecode2 = SWIG_AsVal_long(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "mesh4d_f_getval" "', argument " "2"" of type '" "long""'");
+  } 
+  arg2 = static_cast< long >(val2);
+  ecode3 = SWIG_AsVal_long(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "mesh4d_f_getval" "', argument " "3"" of type '" "long""'");
+  } 
+  arg3 = static_cast< long >(val3);
+  ecode4 = SWIG_AsVal_long(obj3, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "mesh4d_f_getval" "', argument " "4"" of type '" "long""'");
+  } 
+  arg4 = static_cast< long >(val4);
+  ecode5 = SWIG_AsVal_long(obj4, &val5);
+  if (!SWIG_IsOK(ecode5)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "mesh4d_f_getval" "', argument " "5"" of type '" "long""'");
+  } 
+  arg5 = static_cast< long >(val5);
+  result = (float)(arg1)->getval(arg2,arg3,arg4,arg5);
+  resultobj = SWIG_From_float(static_cast< float >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh4d_f_setval(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction4D< float > *arg1 = (MeshFunction4D< float > *) 0 ;
+  float arg2 ;
+  long arg3 ;
+  long arg4 ;
+  long arg5 ;
+  long arg6 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  float val2 ;
+  int ecode2 = 0 ;
+  long val3 ;
+  int ecode3 = 0 ;
+  long val4 ;
+  int ecode4 = 0 ;
+  long val5 ;
+  int ecode5 = 0 ;
+  long val6 ;
+  int ecode6 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  PyObject * obj4 = 0 ;
+  PyObject * obj5 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOOOO:mesh4d_f_setval",&obj0,&obj1,&obj2,&obj3,&obj4,&obj5)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunction4DT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh4d_f_setval" "', argument " "1"" of type '" "MeshFunction4D< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction4D< float > * >(argp1);
+  ecode2 = SWIG_AsVal_float(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "mesh4d_f_setval" "', argument " "2"" of type '" "float""'");
+  } 
+  arg2 = static_cast< float >(val2);
+  ecode3 = SWIG_AsVal_long(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "mesh4d_f_setval" "', argument " "3"" of type '" "long""'");
+  } 
+  arg3 = static_cast< long >(val3);
+  ecode4 = SWIG_AsVal_long(obj3, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "mesh4d_f_setval" "', argument " "4"" of type '" "long""'");
+  } 
+  arg4 = static_cast< long >(val4);
+  ecode5 = SWIG_AsVal_long(obj4, &val5);
+  if (!SWIG_IsOK(ecode5)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "mesh4d_f_setval" "', argument " "5"" of type '" "long""'");
+  } 
+  arg5 = static_cast< long >(val5);
+  ecode6 = SWIG_AsVal_long(obj5, &val6);
+  if (!SWIG_IsOK(ecode6)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode6), "in method '" "mesh4d_f_setval" "', argument " "6"" of type '" "long""'");
+  } 
+  arg6 = static_cast< long >(val6);
+  (arg1)->setval(arg2,arg3,arg4,arg5,arg6);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh4d_f_getpage(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunction4D< float > *arg1 = (MeshFunction4D< float > *) 0 ;
+  long arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  long val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  MeshFunction3D< float > *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:mesh4d_f_getpage",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunction4DT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh4d_f_getpage" "', argument " "1"" of type '" "MeshFunction4D< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunction4D< float > * >(argp1);
+  ecode2 = SWIG_AsVal_long(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "mesh4d_f_getpage" "', argument " "2"" of type '" "long""'");
+  } 
+  arg2 = static_cast< long >(val2);
+  result = (MeshFunction3D< float > *)(arg1)->getpage(arg2);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_MeshFunction3DT_float_t, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *mesh4d_f_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O:swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_MeshFunction4DT_float_t, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *_wrap_new_mesh34d_f__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunctionPseudo4D< float > *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)":new_mesh34d_f")) SWIG_fail;
+  result = (MeshFunctionPseudo4D< float > *)new MeshFunctionPseudo4D< float >();
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_MeshFunctionPseudo4DT_float_t, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_mesh34d_f__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  long arg1 ;
+  long arg2 ;
+  long arg3 ;
+  long val1 ;
+  int ecode1 = 0 ;
+  long val2 ;
+  int ecode2 = 0 ;
+  long val3 ;
+  int ecode3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  MeshFunctionPseudo4D< float > *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:new_mesh34d_f",&obj0,&obj1,&obj2)) SWIG_fail;
+  ecode1 = SWIG_AsVal_long(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_mesh34d_f" "', argument " "1"" of type '" "long""'");
+  } 
+  arg1 = static_cast< long >(val1);
+  ecode2 = SWIG_AsVal_long(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_mesh34d_f" "', argument " "2"" of type '" "long""'");
+  } 
+  arg2 = static_cast< long >(val2);
+  ecode3 = SWIG_AsVal_long(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "new_mesh34d_f" "', argument " "3"" of type '" "long""'");
+  } 
+  arg3 = static_cast< long >(val3);
+  result = (MeshFunctionPseudo4D< float > *)new MeshFunctionPseudo4D< float >(arg1,arg2,arg3);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_MeshFunctionPseudo4DT_float_t, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_mesh34d_f__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  long arg1 ;
+  long arg2 ;
+  long arg3 ;
+  long arg4 ;
+  long val1 ;
+  int ecode1 = 0 ;
+  long val2 ;
+  int ecode2 = 0 ;
+  long val3 ;
+  int ecode3 = 0 ;
+  long val4 ;
+  int ecode4 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  MeshFunctionPseudo4D< float > *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOO:new_mesh34d_f",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
+  ecode1 = SWIG_AsVal_long(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_mesh34d_f" "', argument " "1"" of type '" "long""'");
+  } 
+  arg1 = static_cast< long >(val1);
+  ecode2 = SWIG_AsVal_long(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_mesh34d_f" "', argument " "2"" of type '" "long""'");
+  } 
+  arg2 = static_cast< long >(val2);
+  ecode3 = SWIG_AsVal_long(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "new_mesh34d_f" "', argument " "3"" of type '" "long""'");
+  } 
+  arg3 = static_cast< long >(val3);
+  ecode4 = SWIG_AsVal_long(obj3, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "new_mesh34d_f" "', argument " "4"" of type '" "long""'");
+  } 
+  arg4 = static_cast< long >(val4);
+  result = (MeshFunctionPseudo4D< float > *)new MeshFunctionPseudo4D< float >(arg1,arg2,arg3,arg4);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_MeshFunctionPseudo4DT_float_t, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_mesh34d_f(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[5] = {
+    0
+  };
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 4) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 0) {
+    return _wrap_new_mesh34d_f__SWIG_0(self, args);
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      int res = SWIG_AsVal_long(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_long(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_long(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          return _wrap_new_mesh34d_f__SWIG_1(self, args);
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    {
+      int res = SWIG_AsVal_long(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_long(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_long(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          {
+            int res = SWIG_AsVal_long(argv[3], NULL);
+            _v = SWIG_CheckState(res);
+          }
+          if (_v) {
+            return _wrap_new_mesh34d_f__SWIG_2(self, args);
+          }
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'new_mesh34d_f'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    MeshFunctionPseudo4D< float >::MeshFunctionPseudo4D()\n"
+    "    MeshFunctionPseudo4D< float >::MeshFunctionPseudo4D(long,long,long)\n"
+    "    MeshFunctionPseudo4D< float >::MeshFunctionPseudo4D(long,long,long,long)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_mesh34d_f(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunctionPseudo4D< float > *arg1 = (MeshFunctionPseudo4D< float > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_mesh34d_f",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunctionPseudo4DT_float_t, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_mesh34d_f" "', argument " "1"" of type '" "MeshFunctionPseudo4D< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunctionPseudo4D< float > * >(argp1);
+  delete arg1;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh34d_f_index__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunctionPseudo4D< float > *arg1 = (MeshFunctionPseudo4D< float > *) 0 ;
+  long *arg2 = 0 ;
+  long *arg3 = 0 ;
+  long *arg4 = 0 ;
+  long *arg5 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  void *argp4 = 0 ;
+  int res4 = 0 ;
+  void *argp5 = 0 ;
+  int res5 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  PyObject * obj4 = 0 ;
+  long result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOOO:mesh34d_f_index",&obj0,&obj1,&obj2,&obj3,&obj4)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunctionPseudo4DT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh34d_f_index" "', argument " "1"" of type '" "MeshFunctionPseudo4D< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunctionPseudo4D< float > * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_long,  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "mesh34d_f_index" "', argument " "2"" of type '" "long &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "mesh34d_f_index" "', argument " "2"" of type '" "long &""'"); 
+  }
+  arg2 = reinterpret_cast< long * >(argp2);
+  res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_long,  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "mesh34d_f_index" "', argument " "3"" of type '" "long &""'"); 
+  }
+  if (!argp3) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "mesh34d_f_index" "', argument " "3"" of type '" "long &""'"); 
+  }
+  arg3 = reinterpret_cast< long * >(argp3);
+  res4 = SWIG_ConvertPtr(obj3, &argp4, SWIGTYPE_p_long,  0 );
+  if (!SWIG_IsOK(res4)) {
+    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "mesh34d_f_index" "', argument " "4"" of type '" "long &""'"); 
+  }
+  if (!argp4) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "mesh34d_f_index" "', argument " "4"" of type '" "long &""'"); 
+  }
+  arg4 = reinterpret_cast< long * >(argp4);
+  res5 = SWIG_ConvertPtr(obj4, &argp5, SWIGTYPE_p_long,  0 );
+  if (!SWIG_IsOK(res5)) {
+    SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "mesh34d_f_index" "', argument " "5"" of type '" "long &""'"); 
+  }
+  if (!argp5) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "mesh34d_f_index" "', argument " "5"" of type '" "long &""'"); 
+  }
+  arg5 = reinterpret_cast< long * >(argp5);
+  result = (long)(arg1)->index(*arg2,*arg3,*arg4,*arg5);
+  resultobj = SWIG_From_long(static_cast< long >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh34d_f_index__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunctionPseudo4D< float > *arg1 = (MeshFunctionPseudo4D< float > *) 0 ;
+  long **arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  long result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:mesh34d_f_index",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunctionPseudo4DT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh34d_f_index" "', argument " "1"" of type '" "MeshFunctionPseudo4D< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunctionPseudo4D< float > * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_p_long,  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "mesh34d_f_index" "', argument " "2"" of type '" "long *&""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "mesh34d_f_index" "', argument " "2"" of type '" "long *&""'"); 
+  }
+  arg2 = reinterpret_cast< long ** >(argp2);
+  result = (long)(arg1)->index(*arg2);
+  resultobj = SWIG_From_long(static_cast< long >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh34d_f_index(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[6] = {
+    0
+  };
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 5) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_MeshFunctionPseudo4DT_float_t, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_p_long, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap_mesh34d_f_index__SWIG_1(self, args);
+      }
+    }
+  }
+  if (argc == 5) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_MeshFunctionPseudo4DT_float_t, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_long, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        void *vptr = 0;
+        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_long, 0);
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          void *vptr = 0;
+          int res = SWIG_ConvertPtr(argv[3], &vptr, SWIGTYPE_p_long, 0);
+          _v = SWIG_CheckState(res);
+          if (_v) {
+            void *vptr = 0;
+            int res = SWIG_ConvertPtr(argv[4], &vptr, SWIGTYPE_p_long, 0);
+            _v = SWIG_CheckState(res);
+            if (_v) {
+              return _wrap_mesh34d_f_index__SWIG_0(self, args);
+            }
+          }
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'mesh34d_f_index'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    MeshFunctionPseudo4D< float >::index(long &,long &,long &,long &)\n"
+    "    MeshFunctionPseudo4D< float >::index(long *&)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_mesh34d_f_val(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  MeshFunctionPseudo4D< float > *arg1 = (MeshFunctionPseudo4D< float > *) 0 ;
+  long *arg2 = (long *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  float *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:mesh34d_f_val",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_MeshFunctionPseudo4DT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "mesh34d_f_val" "', argument " "1"" of type '" "MeshFunctionPseudo4D< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< MeshFunctionPseudo4D< float > * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_long, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "mesh34d_f_val" "', argument " "2"" of type '" "long *""'"); 
+  }
+  arg2 = reinterpret_cast< long * >(argp2);
+  result = (float *) &(arg1)->val(arg2);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_float, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *mesh34d_f_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O:swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_MeshFunctionPseudo4DT_float_t, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
 SWIGINTERN PyObject *_wrap_mesh1d_d_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   MeshFunction< double > *arg1 = (MeshFunction< double > *) 0 ;
@@ -6285,203 +8839,602 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_ShareMemoryMesh3(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_pbheSolve_f__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
-  double *arg1 = (double *) 0 ;
-  int arg2 ;
-  int arg3 ;
-  int arg4 ;
-  double *arg5 = (double *) 0 ;
-  int arg6 ;
-  MeshFunction3D< double > *arg7 = (MeshFunction3D< double > *) 0 ;
-  PyArrayObject *array1 = NULL ;
-  int is_new_object1 = 0 ;
-  PyArrayObject *array5 = NULL ;
-  int i5 = 1 ;
+  int arg1 ;
+  float arg2 ;
+  float arg3 ;
+  float arg4 ;
+  float arg5 ;
+  MeshFunction4D< float > *arg6 = (MeshFunction4D< float > *) 0 ;
+  MeshFunction4D< float > *arg7 = (MeshFunction4D< float > *) 0 ;
+  MeshFunction3D< float > *arg8 = (MeshFunction3D< float > *) 0 ;
+  MeshFunction3D< float > *arg9 = (MeshFunction3D< float > *) 0 ;
+  float arg10 ;
+  float arg11 ;
+  long arg12 ;
+  long arg13 ;
+  int val1 ;
+  int ecode1 = 0 ;
+  float val2 ;
+  int ecode2 = 0 ;
+  float val3 ;
+  int ecode3 = 0 ;
+  float val4 ;
+  int ecode4 = 0 ;
+  float val5 ;
+  int ecode5 = 0 ;
+  void *argp6 = 0 ;
+  int res6 = 0 ;
   void *argp7 = 0 ;
   int res7 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOO:ShareMemoryMesh3",&obj0,&obj1,&obj2)) SWIG_fail;
-  {
-    npy_intp size[3] = {
-      -1, -1, -1 
-    };
-    array1 = obj_to_array_contiguous_allow_conversion(obj0, NPY_DOUBLE,
-      &is_new_object1);
-    if (!array1 || !require_dimensions(array1, 3) ||
-      !require_size(array1, size, 3)) SWIG_fail;
-    arg1 = (double*) array_data(array1);
-    arg2 = (int) array_size(array1,0);
-    arg3 = (int) array_size(array1,1);
-    arg4 = (int) array_size(array1,2);
-  }
-  {
-    array5 = obj_to_array_no_conversion(obj1, NPY_DOUBLE);
-    if (!array5 || !require_dimensions(array5,1) || !require_contiguous(array5)
-      || !require_native(array5)) SWIG_fail;
-    arg5 = (double*) array_data(array5);
-    arg6 = 1;
-    for (i5=0; i5 < array_numdims(array5); ++i5) arg6 *= array_size(array5,i5);
-  }
-  res7 = SWIG_ConvertPtr(obj2, &argp7,SWIGTYPE_p_MeshFunction3DT_double_t, 0 |  0 );
-  if (!SWIG_IsOK(res7)) {
-    SWIG_exception_fail(SWIG_ArgError(res7), "in method '" "ShareMemoryMesh3" "', argument " "7"" of type '" "MeshFunction3D< double > *""'"); 
-  }
-  arg7 = reinterpret_cast< MeshFunction3D< double > * >(argp7);
-  ShareMemoryMesh3(arg1,arg2,arg3,arg4,arg5,arg6,arg7);
-  resultobj = SWIG_Py_Void();
-  {
-    if (is_new_object1 && array1)
-    {
-      Py_DECREF(array1); 
-    }
-  }
-  return resultobj;
-fail:
-  {
-    if (is_new_object1 && array1)
-    {
-      Py_DECREF(array1); 
-    }
-  }
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_ShareMemoryMesh34(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  double *arg1 = (double *) 0 ;
-  int arg2 ;
-  int arg3 ;
-  int arg4 ;
-  double *arg5 = (double *) 0 ;
-  int arg6 ;
-  MeshFunctionPseudo4D< double > *arg7 = (MeshFunctionPseudo4D< double > *) 0 ;
-  PyArrayObject *array1 = NULL ;
-  int is_new_object1 = 0 ;
-  PyArrayObject *array5 = NULL ;
-  int i5 = 1 ;
-  void *argp7 = 0 ;
-  int res7 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOO:ShareMemoryMesh34",&obj0,&obj1,&obj2)) SWIG_fail;
-  {
-    npy_intp size[3] = {
-      -1, -1, -1 
-    };
-    array1 = obj_to_array_contiguous_allow_conversion(obj0, NPY_DOUBLE,
-      &is_new_object1);
-    if (!array1 || !require_dimensions(array1, 3) ||
-      !require_size(array1, size, 3)) SWIG_fail;
-    arg1 = (double*) array_data(array1);
-    arg2 = (int) array_size(array1,0);
-    arg3 = (int) array_size(array1,1);
-    arg4 = (int) array_size(array1,2);
-  }
-  {
-    array5 = obj_to_array_no_conversion(obj1, NPY_DOUBLE);
-    if (!array5 || !require_dimensions(array5,1) || !require_contiguous(array5)
-      || !require_native(array5)) SWIG_fail;
-    arg5 = (double*) array_data(array5);
-    arg6 = 1;
-    for (i5=0; i5 < array_numdims(array5); ++i5) arg6 *= array_size(array5,i5);
-  }
-  res7 = SWIG_ConvertPtr(obj2, &argp7,SWIGTYPE_p_MeshFunctionPseudo4DT_double_t, 0 |  0 );
-  if (!SWIG_IsOK(res7)) {
-    SWIG_exception_fail(SWIG_ArgError(res7), "in method '" "ShareMemoryMesh34" "', argument " "7"" of type '" "MeshFunctionPseudo4D< double > *""'"); 
-  }
-  arg7 = reinterpret_cast< MeshFunctionPseudo4D< double > * >(argp7);
-  ShareMemoryMesh34(arg1,arg2,arg3,arg4,arg5,arg6,arg7);
-  resultobj = SWIG_Py_Void();
-  {
-    if (is_new_object1 && array1)
-    {
-      Py_DECREF(array1); 
-    }
-  }
-  return resultobj;
-fail:
-  {
-    if (is_new_object1 && array1)
-    {
-      Py_DECREF(array1); 
-    }
-  }
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_ShareMemoryMesh4(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  double *arg1 = (double *) 0 ;
-  int arg2 ;
-  int arg3 ;
-  int arg4 ;
-  int arg5 ;
-  double *arg6 = (double *) 0 ;
-  int arg7 ;
-  MeshFunction4D< double > *arg8 = (MeshFunction4D< double > *) 0 ;
-  PyArrayObject *array1 = NULL ;
-  int is_new_object1 = 0 ;
-  PyArrayObject *array6 = NULL ;
-  int i6 = 1 ;
   void *argp8 = 0 ;
   int res8 = 0 ;
+  void *argp9 = 0 ;
+  int res9 = 0 ;
+  float val10 ;
+  int ecode10 = 0 ;
+  float val11 ;
+  int ecode11 = 0 ;
+  long val12 ;
+  int ecode12 = 0 ;
+  long val13 ;
+  int ecode13 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  PyObject * obj4 = 0 ;
+  PyObject * obj5 = 0 ;
+  PyObject * obj6 = 0 ;
+  PyObject * obj7 = 0 ;
+  PyObject * obj8 = 0 ;
+  PyObject * obj9 = 0 ;
+  PyObject * obj10 = 0 ;
+  PyObject * obj11 = 0 ;
+  PyObject * obj12 = 0 ;
   
-  if (!PyArg_ParseTuple(args,(char *)"OOO:ShareMemoryMesh4",&obj0,&obj1,&obj2)) SWIG_fail;
-  {
-    npy_intp size[4] = {
-      -1, -1, -1, -1 
-    };
-    array1 = obj_to_array_contiguous_allow_conversion(obj0, NPY_DOUBLE,
-      &is_new_object1);
-    if (!array1 || !require_dimensions(array1, 4) ||
-      !require_size(array1, size, 4)) SWIG_fail;
-    arg1 = (double*) array_data(array1);
-    arg2 = (int) array_size(array1,0);
-    arg3 = (int) array_size(array1,1);
-    arg4 = (int) array_size(array1,2);
-    arg5 = (int) array_size(array1,3);
+  if (!PyArg_ParseTuple(args,(char *)"OOOOOOOOOOOOO:pbheSolve_f",&obj0,&obj1,&obj2,&obj3,&obj4,&obj5,&obj6,&obj7,&obj8,&obj9,&obj10,&obj11,&obj12)) SWIG_fail;
+  ecode1 = SWIG_AsVal_int(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "pbheSolve_f" "', argument " "1"" of type '" "int""'");
+  } 
+  arg1 = static_cast< int >(val1);
+  ecode2 = SWIG_AsVal_float(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "pbheSolve_f" "', argument " "2"" of type '" "float""'");
+  } 
+  arg2 = static_cast< float >(val2);
+  ecode3 = SWIG_AsVal_float(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "pbheSolve_f" "', argument " "3"" of type '" "float""'");
+  } 
+  arg3 = static_cast< float >(val3);
+  ecode4 = SWIG_AsVal_float(obj3, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "pbheSolve_f" "', argument " "4"" of type '" "float""'");
+  } 
+  arg4 = static_cast< float >(val4);
+  ecode5 = SWIG_AsVal_float(obj4, &val5);
+  if (!SWIG_IsOK(ecode5)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "pbheSolve_f" "', argument " "5"" of type '" "float""'");
+  } 
+  arg5 = static_cast< float >(val5);
+  res6 = SWIG_ConvertPtr(obj5, &argp6,SWIGTYPE_p_MeshFunction4DT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res6)) {
+    SWIG_exception_fail(SWIG_ArgError(res6), "in method '" "pbheSolve_f" "', argument " "6"" of type '" "MeshFunction4D< float > *""'"); 
   }
-  {
-    array6 = obj_to_array_no_conversion(obj1, NPY_DOUBLE);
-    if (!array6 || !require_dimensions(array6,1) || !require_contiguous(array6)
-      || !require_native(array6)) SWIG_fail;
-    arg6 = (double*) array_data(array6);
-    arg7 = 1;
-    for (i6=0; i6 < array_numdims(array6); ++i6) arg7 *= array_size(array6,i6);
+  arg6 = reinterpret_cast< MeshFunction4D< float > * >(argp6);
+  res7 = SWIG_ConvertPtr(obj6, &argp7,SWIGTYPE_p_MeshFunction4DT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res7)) {
+    SWIG_exception_fail(SWIG_ArgError(res7), "in method '" "pbheSolve_f" "', argument " "7"" of type '" "MeshFunction4D< float > *""'"); 
   }
-  res8 = SWIG_ConvertPtr(obj2, &argp8,SWIGTYPE_p_MeshFunction4DT_double_t, 0 |  0 );
+  arg7 = reinterpret_cast< MeshFunction4D< float > * >(argp7);
+  res8 = SWIG_ConvertPtr(obj7, &argp8,SWIGTYPE_p_MeshFunction3DT_float_t, 0 |  0 );
   if (!SWIG_IsOK(res8)) {
-    SWIG_exception_fail(SWIG_ArgError(res8), "in method '" "ShareMemoryMesh4" "', argument " "8"" of type '" "MeshFunction4D< double > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res8), "in method '" "pbheSolve_f" "', argument " "8"" of type '" "MeshFunction3D< float > *""'"); 
   }
-  arg8 = reinterpret_cast< MeshFunction4D< double > * >(argp8);
-  ShareMemoryMesh4(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8);
+  arg8 = reinterpret_cast< MeshFunction3D< float > * >(argp8);
+  res9 = SWIG_ConvertPtr(obj8, &argp9,SWIGTYPE_p_MeshFunction3DT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res9)) {
+    SWIG_exception_fail(SWIG_ArgError(res9), "in method '" "pbheSolve_f" "', argument " "9"" of type '" "MeshFunction3D< float > *""'"); 
+  }
+  arg9 = reinterpret_cast< MeshFunction3D< float > * >(argp9);
+  ecode10 = SWIG_AsVal_float(obj9, &val10);
+  if (!SWIG_IsOK(ecode10)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode10), "in method '" "pbheSolve_f" "', argument " "10"" of type '" "float""'");
+  } 
+  arg10 = static_cast< float >(val10);
+  ecode11 = SWIG_AsVal_float(obj10, &val11);
+  if (!SWIG_IsOK(ecode11)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode11), "in method '" "pbheSolve_f" "', argument " "11"" of type '" "float""'");
+  } 
+  arg11 = static_cast< float >(val11);
+  ecode12 = SWIG_AsVal_long(obj11, &val12);
+  if (!SWIG_IsOK(ecode12)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode12), "in method '" "pbheSolve_f" "', argument " "12"" of type '" "long""'");
+  } 
+  arg12 = static_cast< long >(val12);
+  ecode13 = SWIG_AsVal_long(obj12, &val13);
+  if (!SWIG_IsOK(ecode13)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode13), "in method '" "pbheSolve_f" "', argument " "13"" of type '" "long""'");
+  } 
+  arg13 = static_cast< long >(val13);
+  pbheSolve_f(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11,arg12,arg13);
   resultobj = SWIG_Py_Void();
-  {
-    if (is_new_object1 && array1)
-    {
-      Py_DECREF(array1); 
-    }
-  }
   return resultobj;
 fail:
-  {
-    if (is_new_object1 && array1)
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_pbheSolve_f__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  int arg1 ;
+  float arg2 ;
+  float arg3 ;
+  float arg4 ;
+  float arg5 ;
+  MeshFunction4D< float > *arg6 = (MeshFunction4D< float > *) 0 ;
+  MeshFunction4D< float > *arg7 = (MeshFunction4D< float > *) 0 ;
+  MeshFunction3D< float > *arg8 = (MeshFunction3D< float > *) 0 ;
+  MeshFunction3D< float > *arg9 = (MeshFunction3D< float > *) 0 ;
+  float arg10 ;
+  float arg11 ;
+  long arg12 ;
+  int val1 ;
+  int ecode1 = 0 ;
+  float val2 ;
+  int ecode2 = 0 ;
+  float val3 ;
+  int ecode3 = 0 ;
+  float val4 ;
+  int ecode4 = 0 ;
+  float val5 ;
+  int ecode5 = 0 ;
+  void *argp6 = 0 ;
+  int res6 = 0 ;
+  void *argp7 = 0 ;
+  int res7 = 0 ;
+  void *argp8 = 0 ;
+  int res8 = 0 ;
+  void *argp9 = 0 ;
+  int res9 = 0 ;
+  float val10 ;
+  int ecode10 = 0 ;
+  float val11 ;
+  int ecode11 = 0 ;
+  long val12 ;
+  int ecode12 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  PyObject * obj4 = 0 ;
+  PyObject * obj5 = 0 ;
+  PyObject * obj6 = 0 ;
+  PyObject * obj7 = 0 ;
+  PyObject * obj8 = 0 ;
+  PyObject * obj9 = 0 ;
+  PyObject * obj10 = 0 ;
+  PyObject * obj11 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOOOOOOOOOO:pbheSolve_f",&obj0,&obj1,&obj2,&obj3,&obj4,&obj5,&obj6,&obj7,&obj8,&obj9,&obj10,&obj11)) SWIG_fail;
+  ecode1 = SWIG_AsVal_int(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "pbheSolve_f" "', argument " "1"" of type '" "int""'");
+  } 
+  arg1 = static_cast< int >(val1);
+  ecode2 = SWIG_AsVal_float(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "pbheSolve_f" "', argument " "2"" of type '" "float""'");
+  } 
+  arg2 = static_cast< float >(val2);
+  ecode3 = SWIG_AsVal_float(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "pbheSolve_f" "', argument " "3"" of type '" "float""'");
+  } 
+  arg3 = static_cast< float >(val3);
+  ecode4 = SWIG_AsVal_float(obj3, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "pbheSolve_f" "', argument " "4"" of type '" "float""'");
+  } 
+  arg4 = static_cast< float >(val4);
+  ecode5 = SWIG_AsVal_float(obj4, &val5);
+  if (!SWIG_IsOK(ecode5)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "pbheSolve_f" "', argument " "5"" of type '" "float""'");
+  } 
+  arg5 = static_cast< float >(val5);
+  res6 = SWIG_ConvertPtr(obj5, &argp6,SWIGTYPE_p_MeshFunction4DT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res6)) {
+    SWIG_exception_fail(SWIG_ArgError(res6), "in method '" "pbheSolve_f" "', argument " "6"" of type '" "MeshFunction4D< float > *""'"); 
+  }
+  arg6 = reinterpret_cast< MeshFunction4D< float > * >(argp6);
+  res7 = SWIG_ConvertPtr(obj6, &argp7,SWIGTYPE_p_MeshFunction4DT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res7)) {
+    SWIG_exception_fail(SWIG_ArgError(res7), "in method '" "pbheSolve_f" "', argument " "7"" of type '" "MeshFunction4D< float > *""'"); 
+  }
+  arg7 = reinterpret_cast< MeshFunction4D< float > * >(argp7);
+  res8 = SWIG_ConvertPtr(obj7, &argp8,SWIGTYPE_p_MeshFunction3DT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res8)) {
+    SWIG_exception_fail(SWIG_ArgError(res8), "in method '" "pbheSolve_f" "', argument " "8"" of type '" "MeshFunction3D< float > *""'"); 
+  }
+  arg8 = reinterpret_cast< MeshFunction3D< float > * >(argp8);
+  res9 = SWIG_ConvertPtr(obj8, &argp9,SWIGTYPE_p_MeshFunction3DT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res9)) {
+    SWIG_exception_fail(SWIG_ArgError(res9), "in method '" "pbheSolve_f" "', argument " "9"" of type '" "MeshFunction3D< float > *""'"); 
+  }
+  arg9 = reinterpret_cast< MeshFunction3D< float > * >(argp9);
+  ecode10 = SWIG_AsVal_float(obj9, &val10);
+  if (!SWIG_IsOK(ecode10)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode10), "in method '" "pbheSolve_f" "', argument " "10"" of type '" "float""'");
+  } 
+  arg10 = static_cast< float >(val10);
+  ecode11 = SWIG_AsVal_float(obj10, &val11);
+  if (!SWIG_IsOK(ecode11)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode11), "in method '" "pbheSolve_f" "', argument " "11"" of type '" "float""'");
+  } 
+  arg11 = static_cast< float >(val11);
+  ecode12 = SWIG_AsVal_long(obj11, &val12);
+  if (!SWIG_IsOK(ecode12)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode12), "in method '" "pbheSolve_f" "', argument " "12"" of type '" "long""'");
+  } 
+  arg12 = static_cast< long >(val12);
+  pbheSolve_f(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11,arg12);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_pbheSolve_f__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  int arg1 ;
+  float arg2 ;
+  float arg3 ;
+  float arg4 ;
+  float arg5 ;
+  MeshFunction4D< float > *arg6 = (MeshFunction4D< float > *) 0 ;
+  MeshFunction4D< float > *arg7 = (MeshFunction4D< float > *) 0 ;
+  MeshFunction3D< float > *arg8 = (MeshFunction3D< float > *) 0 ;
+  MeshFunction3D< float > *arg9 = (MeshFunction3D< float > *) 0 ;
+  float arg10 ;
+  float arg11 ;
+  int val1 ;
+  int ecode1 = 0 ;
+  float val2 ;
+  int ecode2 = 0 ;
+  float val3 ;
+  int ecode3 = 0 ;
+  float val4 ;
+  int ecode4 = 0 ;
+  float val5 ;
+  int ecode5 = 0 ;
+  void *argp6 = 0 ;
+  int res6 = 0 ;
+  void *argp7 = 0 ;
+  int res7 = 0 ;
+  void *argp8 = 0 ;
+  int res8 = 0 ;
+  void *argp9 = 0 ;
+  int res9 = 0 ;
+  float val10 ;
+  int ecode10 = 0 ;
+  float val11 ;
+  int ecode11 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  PyObject * obj4 = 0 ;
+  PyObject * obj5 = 0 ;
+  PyObject * obj6 = 0 ;
+  PyObject * obj7 = 0 ;
+  PyObject * obj8 = 0 ;
+  PyObject * obj9 = 0 ;
+  PyObject * obj10 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOOOOOOOOO:pbheSolve_f",&obj0,&obj1,&obj2,&obj3,&obj4,&obj5,&obj6,&obj7,&obj8,&obj9,&obj10)) SWIG_fail;
+  ecode1 = SWIG_AsVal_int(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "pbheSolve_f" "', argument " "1"" of type '" "int""'");
+  } 
+  arg1 = static_cast< int >(val1);
+  ecode2 = SWIG_AsVal_float(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "pbheSolve_f" "', argument " "2"" of type '" "float""'");
+  } 
+  arg2 = static_cast< float >(val2);
+  ecode3 = SWIG_AsVal_float(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "pbheSolve_f" "', argument " "3"" of type '" "float""'");
+  } 
+  arg3 = static_cast< float >(val3);
+  ecode4 = SWIG_AsVal_float(obj3, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "pbheSolve_f" "', argument " "4"" of type '" "float""'");
+  } 
+  arg4 = static_cast< float >(val4);
+  ecode5 = SWIG_AsVal_float(obj4, &val5);
+  if (!SWIG_IsOK(ecode5)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "pbheSolve_f" "', argument " "5"" of type '" "float""'");
+  } 
+  arg5 = static_cast< float >(val5);
+  res6 = SWIG_ConvertPtr(obj5, &argp6,SWIGTYPE_p_MeshFunction4DT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res6)) {
+    SWIG_exception_fail(SWIG_ArgError(res6), "in method '" "pbheSolve_f" "', argument " "6"" of type '" "MeshFunction4D< float > *""'"); 
+  }
+  arg6 = reinterpret_cast< MeshFunction4D< float > * >(argp6);
+  res7 = SWIG_ConvertPtr(obj6, &argp7,SWIGTYPE_p_MeshFunction4DT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res7)) {
+    SWIG_exception_fail(SWIG_ArgError(res7), "in method '" "pbheSolve_f" "', argument " "7"" of type '" "MeshFunction4D< float > *""'"); 
+  }
+  arg7 = reinterpret_cast< MeshFunction4D< float > * >(argp7);
+  res8 = SWIG_ConvertPtr(obj7, &argp8,SWIGTYPE_p_MeshFunction3DT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res8)) {
+    SWIG_exception_fail(SWIG_ArgError(res8), "in method '" "pbheSolve_f" "', argument " "8"" of type '" "MeshFunction3D< float > *""'"); 
+  }
+  arg8 = reinterpret_cast< MeshFunction3D< float > * >(argp8);
+  res9 = SWIG_ConvertPtr(obj8, &argp9,SWIGTYPE_p_MeshFunction3DT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res9)) {
+    SWIG_exception_fail(SWIG_ArgError(res9), "in method '" "pbheSolve_f" "', argument " "9"" of type '" "MeshFunction3D< float > *""'"); 
+  }
+  arg9 = reinterpret_cast< MeshFunction3D< float > * >(argp9);
+  ecode10 = SWIG_AsVal_float(obj9, &val10);
+  if (!SWIG_IsOK(ecode10)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode10), "in method '" "pbheSolve_f" "', argument " "10"" of type '" "float""'");
+  } 
+  arg10 = static_cast< float >(val10);
+  ecode11 = SWIG_AsVal_float(obj10, &val11);
+  if (!SWIG_IsOK(ecode11)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode11), "in method '" "pbheSolve_f" "', argument " "11"" of type '" "float""'");
+  } 
+  arg11 = static_cast< float >(val11);
+  pbheSolve_f(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_pbheSolve_f(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[14] = {
+    0
+  };
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? (int)PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 13) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 11) {
+    int _v;
     {
-      Py_DECREF(array1); 
+      int res = SWIG_AsVal_int(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_float(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_float(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          {
+            int res = SWIG_AsVal_float(argv[3], NULL);
+            _v = SWIG_CheckState(res);
+          }
+          if (_v) {
+            {
+              int res = SWIG_AsVal_float(argv[4], NULL);
+              _v = SWIG_CheckState(res);
+            }
+            if (_v) {
+              void *vptr = 0;
+              int res = SWIG_ConvertPtr(argv[5], &vptr, SWIGTYPE_p_MeshFunction4DT_float_t, 0);
+              _v = SWIG_CheckState(res);
+              if (_v) {
+                void *vptr = 0;
+                int res = SWIG_ConvertPtr(argv[6], &vptr, SWIGTYPE_p_MeshFunction4DT_float_t, 0);
+                _v = SWIG_CheckState(res);
+                if (_v) {
+                  void *vptr = 0;
+                  int res = SWIG_ConvertPtr(argv[7], &vptr, SWIGTYPE_p_MeshFunction3DT_float_t, 0);
+                  _v = SWIG_CheckState(res);
+                  if (_v) {
+                    void *vptr = 0;
+                    int res = SWIG_ConvertPtr(argv[8], &vptr, SWIGTYPE_p_MeshFunction3DT_float_t, 0);
+                    _v = SWIG_CheckState(res);
+                    if (_v) {
+                      {
+                        int res = SWIG_AsVal_float(argv[9], NULL);
+                        _v = SWIG_CheckState(res);
+                      }
+                      if (_v) {
+                        {
+                          int res = SWIG_AsVal_float(argv[10], NULL);
+                          _v = SWIG_CheckState(res);
+                        }
+                        if (_v) {
+                          return _wrap_pbheSolve_f__SWIG_2(self, args);
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
-  return NULL;
+  if (argc == 12) {
+    int _v;
+    {
+      int res = SWIG_AsVal_int(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_float(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_float(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          {
+            int res = SWIG_AsVal_float(argv[3], NULL);
+            _v = SWIG_CheckState(res);
+          }
+          if (_v) {
+            {
+              int res = SWIG_AsVal_float(argv[4], NULL);
+              _v = SWIG_CheckState(res);
+            }
+            if (_v) {
+              void *vptr = 0;
+              int res = SWIG_ConvertPtr(argv[5], &vptr, SWIGTYPE_p_MeshFunction4DT_float_t, 0);
+              _v = SWIG_CheckState(res);
+              if (_v) {
+                void *vptr = 0;
+                int res = SWIG_ConvertPtr(argv[6], &vptr, SWIGTYPE_p_MeshFunction4DT_float_t, 0);
+                _v = SWIG_CheckState(res);
+                if (_v) {
+                  void *vptr = 0;
+                  int res = SWIG_ConvertPtr(argv[7], &vptr, SWIGTYPE_p_MeshFunction3DT_float_t, 0);
+                  _v = SWIG_CheckState(res);
+                  if (_v) {
+                    void *vptr = 0;
+                    int res = SWIG_ConvertPtr(argv[8], &vptr, SWIGTYPE_p_MeshFunction3DT_float_t, 0);
+                    _v = SWIG_CheckState(res);
+                    if (_v) {
+                      {
+                        int res = SWIG_AsVal_float(argv[9], NULL);
+                        _v = SWIG_CheckState(res);
+                      }
+                      if (_v) {
+                        {
+                          int res = SWIG_AsVal_float(argv[10], NULL);
+                          _v = SWIG_CheckState(res);
+                        }
+                        if (_v) {
+                          {
+                            int res = SWIG_AsVal_long(argv[11], NULL);
+                            _v = SWIG_CheckState(res);
+                          }
+                          if (_v) {
+                            return _wrap_pbheSolve_f__SWIG_1(self, args);
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  if (argc == 13) {
+    int _v;
+    {
+      int res = SWIG_AsVal_int(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_float(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_float(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          {
+            int res = SWIG_AsVal_float(argv[3], NULL);
+            _v = SWIG_CheckState(res);
+          }
+          if (_v) {
+            {
+              int res = SWIG_AsVal_float(argv[4], NULL);
+              _v = SWIG_CheckState(res);
+            }
+            if (_v) {
+              void *vptr = 0;
+              int res = SWIG_ConvertPtr(argv[5], &vptr, SWIGTYPE_p_MeshFunction4DT_float_t, 0);
+              _v = SWIG_CheckState(res);
+              if (_v) {
+                void *vptr = 0;
+                int res = SWIG_ConvertPtr(argv[6], &vptr, SWIGTYPE_p_MeshFunction4DT_float_t, 0);
+                _v = SWIG_CheckState(res);
+                if (_v) {
+                  void *vptr = 0;
+                  int res = SWIG_ConvertPtr(argv[7], &vptr, SWIGTYPE_p_MeshFunction3DT_float_t, 0);
+                  _v = SWIG_CheckState(res);
+                  if (_v) {
+                    void *vptr = 0;
+                    int res = SWIG_ConvertPtr(argv[8], &vptr, SWIGTYPE_p_MeshFunction3DT_float_t, 0);
+                    _v = SWIG_CheckState(res);
+                    if (_v) {
+                      {
+                        int res = SWIG_AsVal_float(argv[9], NULL);
+                        _v = SWIG_CheckState(res);
+                      }
+                      if (_v) {
+                        {
+                          int res = SWIG_AsVal_float(argv[10], NULL);
+                          _v = SWIG_CheckState(res);
+                        }
+                        if (_v) {
+                          {
+                            int res = SWIG_AsVal_long(argv[11], NULL);
+                            _v = SWIG_CheckState(res);
+                          }
+                          if (_v) {
+                            {
+                              int res = SWIG_AsVal_long(argv[12], NULL);
+                              _v = SWIG_CheckState(res);
+                            }
+                            if (_v) {
+                              return _wrap_pbheSolve_f__SWIG_0(self, args);
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'pbheSolve_f'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    pbheSolve_f(int,float,float,float,float,MeshFunction4D< float > *,MeshFunction4D< float > *,MeshFunction3D< float > *,MeshFunction3D< float > *,float,float,long,long)\n"
+    "    pbheSolve_f(int,float,float,float,float,MeshFunction4D< float > *,MeshFunction4D< float > *,MeshFunction3D< float > *,MeshFunction3D< float > *,float,float,long)\n"
+    "    pbheSolve_f(int,float,float,float,float,MeshFunction4D< float > *,MeshFunction4D< float > *,MeshFunction3D< float > *,MeshFunction3D< float > *,float,float)\n");
+  return 0;
 }
 
 
@@ -6606,7 +9559,7 @@ SWIGINTERN PyObject *_wrap_pbheSolve__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyO
     SWIG_exception_fail(SWIG_ArgError(ecode13), "in method '" "pbheSolve" "', argument " "13"" of type '" "long""'");
   } 
   arg13 = static_cast< long >(val13);
-  Pennes_Perfused_SolveCube_interface< double >(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11,arg12,arg13);
+  pbheSolve(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11,arg12,arg13);
   resultobj = SWIG_Py_Void();
   return resultobj;
 fail:
@@ -6726,7 +9679,7 @@ SWIGINTERN PyObject *_wrap_pbheSolve__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyO
     SWIG_exception_fail(SWIG_ArgError(ecode12), "in method '" "pbheSolve" "', argument " "12"" of type '" "long""'");
   } 
   arg12 = static_cast< long >(val12);
-  Pennes_Perfused_SolveCube_interface< double >(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11,arg12);
+  pbheSolve(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11,arg12);
   resultobj = SWIG_Py_Void();
   return resultobj;
 fail:
@@ -6837,7 +9790,7 @@ SWIGINTERN PyObject *_wrap_pbheSolve__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyO
     SWIG_exception_fail(SWIG_ArgError(ecode11), "in method '" "pbheSolve" "', argument " "11"" of type '" "double""'");
   } 
   arg11 = static_cast< double >(val11);
-  Pennes_Perfused_SolveCube_interface< double >(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11);
+  pbheSolve(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11);
   resultobj = SWIG_Py_Void();
   return resultobj;
 fail:
@@ -7077,15 +10030,560 @@ SWIGINTERN PyObject *_wrap_pbheSolve(PyObject *self, PyObject *args) {
 fail:
   SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'pbheSolve'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    Pennes_Perfused_SolveCube_interface< double >(int,double,double,double,double,MeshFunction4D< double > *,MeshFunction4D< double > *,MeshFunction3D< double > *,MeshFunction3D< double > *,double,double,long,long)\n"
-    "    Pennes_Perfused_SolveCube_interface< double >(int,double,double,double,double,MeshFunction4D< double > *,MeshFunction4D< double > *,MeshFunction3D< double > *,MeshFunction3D< double > *,double,double,long)\n"
-    "    Pennes_Perfused_SolveCube_interface< double >(int,double,double,double,double,MeshFunction4D< double > *,MeshFunction4D< double > *,MeshFunction3D< double > *,MeshFunction3D< double > *,double,double)\n");
+    "    pbheSolve(int,double,double,double,double,MeshFunction4D< double > *,MeshFunction4D< double > *,MeshFunction3D< double > *,MeshFunction3D< double > *,double,double,long,long)\n"
+    "    pbheSolve(int,double,double,double,double,MeshFunction4D< double > *,MeshFunction4D< double > *,MeshFunction3D< double > *,MeshFunction3D< double > *,double,double,long)\n"
+    "    pbheSolve(int,double,double,double,double,MeshFunction4D< double > *,MeshFunction4D< double > *,MeshFunction3D< double > *,MeshFunction3D< double > *,double,double)\n");
   return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_ShareMemoryMesh3(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  double *arg1 = (double *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  int arg4 ;
+  double *arg5 = (double *) 0 ;
+  int arg6 ;
+  MeshFunction3D< double > *arg7 = (MeshFunction3D< double > *) 0 ;
+  PyArrayObject *array1 = NULL ;
+  int is_new_object1 = 0 ;
+  PyArrayObject *array5 = NULL ;
+  int is_new_object5 = 0 ;
+  void *argp7 = 0 ;
+  int res7 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:ShareMemoryMesh3",&obj0,&obj1,&obj2)) SWIG_fail;
+  {
+    npy_intp size[3] = {
+      -1, -1, -1 
+    };
+    array1 = obj_to_array_contiguous_allow_conversion(obj0, NPY_DOUBLE,
+      &is_new_object1);
+    if (!array1 || !require_dimensions(array1, 3) ||
+      !require_size(array1, size, 3)) SWIG_fail;
+    arg1 = (double*) array_data(array1);
+    arg2 = (int) array_size(array1,0);
+    arg3 = (int) array_size(array1,1);
+    arg4 = (int) array_size(array1,2);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array5 = obj_to_array_contiguous_allow_conversion(obj1,
+      NPY_DOUBLE,
+      &is_new_object5);
+    if (!array5 || !require_dimensions(array5, 1) ||
+      !require_size(array5, size, 1)) SWIG_fail;
+    arg5 = (double*) array_data(array5);
+    arg6 = (int) array_size(array5,0);
+  }
+  res7 = SWIG_ConvertPtr(obj2, &argp7,SWIGTYPE_p_MeshFunction3DT_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res7)) {
+    SWIG_exception_fail(SWIG_ArgError(res7), "in method '" "ShareMemoryMesh3" "', argument " "7"" of type '" "MeshFunction3D< double > *""'"); 
+  }
+  arg7 = reinterpret_cast< MeshFunction3D< double > * >(argp7);
+  ShareMemoryMesh3< double >(arg1,arg2,arg3,arg4,arg5,arg6,arg7);
+  resultobj = SWIG_Py_Void();
+  {
+    if (is_new_object1 && array1)
+    {
+      Py_DECREF(array1); 
+    }
+  }
+  {
+    if (is_new_object5 && array5)
+    {
+      Py_DECREF(array5); 
+    }
+  }
+  return resultobj;
+fail:
+  {
+    if (is_new_object1 && array1)
+    {
+      Py_DECREF(array1); 
+    }
+  }
+  {
+    if (is_new_object5 && array5)
+    {
+      Py_DECREF(array5); 
+    }
+  }
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_ShareMemoryMesh34(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  double *arg1 = (double *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  int arg4 ;
+  double *arg5 = (double *) 0 ;
+  int arg6 ;
+  MeshFunctionPseudo4D< double > *arg7 = (MeshFunctionPseudo4D< double > *) 0 ;
+  PyArrayObject *array1 = NULL ;
+  int is_new_object1 = 0 ;
+  PyArrayObject *array5 = NULL ;
+  int is_new_object5 = 0 ;
+  void *argp7 = 0 ;
+  int res7 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:ShareMemoryMesh34",&obj0,&obj1,&obj2)) SWIG_fail;
+  {
+    npy_intp size[3] = {
+      -1, -1, -1 
+    };
+    array1 = obj_to_array_contiguous_allow_conversion(obj0, NPY_DOUBLE,
+      &is_new_object1);
+    if (!array1 || !require_dimensions(array1, 3) ||
+      !require_size(array1, size, 3)) SWIG_fail;
+    arg1 = (double*) array_data(array1);
+    arg2 = (int) array_size(array1,0);
+    arg3 = (int) array_size(array1,1);
+    arg4 = (int) array_size(array1,2);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array5 = obj_to_array_contiguous_allow_conversion(obj1,
+      NPY_DOUBLE,
+      &is_new_object5);
+    if (!array5 || !require_dimensions(array5, 1) ||
+      !require_size(array5, size, 1)) SWIG_fail;
+    arg5 = (double*) array_data(array5);
+    arg6 = (int) array_size(array5,0);
+  }
+  res7 = SWIG_ConvertPtr(obj2, &argp7,SWIGTYPE_p_MeshFunctionPseudo4DT_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res7)) {
+    SWIG_exception_fail(SWIG_ArgError(res7), "in method '" "ShareMemoryMesh34" "', argument " "7"" of type '" "MeshFunctionPseudo4D< double > *""'"); 
+  }
+  arg7 = reinterpret_cast< MeshFunctionPseudo4D< double > * >(argp7);
+  ShareMemoryMesh34< double >(arg1,arg2,arg3,arg4,arg5,arg6,arg7);
+  resultobj = SWIG_Py_Void();
+  {
+    if (is_new_object1 && array1)
+    {
+      Py_DECREF(array1); 
+    }
+  }
+  {
+    if (is_new_object5 && array5)
+    {
+      Py_DECREF(array5); 
+    }
+  }
+  return resultobj;
+fail:
+  {
+    if (is_new_object1 && array1)
+    {
+      Py_DECREF(array1); 
+    }
+  }
+  {
+    if (is_new_object5 && array5)
+    {
+      Py_DECREF(array5); 
+    }
+  }
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_ShareMemoryMesh4(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  double *arg1 = (double *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  int arg4 ;
+  int arg5 ;
+  double *arg6 = (double *) 0 ;
+  int arg7 ;
+  MeshFunction4D< double > *arg8 = (MeshFunction4D< double > *) 0 ;
+  PyArrayObject *array1 = NULL ;
+  int is_new_object1 = 0 ;
+  PyArrayObject *array6 = NULL ;
+  int is_new_object6 = 0 ;
+  void *argp8 = 0 ;
+  int res8 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:ShareMemoryMesh4",&obj0,&obj1,&obj2)) SWIG_fail;
+  {
+    npy_intp size[4] = {
+      -1, -1, -1, -1 
+    };
+    array1 = obj_to_array_contiguous_allow_conversion(obj0, NPY_DOUBLE,
+      &is_new_object1);
+    if (!array1 || !require_dimensions(array1, 4) ||
+      !require_size(array1, size, 4)) SWIG_fail;
+    arg1 = (double*) array_data(array1);
+    arg2 = (int) array_size(array1,0);
+    arg3 = (int) array_size(array1,1);
+    arg4 = (int) array_size(array1,2);
+    arg5 = (int) array_size(array1,3);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array6 = obj_to_array_contiguous_allow_conversion(obj1,
+      NPY_DOUBLE,
+      &is_new_object6);
+    if (!array6 || !require_dimensions(array6, 1) ||
+      !require_size(array6, size, 1)) SWIG_fail;
+    arg6 = (double*) array_data(array6);
+    arg7 = (int) array_size(array6,0);
+  }
+  res8 = SWIG_ConvertPtr(obj2, &argp8,SWIGTYPE_p_MeshFunction4DT_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res8)) {
+    SWIG_exception_fail(SWIG_ArgError(res8), "in method '" "ShareMemoryMesh4" "', argument " "8"" of type '" "MeshFunction4D< double > *""'"); 
+  }
+  arg8 = reinterpret_cast< MeshFunction4D< double > * >(argp8);
+  ShareMemoryMesh4< double >(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8);
+  resultobj = SWIG_Py_Void();
+  {
+    if (is_new_object1 && array1)
+    {
+      Py_DECREF(array1); 
+    }
+  }
+  {
+    if (is_new_object6 && array6)
+    {
+      Py_DECREF(array6); 
+    }
+  }
+  return resultobj;
+fail:
+  {
+    if (is_new_object1 && array1)
+    {
+      Py_DECREF(array1); 
+    }
+  }
+  {
+    if (is_new_object6 && array6)
+    {
+      Py_DECREF(array6); 
+    }
+  }
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_ShareMemoryMesh3_f(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  float *arg1 = (float *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  int arg4 ;
+  float *arg5 = (float *) 0 ;
+  int arg6 ;
+  MeshFunction3D< float > *arg7 = (MeshFunction3D< float > *) 0 ;
+  PyArrayObject *array1 = NULL ;
+  int is_new_object1 = 0 ;
+  PyArrayObject *array5 = NULL ;
+  int is_new_object5 = 0 ;
+  void *argp7 = 0 ;
+  int res7 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:ShareMemoryMesh3_f",&obj0,&obj1,&obj2)) SWIG_fail;
+  {
+    npy_intp size[3] = {
+      -1, -1, -1 
+    };
+    array1 = obj_to_array_contiguous_allow_conversion(obj0, NPY_FLOAT,
+      &is_new_object1);
+    if (!array1 || !require_dimensions(array1, 3) ||
+      !require_size(array1, size, 3)) SWIG_fail;
+    arg1 = (float*) array_data(array1);
+    arg2 = (int) array_size(array1,0);
+    arg3 = (int) array_size(array1,1);
+    arg4 = (int) array_size(array1,2);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array5 = obj_to_array_contiguous_allow_conversion(obj1,
+      NPY_FLOAT,
+      &is_new_object5);
+    if (!array5 || !require_dimensions(array5, 1) ||
+      !require_size(array5, size, 1)) SWIG_fail;
+    arg5 = (float*) array_data(array5);
+    arg6 = (int) array_size(array5,0);
+  }
+  res7 = SWIG_ConvertPtr(obj2, &argp7,SWIGTYPE_p_MeshFunction3DT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res7)) {
+    SWIG_exception_fail(SWIG_ArgError(res7), "in method '" "ShareMemoryMesh3_f" "', argument " "7"" of type '" "MeshFunction3D< float > *""'"); 
+  }
+  arg7 = reinterpret_cast< MeshFunction3D< float > * >(argp7);
+  ShareMemoryMesh3< float >(arg1,arg2,arg3,arg4,arg5,arg6,arg7);
+  resultobj = SWIG_Py_Void();
+  {
+    if (is_new_object1 && array1)
+    {
+      Py_DECREF(array1); 
+    }
+  }
+  {
+    if (is_new_object5 && array5)
+    {
+      Py_DECREF(array5); 
+    }
+  }
+  return resultobj;
+fail:
+  {
+    if (is_new_object1 && array1)
+    {
+      Py_DECREF(array1); 
+    }
+  }
+  {
+    if (is_new_object5 && array5)
+    {
+      Py_DECREF(array5); 
+    }
+  }
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_ShareMemoryMesh34_f(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  float *arg1 = (float *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  int arg4 ;
+  float *arg5 = (float *) 0 ;
+  int arg6 ;
+  MeshFunctionPseudo4D< float > *arg7 = (MeshFunctionPseudo4D< float > *) 0 ;
+  PyArrayObject *array1 = NULL ;
+  int is_new_object1 = 0 ;
+  PyArrayObject *array5 = NULL ;
+  int is_new_object5 = 0 ;
+  void *argp7 = 0 ;
+  int res7 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:ShareMemoryMesh34_f",&obj0,&obj1,&obj2)) SWIG_fail;
+  {
+    npy_intp size[3] = {
+      -1, -1, -1 
+    };
+    array1 = obj_to_array_contiguous_allow_conversion(obj0, NPY_FLOAT,
+      &is_new_object1);
+    if (!array1 || !require_dimensions(array1, 3) ||
+      !require_size(array1, size, 3)) SWIG_fail;
+    arg1 = (float*) array_data(array1);
+    arg2 = (int) array_size(array1,0);
+    arg3 = (int) array_size(array1,1);
+    arg4 = (int) array_size(array1,2);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array5 = obj_to_array_contiguous_allow_conversion(obj1,
+      NPY_FLOAT,
+      &is_new_object5);
+    if (!array5 || !require_dimensions(array5, 1) ||
+      !require_size(array5, size, 1)) SWIG_fail;
+    arg5 = (float*) array_data(array5);
+    arg6 = (int) array_size(array5,0);
+  }
+  res7 = SWIG_ConvertPtr(obj2, &argp7,SWIGTYPE_p_MeshFunctionPseudo4DT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res7)) {
+    SWIG_exception_fail(SWIG_ArgError(res7), "in method '" "ShareMemoryMesh34_f" "', argument " "7"" of type '" "MeshFunctionPseudo4D< float > *""'"); 
+  }
+  arg7 = reinterpret_cast< MeshFunctionPseudo4D< float > * >(argp7);
+  ShareMemoryMesh34< float >(arg1,arg2,arg3,arg4,arg5,arg6,arg7);
+  resultobj = SWIG_Py_Void();
+  {
+    if (is_new_object1 && array1)
+    {
+      Py_DECREF(array1); 
+    }
+  }
+  {
+    if (is_new_object5 && array5)
+    {
+      Py_DECREF(array5); 
+    }
+  }
+  return resultobj;
+fail:
+  {
+    if (is_new_object1 && array1)
+    {
+      Py_DECREF(array1); 
+    }
+  }
+  {
+    if (is_new_object5 && array5)
+    {
+      Py_DECREF(array5); 
+    }
+  }
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_ShareMemoryMesh4_f(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  float *arg1 = (float *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  int arg4 ;
+  int arg5 ;
+  float *arg6 = (float *) 0 ;
+  int arg7 ;
+  MeshFunction4D< float > *arg8 = (MeshFunction4D< float > *) 0 ;
+  PyArrayObject *array1 = NULL ;
+  int is_new_object1 = 0 ;
+  PyArrayObject *array6 = NULL ;
+  int is_new_object6 = 0 ;
+  void *argp8 = 0 ;
+  int res8 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:ShareMemoryMesh4_f",&obj0,&obj1,&obj2)) SWIG_fail;
+  {
+    npy_intp size[4] = {
+      -1, -1, -1, -1 
+    };
+    array1 = obj_to_array_contiguous_allow_conversion(obj0, NPY_FLOAT,
+      &is_new_object1);
+    if (!array1 || !require_dimensions(array1, 4) ||
+      !require_size(array1, size, 4)) SWIG_fail;
+    arg1 = (float*) array_data(array1);
+    arg2 = (int) array_size(array1,0);
+    arg3 = (int) array_size(array1,1);
+    arg4 = (int) array_size(array1,2);
+    arg5 = (int) array_size(array1,3);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array6 = obj_to_array_contiguous_allow_conversion(obj1,
+      NPY_FLOAT,
+      &is_new_object6);
+    if (!array6 || !require_dimensions(array6, 1) ||
+      !require_size(array6, size, 1)) SWIG_fail;
+    arg6 = (float*) array_data(array6);
+    arg7 = (int) array_size(array6,0);
+  }
+  res8 = SWIG_ConvertPtr(obj2, &argp8,SWIGTYPE_p_MeshFunction4DT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res8)) {
+    SWIG_exception_fail(SWIG_ArgError(res8), "in method '" "ShareMemoryMesh4_f" "', argument " "8"" of type '" "MeshFunction4D< float > *""'"); 
+  }
+  arg8 = reinterpret_cast< MeshFunction4D< float > * >(argp8);
+  ShareMemoryMesh4< float >(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8);
+  resultobj = SWIG_Py_Void();
+  {
+    if (is_new_object1 && array1)
+    {
+      Py_DECREF(array1); 
+    }
+  }
+  {
+    if (is_new_object6 && array6)
+    {
+      Py_DECREF(array6); 
+    }
+  }
+  return resultobj;
+fail:
+  {
+    if (is_new_object1 && array1)
+    {
+      Py_DECREF(array1); 
+    }
+  }
+  {
+    if (is_new_object6 && array6)
+    {
+      Py_DECREF(array6); 
+    }
+  }
+  return NULL;
 }
 
 
 static PyMethodDef SwigMethods[] = {
 	 { (char *)"SWIG_PyInstanceMethod_New", (PyCFunction)SWIG_PyInstanceMethod_New, METH_O, NULL},
+	 { (char *)"mesh1d_f_d_set", _wrap_mesh1d_f_d_set, METH_VARARGS, NULL},
+	 { (char *)"mesh1d_f_d_get", _wrap_mesh1d_f_d_get, METH_VARARGS, NULL},
+	 { (char *)"mesh1d_f_ds_set", _wrap_mesh1d_f_ds_set, METH_VARARGS, NULL},
+	 { (char *)"mesh1d_f_ds_get", _wrap_mesh1d_f_ds_get, METH_VARARGS, NULL},
+	 { (char *)"mesh1d_f_data_set", _wrap_mesh1d_f_data_set, METH_VARARGS, NULL},
+	 { (char *)"mesh1d_f_data_get", _wrap_mesh1d_f_data_get, METH_VARARGS, NULL},
+	 { (char *)"mesh1d_f_scalar_set", _wrap_mesh1d_f_scalar_set, METH_VARARGS, NULL},
+	 { (char *)"mesh1d_f_scalar_get", _wrap_mesh1d_f_scalar_get, METH_VARARGS, NULL},
+	 { (char *)"mesh1d_f_ndims_set", _wrap_mesh1d_f_ndims_set, METH_VARARGS, NULL},
+	 { (char *)"mesh1d_f_ndims_get", _wrap_mesh1d_f_ndims_get, METH_VARARGS, NULL},
+	 { (char *)"mesh1d_f_usesSharedData_set", _wrap_mesh1d_f_usesSharedData_set, METH_VARARGS, NULL},
+	 { (char *)"mesh1d_f_usesSharedData_get", _wrap_mesh1d_f_usesSharedData_get, METH_VARARGS, NULL},
+	 { (char *)"new_mesh1d_f", _wrap_new_mesh1d_f, METH_VARARGS, NULL},
+	 { (char *)"delete_mesh1d_f", _wrap_delete_mesh1d_f, METH_VARARGS, NULL},
+	 { (char *)"mesh1d_f_setndims", _wrap_mesh1d_f_setndims, METH_VARARGS, NULL},
+	 { (char *)"mesh1d_f_setdims", _wrap_mesh1d_f_setdims, METH_VARARGS, NULL},
+	 { (char *)"mesh1d_f_isRowMaj_set", _wrap_mesh1d_f_isRowMaj_set, METH_VARARGS, NULL},
+	 { (char *)"mesh1d_f_isRowMaj_get", _wrap_mesh1d_f_isRowMaj_get, METH_VARARGS, NULL},
+	 { (char *)"mesh1d_f_getndims", _wrap_mesh1d_f_getndims, METH_VARARGS, NULL},
+	 { (char *)"mesh1d_f_getdims", _wrap_mesh1d_f_getdims, METH_VARARGS, NULL},
+	 { (char *)"mesh1d_f_setres", _wrap_mesh1d_f_setres, METH_VARARGS, NULL},
+	 { (char *)"mesh1d_f_getres", _wrap_mesh1d_f_getres, METH_VARARGS, NULL},
+	 { (char *)"mesh1d_f_clear", _wrap_mesh1d_f_clear, METH_VARARGS, NULL},
+	 { (char *)"mesh1d_f_setToScalar", _wrap_mesh1d_f_setToScalar, METH_VARARGS, NULL},
+	 { (char *)"mesh1d_f_useSharedData", _wrap_mesh1d_f_useSharedData, METH_VARARGS, NULL},
+	 { (char *)"mesh1d_f_val", _wrap_mesh1d_f_val, METH_VARARGS, NULL},
+	 { (char *)"mesh1d_f_swigregister", mesh1d_f_swigregister, METH_VARARGS, NULL},
+	 { (char *)"new_mesh3d_f", _wrap_new_mesh3d_f, METH_VARARGS, NULL},
+	 { (char *)"delete_mesh3d_f", _wrap_delete_mesh3d_f, METH_VARARGS, NULL},
+	 { (char *)"mesh3d_f_index", _wrap_mesh3d_f_index, METH_VARARGS, NULL},
+	 { (char *)"mesh3d_f_val", _wrap_mesh3d_f_val, METH_VARARGS, NULL},
+	 { (char *)"mesh3d_f___call__", _wrap_mesh3d_f___call__, METH_VARARGS, NULL},
+	 { (char *)"mesh3d_f_getval", _wrap_mesh3d_f_getval, METH_VARARGS, NULL},
+	 { (char *)"mesh3d_f_setval", _wrap_mesh3d_f_setval, METH_VARARGS, NULL},
+	 { (char *)"mesh3d_f_swigregister", mesh3d_f_swigregister, METH_VARARGS, NULL},
+	 { (char *)"new_mesh4d_f", _wrap_new_mesh4d_f, METH_VARARGS, NULL},
+	 { (char *)"delete_mesh4d_f", _wrap_delete_mesh4d_f, METH_VARARGS, NULL},
+	 { (char *)"mesh4d_f_index", _wrap_mesh4d_f_index, METH_VARARGS, NULL},
+	 { (char *)"mesh4d_f_val", _wrap_mesh4d_f_val, METH_VARARGS, NULL},
+	 { (char *)"mesh4d_f___call__", _wrap_mesh4d_f___call__, METH_VARARGS, NULL},
+	 { (char *)"mesh4d_f_getval", _wrap_mesh4d_f_getval, METH_VARARGS, NULL},
+	 { (char *)"mesh4d_f_setval", _wrap_mesh4d_f_setval, METH_VARARGS, NULL},
+	 { (char *)"mesh4d_f_getpage", _wrap_mesh4d_f_getpage, METH_VARARGS, NULL},
+	 { (char *)"mesh4d_f_swigregister", mesh4d_f_swigregister, METH_VARARGS, NULL},
+	 { (char *)"new_mesh34d_f", _wrap_new_mesh34d_f, METH_VARARGS, NULL},
+	 { (char *)"delete_mesh34d_f", _wrap_delete_mesh34d_f, METH_VARARGS, NULL},
+	 { (char *)"mesh34d_f_index", _wrap_mesh34d_f_index, METH_VARARGS, NULL},
+	 { (char *)"mesh34d_f_val", _wrap_mesh34d_f_val, METH_VARARGS, NULL},
+	 { (char *)"mesh34d_f_swigregister", mesh34d_f_swigregister, METH_VARARGS, NULL},
 	 { (char *)"mesh1d_d_set", _wrap_mesh1d_d_set, METH_VARARGS, NULL},
 	 { (char *)"mesh1d_d_get", _wrap_mesh1d_d_get, METH_VARARGS, NULL},
 	 { (char *)"mesh1d_ds_set", _wrap_mesh1d_ds_set, METH_VARARGS, NULL},
@@ -7137,20 +10635,40 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"mesh34d_swigregister", mesh34d_swigregister, METH_VARARGS, NULL},
 	 { (char *)"test1int", _wrap_test1int, METH_VARARGS, NULL},
 	 { (char *)"testintarr", _wrap_testintarr, METH_VARARGS, NULL},
-	 { (char *)"ShareMemoryMesh3", _wrap_ShareMemoryMesh3, METH_VARARGS, NULL},
-	 { (char *)"ShareMemoryMesh34", _wrap_ShareMemoryMesh34, METH_VARARGS, NULL},
-	 { (char *)"ShareMemoryMesh4", _wrap_ShareMemoryMesh4, METH_VARARGS, NULL},
+	 { (char *)"pbheSolve_f", _wrap_pbheSolve_f, METH_VARARGS, (char *)"\n"
+		"pbheSolve_f(freeFlow, dt,dx,dy,dz, mesh4d_f T, mesh4d_f Tdot, mesh3d_f k, mesh3d_f rho_Cp, Tblood, perfusionRate, [ti1, ti2]  ) -> updates T\n"
+		"pbheSolve_f(freeFlow, dt,dx,dy,dz, mesh4d_f T, mesh4d_f Tdot, mesh3d_f k, mesh3d_f rho_Cp, Tblood, perfusionRate, [ti1, ti2]  ) -> updates T\n"
+		"pbheSolve_f(freeFlow, dt,dx,dy,dz, mesh4d_f T, mesh4d_f Tdot, mesh3d_f k, mesh3d_f rho_Cp, Tblood, perfusionRate, [ti1, ti2]  ) -> updates T\n"
+		""},
 	 { (char *)"pbheSolve", _wrap_pbheSolve, METH_VARARGS, (char *)"\n"
 		"pbheSolve(freeFlow, dt,dx,dy,dz, mesh4d T, mesh4d Tdot, mesh3d k, mesh3d rho_Cp, Tblood, perfusionRate, [ti1, ti2]  ) -> updates T\n"
 		"pbheSolve(freeFlow, dt,dx,dy,dz, mesh4d T, mesh4d Tdot, mesh3d k, mesh3d rho_Cp, Tblood, perfusionRate, [ti1, ti2]  ) -> updates T\n"
 		"pbheSolve(freeFlow, dt,dx,dy,dz, mesh4d T, mesh4d Tdot, mesh3d k, mesh3d rho_Cp, Tblood, perfusionRate, [ti1, ti2]  ) -> updates T\n"
 		""},
+	 { (char *)"ShareMemoryMesh3", _wrap_ShareMemoryMesh3, METH_VARARGS, NULL},
+	 { (char *)"ShareMemoryMesh34", _wrap_ShareMemoryMesh34, METH_VARARGS, NULL},
+	 { (char *)"ShareMemoryMesh4", _wrap_ShareMemoryMesh4, METH_VARARGS, NULL},
+	 { (char *)"ShareMemoryMesh3_f", _wrap_ShareMemoryMesh3_f, METH_VARARGS, NULL},
+	 { (char *)"ShareMemoryMesh34_f", _wrap_ShareMemoryMesh34_f, METH_VARARGS, NULL},
+	 { (char *)"ShareMemoryMesh4_f", _wrap_ShareMemoryMesh4_f, METH_VARARGS, NULL},
 	 { NULL, NULL, 0, NULL }
 };
 
 
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
+static void *_p_MeshFunctionPseudo4DT_float_tTo_p_MeshFunction4DT_float_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((MeshFunction4D< float > *)  ((MeshFunctionPseudo4D< float > *) x));
+}
+static void *_p_MeshFunction3DT_float_tTo_p_MeshFunctionT_float_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((MeshFunction< float > *)  ((MeshFunction3D< float > *) x));
+}
+static void *_p_MeshFunction4DT_float_tTo_p_MeshFunctionT_float_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((MeshFunction< float > *)  ((MeshFunction4D< float > *) x));
+}
+static void *_p_MeshFunctionPseudo4DT_float_tTo_p_MeshFunctionT_float_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((MeshFunction< float > *) (MeshFunction4D< float > *) ((MeshFunctionPseudo4D< float > *) x));
+}
 static void *_p_MeshFunctionPseudo4DT_double_tTo_p_MeshFunction4DT_double_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((MeshFunction4D< double > *)  ((MeshFunctionPseudo4D< double > *) x));
 }
@@ -7163,54 +10681,62 @@ static void *_p_MeshFunction4DT_double_tTo_p_MeshFunctionT_double_t(void *x, int
 static void *_p_MeshFunctionPseudo4DT_double_tTo_p_MeshFunctionT_double_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((MeshFunction< double > *) (MeshFunction4D< double > *) ((MeshFunctionPseudo4D< double > *) x));
 }
-static swig_type_info _swigt__p_MESH_T = {"_p_MESH_T", "MESH_T *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_MeshFunction3DT_MESH_T_t = {"_p_MeshFunction3DT_MESH_T_t", "MeshFunction3D< MESH_T > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_MeshFunction3DT_double_t = {"_p_MeshFunction3DT_double_t", "MeshFunction3D< double > *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_MeshFunction4DT_MESH_T_t = {"_p_MeshFunction4DT_MESH_T_t", "MeshFunction4D< MESH_T > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_MeshFunction3DT_float_t = {"_p_MeshFunction3DT_float_t", "MeshFunction3D< float > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_MeshFunction4DT_double_t = {"_p_MeshFunction4DT_double_t", "MeshFunction4D< double > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_MeshFunction4DT_float_t = {"_p_MeshFunction4DT_float_t", "MeshFunction4D< float > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_MeshFunctionPseudo4DT_double_t = {"_p_MeshFunctionPseudo4DT_double_t", "MeshFunctionPseudo4D< double > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_MeshFunctionPseudo4DT_float_t = {"_p_MeshFunctionPseudo4DT_float_t", "MeshFunctionPseudo4D< float > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_MeshFunctionT_double_t = {"_p_MeshFunctionT_double_t", "MeshFunction< double > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_MeshFunctionT_float_t = {"_p_MeshFunctionT_float_t", "MeshFunction< float > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_char = {"_p_char", "char *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_double = {"_p_double", "double *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_float = {"_p_float", "float *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_long = {"_p_long", "long *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_p_long = {"_p_p_long", "long **", 0, 0, (void*)0, 0};
 
 static swig_type_info *swig_type_initial[] = {
-  &_swigt__p_MESH_T,
-  &_swigt__p_MeshFunction3DT_MESH_T_t,
   &_swigt__p_MeshFunction3DT_double_t,
-  &_swigt__p_MeshFunction4DT_MESH_T_t,
+  &_swigt__p_MeshFunction3DT_float_t,
   &_swigt__p_MeshFunction4DT_double_t,
+  &_swigt__p_MeshFunction4DT_float_t,
   &_swigt__p_MeshFunctionPseudo4DT_double_t,
+  &_swigt__p_MeshFunctionPseudo4DT_float_t,
   &_swigt__p_MeshFunctionT_double_t,
+  &_swigt__p_MeshFunctionT_float_t,
   &_swigt__p_char,
   &_swigt__p_double,
+  &_swigt__p_float,
   &_swigt__p_long,
   &_swigt__p_p_long,
 };
 
-static swig_cast_info _swigc__p_MESH_T[] = {  {&_swigt__p_MESH_T, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_MeshFunction3DT_MESH_T_t[] = {  {&_swigt__p_MeshFunction3DT_MESH_T_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_MeshFunction3DT_double_t[] = {  {&_swigt__p_MeshFunction3DT_double_t, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_MeshFunction4DT_MESH_T_t[] = {  {&_swigt__p_MeshFunction4DT_MESH_T_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_MeshFunction3DT_float_t[] = {  {&_swigt__p_MeshFunction3DT_float_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_MeshFunction4DT_double_t[] = {  {&_swigt__p_MeshFunction4DT_double_t, 0, 0, 0},  {&_swigt__p_MeshFunctionPseudo4DT_double_t, _p_MeshFunctionPseudo4DT_double_tTo_p_MeshFunction4DT_double_t, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_MeshFunction4DT_float_t[] = {  {&_swigt__p_MeshFunction4DT_float_t, 0, 0, 0},  {&_swigt__p_MeshFunctionPseudo4DT_float_t, _p_MeshFunctionPseudo4DT_float_tTo_p_MeshFunction4DT_float_t, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_MeshFunctionPseudo4DT_double_t[] = {  {&_swigt__p_MeshFunctionPseudo4DT_double_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_MeshFunctionPseudo4DT_float_t[] = {  {&_swigt__p_MeshFunctionPseudo4DT_float_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_MeshFunctionT_double_t[] = {  {&_swigt__p_MeshFunctionT_double_t, 0, 0, 0},  {&_swigt__p_MeshFunction3DT_double_t, _p_MeshFunction3DT_double_tTo_p_MeshFunctionT_double_t, 0, 0},  {&_swigt__p_MeshFunction4DT_double_t, _p_MeshFunction4DT_double_tTo_p_MeshFunctionT_double_t, 0, 0},  {&_swigt__p_MeshFunctionPseudo4DT_double_t, _p_MeshFunctionPseudo4DT_double_tTo_p_MeshFunctionT_double_t, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_MeshFunctionT_float_t[] = {  {&_swigt__p_MeshFunctionT_float_t, 0, 0, 0},  {&_swigt__p_MeshFunction3DT_float_t, _p_MeshFunction3DT_float_tTo_p_MeshFunctionT_float_t, 0, 0},  {&_swigt__p_MeshFunction4DT_float_t, _p_MeshFunction4DT_float_tTo_p_MeshFunctionT_float_t, 0, 0},  {&_swigt__p_MeshFunctionPseudo4DT_float_t, _p_MeshFunctionPseudo4DT_float_tTo_p_MeshFunctionT_float_t, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_char[] = {  {&_swigt__p_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_double[] = {  {&_swigt__p_double, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_float[] = {  {&_swigt__p_float, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_long[] = {  {&_swigt__p_long, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_p_long[] = {  {&_swigt__p_p_long, 0, 0, 0},{0, 0, 0, 0}};
 
 static swig_cast_info *swig_cast_initial[] = {
-  _swigc__p_MESH_T,
-  _swigc__p_MeshFunction3DT_MESH_T_t,
   _swigc__p_MeshFunction3DT_double_t,
-  _swigc__p_MeshFunction4DT_MESH_T_t,
+  _swigc__p_MeshFunction3DT_float_t,
   _swigc__p_MeshFunction4DT_double_t,
+  _swigc__p_MeshFunction4DT_float_t,
   _swigc__p_MeshFunctionPseudo4DT_double_t,
+  _swigc__p_MeshFunctionPseudo4DT_float_t,
   _swigc__p_MeshFunctionT_double_t,
+  _swigc__p_MeshFunctionT_float_t,
   _swigc__p_char,
   _swigc__p_double,
+  _swigc__p_float,
   _swigc__p_long,
   _swigc__p_p_long,
 };
