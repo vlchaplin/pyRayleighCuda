@@ -44,10 +44,17 @@ simZp = 1e-3*(120:1.0:160.0);
 N = 256;
 unormals = repmat([0.0 0.0 0.14]', 1, N) - uxyz;
 
-[ pn, near_field_mask, gx, gy, gz ] = calc_finitexdc_pressure_field_ndgrid( kr, uamp, uxyz, simXp, simYp, simZp, [], [] );
+[ pn, near_field_mask, gx, gy, gz ] = calc_finitexdc_pressure_field_ndgrid( kr, uamp, uxyz, simXp, simYp, simZp, unormals, [] );
 
-Inten = conj(pn).*pn;
+% re-normalize pn or intensity
+p_peak = 1e6; %pascals 
+pn = pn .* (p_peak / (max(abs(pn(:)))) );
 
+
+Inten = conj(pn).*pn /(2*rho*c0);
+
+
+%re-normalize intensity to plot dB change from max more easily
 Inten = Inten / max(Inten(:));
 
 tx = 100*permute(gx,[2 1 3]);
@@ -160,7 +167,7 @@ set(p3, 'Clipping', 'on', 'FaceColor', 'blue', 'EdgeColor', 'none','FaceAlpha',0
 xp = (-6.0:0.01:6.0);
 yp = (-6.0:0.01:6.0);
 zp = (4.0:0.05:16.0);
-[ yzPplane,nf,ndx,ndy,ndz  ] = calc_finitexdc_pressure_field_ndgrid( kr, uamp, uxyz, [0.0],1e-2*yp, 1e-2*zp, [], [] );
+[ yzPplane,nf,ndx,ndy,ndz  ] = calc_finitexdc_pressure_field_ndgrid( kr, uamp, uxyz, [0.0],1e-2*yp, 1e-2*zp, unormals, [] );
 
 yzPplane = squeeze( permute(yzPplane,[2 1 3]) );
 
