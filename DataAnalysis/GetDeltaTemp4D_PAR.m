@@ -37,6 +37,8 @@ function [ deltaTseries, axis0_mm, axis1_mm, slice_axis_mm, dyntimes, im ] = Get
 
     [dyntimes,dynamicIdxReorder] = sort(dyntimes);
 
+    %im.Data = im.Data(:,:,:,:,dynamicIdxReorder);
+    
     magmeanForMask = mean(im.Data(:,:,:, 1, :),5);
     outsideVox = ( magmeanForMask/ max(magmeanForMask(:)) < maskMagThreshold );
     

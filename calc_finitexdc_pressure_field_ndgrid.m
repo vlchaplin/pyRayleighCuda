@@ -1,4 +1,4 @@
-function [ pn, near_field_mask ] = calc_finitexdc_pressure_field_ndgrid( kr, uamp, uxyz, simXp, simYp, simZp, u_normals, u_template )
+function [ pn, near_field_mask, gx, gy, gz ] = calc_finitexdc_pressure_field_ndgrid( kr, uamp, uxyz, simXp, simYp, simZp, u_normals, u_template )
 %UNTITLED5 Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -8,13 +8,15 @@ N = size(uxyz,2);
 
 nsubsamp = size(u_template,2);
 if nsubsamp == 0
-    nsubsamp =1
+    nsubsamp =1;
 end
 pn = zeros([length(simXp) length(simYp) length(simZp)]);
 
 near_field_mask = zeros(size(pn));
 
 integral_coeffs = uamp(:).*1i.*ones([N 1]);
+
+u_normals_unit = u_normals ./ repmat(sqrt( sum( u_normals.^2, 1) ), [3 1] );
 
 for n=1:N
     
@@ -30,9 +32,14 @@ for n=1:N
 
     for j=1:nsubsamp
         
-        d = sqrt( (patchcoords(1,j)-gx).^2 + (patchcoords(2,j)-gy).^2 + (patchcoords(3,j)-gz).^2 );
+        dvx = patchcoords(1,j)-gx;
+        dvy = patchcoords(2,j)-gy;
+        dvz = patchcoords(3,j)-gz;
+        d = sqrt( (dvx).^2 + (dvy).^2 + (dvz).^2 );
     
-        thisSource = integral_coeffs(n).*exp(-1i*kr.*(d))./d;
+        cosines = (u_normals_unit(1,n).*dvx + u_normals_unit(2,n).*dvy + u_normals_unit(3,n).*dvz)./d;
+        
+        thisSource = cosines.*integral_coeffs(n).*exp(-1i*kr.*(d))./d;
     
         pn = thisSource+pn;
         

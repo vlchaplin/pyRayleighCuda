@@ -82,7 +82,8 @@ for k=1:nfoci
 end
 %% disk around focus in X-Y plane
 nfoci=3;
-radius=0.0035;
+radius=0.004;
+h=radius/2;
 rm = zeros(nfoci,3);
 thetas = (0:(2*pi/(nfoci)):2*pi) - pi/2  ;
 for k=1:nfoci
@@ -113,9 +114,9 @@ uopt = get_transducer_vals( u_pos, f_o, rho, c, p_control_xyz, p_control );
 
 u_amp = uopt';
 
-xrange = [-1 1]*0.005 ;
-yrange = [-1 1]*0.005 ;
-zrange = r_foc + [-1 1]*0.005;
+xrange = [-2 2]*0.01 ;
+yrange = [-2 2]*0.01 ;
+zrange = r_foc + [-3.5 2.5]*0.01;
 
 Nx=100;
 Ny=100;
@@ -234,7 +235,7 @@ return;
 freeOut=1;
 %Free field acoustic intensity max in W/m^2 
 %(i.e., amount of power absorbed if alpha=1.0/m)
-newMaxI = 1.2e7;
+newMaxI = 1.0e7;
 
 maxI= max(I(:));
 I = I.*(newMaxI/maxI);
@@ -247,17 +248,17 @@ nny = 80;
 nnz = Nz;
 tstep = 0.1;
 Nt = 10;
-T0=28;
+T0=37;
 Tb=37;
 Cp = 3700;
 
 ktherm = 0.5;
-alpha = 1.0;
+alpha = 2.0;
 
 simDur=Nt*tstep;
 
 % Total Simulation Duration 
-totDur = 70.0;  %total time to "sonicate" in seconds
+totDur = 30.0;  %total time to "sonicate" in seconds
 
 time=0;
 
@@ -297,6 +298,8 @@ time=simDur;
 % figure(2);
 % clf;
 % imagesc( tdotsrc(:,:,zslice ) );
+TempAvg=[];
+timeEnds=[];
 
 while( time < totDur )
 
@@ -307,42 +310,42 @@ while( time < totDur )
     ThermDose = ThermDose + squeeze( sum( Rbase.^(Ton-43), 1 ) )*tstep;
 
     tempChange = squeeze( Ton(Nt,:,:,: ) ) - T0;
-    
-    figure(3);
-    clf;
-    hold on;
-    colormap('hot');
-    s=slice(tx, ty, tz, tempChange, 0 ,[], [] );
-    set(s,'EdgeColor','none');
-
-    s=slice(tx, ty, tz, tempChange, [] ,[], focal_point(3) );
-    set(s,'EdgeColor','none');
-
-    daspect([1 1 1]);
-    view([30 50]);
-    caxis([0 20]);
-    
-    
-    figure(4);
-    clf;
-    hold on;
-
-    s=slice(tx, ty, tz, ThermDose, 0 ,[], [] );
-    set(s,'EdgeColor','none');
-
-    s=slice(tx, ty, tz, ThermDose, [] ,[], focal_point(3) );
-    set(s,'EdgeColor','none');
-
-    daspect([1 1 1]);
-    view([30 50]);
-    caxis([0 240]);
+%     
+%     figure(3);
+%     clf;
+%     hold on;
+%     colormap('hot');
+%     s=slice(tx, ty, tz, tempChange, 0 ,[], [] );
+%     set(s,'EdgeColor','none');
+% 
+%     s=slice(tx, ty, tz, tempChange, [] ,[], focal_point(3) );
+%     set(s,'EdgeColor','none');
+% 
+%     daspect([1 1 1]);
+%     view([30 50]);
+%     caxis([0 20]);
+%     
+%     
+%     figure(4);
+%     clf;
+%     hold on;
+% 
+%     s=slice(tx, ty, tz, ThermDose, 0 ,[], [] );
+%     set(s,'EdgeColor','none');
+% 
+%     s=slice(tx, ty, tz, ThermDose, [] ,[], focal_point(3) );
+%     set(s,'EdgeColor','none');
+% 
+%     daspect([1 1 1]);
+%     view([30 50]);
+%     caxis([0 240]);
 
     %[Ton pixMult newDx tdotsrc] = homogenousePBHE( Ton(Nt,:,:,:), alpha, ktherm, rho, Cp, c, Iregrid, nnx, nny, nnz, newDx, nnx, nny, nnz, Nt, tstep, 0 );
 
     [Ton pixMult newDx tdotsrc] = homogenousPerfusedPBHE( Ton(Nt,:,:,:), alpha, ktherm, rho, Cp, c, Iregrid, nnx, nny, nnz, newDx, nnx, nny, nnz, Nt, tstep, 0, Tb, perfusionrate, freeOut );
 
-    
-    
+    TempAvg(end+1) = mean(Ton(Nt,:));
+    timeEnds(end+1) = time;
     time = time + simDur;
 end
 
@@ -353,30 +356,174 @@ figure(6);
 clf;
 hold on;
 subplot(121);
-colormap('jet');
-imagesc(  xrp*1e3, yrp*1e3, tempChange(:,:,focal_point_pix(3)), [0 30] );
+colormap('hot');
+imagesc(  xrp*1e2, yrp*1e2, tempChange(:,:,focal_point_pix(3))', [0 30] );
 %imagesc( xrp*1e3, yrp*1e3, tempChange(:,:,focal_point_pix(3)), [0 20] );
-axis equal tight;
+
+%axis equal tight;
 %axis([-50 50 -50 50]);
-set(gca, 'YDir', 'normal');
-xlabel('mm','FontSize',16);
-ylabel('mm','FontSize',16);
-cbar=colorbar();
+set(gca, 'YDir', 'normal','FontSize',24);
+xlabel('x [cm]','FontSize',24);
+ylabel('y [cm]','FontSize',24);
+cbar=colorbar('Location', 'southoutside');
 cbar.Label.String = '\Delta T (^oC)';
-cbar.FontSize = 16;
+cbar.FontSize = 24;
 
 subplot(122);
-colormap('jet');
-imagesc( yrp*1e3, zrp*1e3, squeeze(tempChange(27,:,:))', [0 30] );
+colormap('hot');
+imagesc( yrp*1e2, zrp*1e2, squeeze(tempChange(27,:,:))', [0 30] );
 %imagesc( xrp*1e3, yrp*1e3, tempChange(:,:,focal_point_pix(3)), [0 20] );
 axis equal tight;
-set(gca, 'YDir', 'normal', 'YLim', [125 140]);
+set(gca, 'YDir', 'normal', 'FontSize',24);
 %axis([-50 50 -50 50]);
-xlabel('mm','FontSize',16);
-ylabel('mm','FontSize',16);
-cbar=colorbar();
+xlabel('y [cm]','FontSize',24);
+ylabel('z [cm]','FontSize',24);
+cbar=colorbar('Location', 'eastoutside');
 cbar.Label.String = '\Delta T (^oC)';
-cbar.FontSize = 16;
+cbar.FontSize = 24;
+
+%% layers
+figure(8);
+clf;
+hold on;
+
+[rgx,rgy,rgz]=ndgrid(xrp*1e2,yrp*1e2,zrp*1e2);
+
+rgx=permute(rgx,[2 1 3]);
+rgy=permute(rgy,[2 1 3]);
+rgz=permute(rgz,[2 1 3]);
+colormap( 'hot' );
+focSurf=slice( rgx, rgy, rgz, tempChange, [], [], [14.0] );
+set(focSurf,'EdgeColor','none', 'Facecolor','flat','FaceLighting', 'gouraud','AmbientStrength', 1.0, 'DiffuseStrength', 0, 'FaceAlpha', 1.0);
+
+
+axis equal tight;
+
+set(gca, 'FontSize',24);
+xlabel('cm','FontSize',24);
+ylabel('cm','FontSize',24);
+zlabel('z [cm]','FontSize',24);
+
+caxis([0 30]);
+
+%% 3D roi contour
+% figure(2);
+% clf;
+% hold on;
+
+%def inEllipse(x,y,z,a=0.005,b=0.005,c=0.005):
+%return np.sqrt((x/a)**2 + (y/b)**2 + (z/c)**2)<=1.0
+a_cm=.5;b_cm=.5;c_cm=1.0;
+
+roiSurfX = (-2*a_cm:0.05:2*a_cm);
+roiSurfY = (-2*b_cm:0.05:2*b_cm); 
+roiSurfZ = (-2*c_cm:0.05:2*c_cm); 
+[roiGridX, roiGridY, roiGridZ] = ndgrid(roiSurfX,roiSurfY,roiSurfZ);
+roiPatchGen = zeros(size(roiGridX));
+roiPatchGen( (roiGridX/a_cm).^2 + (roiGridY/b_cm).^2 + (roiGridZ/c_cm).^2 <= 1.0 ) = 1;
+roiOffPatchGen = zeros(size(roiGridX));
+roiOffPatchGen( (roiGridX/1.0).^2 + (roiGridY/1.0).^2 + (roiGridZ/2.0).^2 <= 1.0 ) = 1;
+
+roiGridX=permute(roiGridX,[2 1 3]); 
+roiGridY=permute(roiGridY,[2 1 3]);
+roiGridZ=permute(roiGridZ,[2 1 3]);
+roiPatchGen = permute(roiOffPatchGen ,[2 1 3]);
+roiOnPatch=patch( isosurface( roiGridX, roiGridY, roiGridZ, roiPatchGen, 0.99 ) );
+isonormals(roiGridX, roiGridY, roiGridZ, roiPatchGen,  roiOnPatch);
+set(roiOnPatch, 'FaceColor', 0.6*[1,1.0,1.0], 'EdgeColor', 'none','FaceAlpha',0.3, ...
+    'FaceLighting', 'flat');
+roiOnPatch.Parent = hgtransform('Matrix', makehgtform('translate',1e2*p_control_xyz(:,1)));
+
+roiPatches={roiOnPatch};
+for m=2:M
+    roiPatches{end+1} = copyobj(roiOnPatch, gca() );
+    roiPatches{m}.Parent = hgtransform('Matrix', makehgtform('translate',1e2*p_control_xyz(:,m)));
+end
+
+%% -- 3D temp contour
+
+cemVal = 240;
+
+figure(1);
+clf;
+hold on;
+
+% xplotr = [-0.011 0.011];
+% yplotr = xplotr;
+% axis([ xplotr yplotr .12 .16 0 1 ] );
+
+%light('Position', [0.00 -0.001 0.14]);
+light('Position', [0 -2 -1]);
+
+pA=patch( isosurface( rgx, rgy, rgz, tempChange, 30.0 ) );
+isonormals(rgx, rgy, tz, tempChange,pA);
+set(pA, 'FaceColor', 'red', 'EdgeColor', 'none', ...
+    'DisplayName', '30.0',...
+    'FaceAlpha',1.0, ...
+    'FaceLighting', 'gouraud', ...
+    'AmbientStrength', 1.0, 'DiffuseStrength', 1.0, ...
+    'SpecularStrength', 0.9, 'SpecularExponent', 25, 'BackFaceLighting', 'unlit' ...
+    );
+
+pB=patch( isosurface( rgx, rgy, rgz, tempChange, 10 ) );
+isonormals(rgx, rgy, rgz, tempChange,pB);
+set(pB, 'Clipping', 'on', 'FaceColor', 'blue',...
+    'DisplayName', '10.0',...
+    'EdgeColor', 'none','FaceAlpha',0.2, ...
+    'FaceLighting', 'gouraud', ...
+    'AmbientStrength', .5, 'DiffuseStrength', 1, ...
+    'SpecularStrength', 1.0, 'SpecularExponent', 5, 'BackFaceLighting', 'unlit' ...
+    );
+
+% xboxr=[-0.01 0.01]; yboxr=xboxr;
+% xyboxverts= [ xboxr([1 1 2 2 1]) ; yboxr([1 2 2 1 1]) ];
+% plot3( xyboxverts(1,:), xyboxverts(2,:), 0.15 + zeros(5), 'LineStyle','--','LineWidth',2, 'Color', 'black' );
+% plot3( xyboxverts(1,:), xyboxverts(2,:), 0.13 + zeros(5), 'LineStyle','--','LineWidth',2, 'Color', 'black' );
+% for i=1:4
+%     plot3( xyboxverts(1,[i i]), xyboxverts(2,[i i]), [0.13 0.15], 'LineStyle','--','LineWidth',2, 'Color', 'black' );
+% 
+% end
+
+legend([pA pB]);
+
+view([60 10]);
+
+
+%lighting gouraud
+
+%grid on;
+%set(gca, 'GridLineStyle', 
+
+
+% xticklabs = (-1:1:1);
+% xticks = xticklabs/(100);
+% 
+% %yticklabs = round(((-Ny/2.0)*100*pixel_size ) : 2 : ((Ny/2.0)*100*pixel_size));
+% yticklabs = xticklabs;
+% yticks = yticklabs/(100) ;
+% 
+% zticklabs = 100*r_foc + (-2:1:2);
+% zticks = zticklabs/(100) ;
+% 
+% set(gca,'XTick', xticks);
+% set(gca,'XTickLabel', xticklabs);
+% set(gca,'YTick', yticks);
+% set(gca,'YTickLabel', yticklabs);
+% set(gca,'ZTick', zticks);
+% set(gca,'ZTickLabel', zticklabs);
+set(gca, 'FontSize',26);
+
+xlabel('X [cm]', 'Fontsize', 26);
+ylabel('Y [cm]', 'Fontsize', 26);
+zlabel('Axial [cm]', 'Fontsize', 26);
+
+
+
+axis equal tight;
+daspect([1 1 1]);
+
+
+
 
 %% -- 3D CEM contour
 
@@ -393,18 +540,18 @@ axis([ xplotr yplotr .12 .16 0 1 ] );
 %light('Position', [0.00 -0.001 0.14]);
 light('Position', [0 -2 -1]);
 
-p=patch( isosurface( tx, ty, tz, ThermDose, cemVal ) );
-isonormals(tx, ty, tz, ThermDose,p);
-set(p, 'FaceColor', 'red', 'EdgeColor', 'none', ...
+pA=patch( isosurface( tx, ty, tz, ThermDose, 240 ) );
+isonormals(tx, ty, tz, ThermDose,pA);
+set(pA, 'FaceColor', 'red', 'EdgeColor', 'none', ...
     'FaceAlpha',1.0, ...
     'FaceLighting', 'gouraud', ...
     'AmbientStrength', 1.0, 'DiffuseStrength', 1.0, ...
     'SpecularStrength', 0.9, 'SpecularExponent', 25, 'BackFaceLighting', 'unlit' ...
     );
 
-p=patch( isosurface( tx, ty, tz, ThermDose, 5 ) );
-isonormals(tx, ty, tz, ThermDose,p);
-set(p, 'Clipping', 'on', 'FaceColor', 'blue', 'EdgeColor', 'none','FaceAlpha',0.5, ...
+pB=patch( isosurface( tx, ty, tz, ThermDose, 30 ) );
+isonormals(tx, ty, tz, ThermDose,pB);
+set(pB, 'Clipping', 'on', 'FaceColor', 'blue', 'EdgeColor', 'none','FaceAlpha',0.5, ...
     'FaceLighting', 'gouraud', ...
     'AmbientStrength', .5, 'DiffuseStrength', 1, ...
     'SpecularStrength', 1.0, 'SpecularExponent', 5, 'BackFaceLighting', 'unlit' ...
@@ -419,26 +566,25 @@ for i=1:4
 
 end
 
-
+leg=legend([pA pB], {'CEM 240', 'CEM 30'});
 
 view([60 10]);
-
+%axis off;
 
 %lighting gouraud
 
 %grid on;
 %set(gca, 'GridLineStyle', 
-daspect([1 1 1]);
 
 
-xticklabs = (-1:0.5:1);
+xticklabs = (-1:1:1);
 xticks = xticklabs/(100);
 
 %yticklabs = round(((-Ny/2.0)*100*pixel_size ) : 2 : ((Ny/2.0)*100*pixel_size));
 yticklabs = xticklabs;
 yticks = yticklabs/(100) ;
 
-zticklabs = 100*r_foc + (-2:0.5:2);
+zticklabs = 100*r_foc + (-2:1:2);
 zticks = zticklabs/(100) ;
 
 set(gca,'XTick', xticks);
@@ -447,14 +593,16 @@ set(gca,'YTick', yticks);
 set(gca,'YTickLabel', yticklabs);
 set(gca,'ZTick', zticks);
 set(gca,'ZTickLabel', zticklabs);
-set(gca, 'FontSize',12);
+set(gca, 'FontSize',26);
 
-xlabel('X [cm]', 'Fontsize', 12);
-ylabel('Y [cm]', 'Fontsize', 12);
-zlabel('Axial [cm]', 'Fontsize', 12);
+xlabel('X [cm]', 'Fontsize', 26);
+ylabel('Y [cm]', 'Fontsize', 26);
+zlabel('Axial [cm]', 'Fontsize', 26);
 
 
 
+axis equal tight;
+daspect([1 1 1]);
 
 
 

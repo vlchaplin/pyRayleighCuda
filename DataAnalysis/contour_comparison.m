@@ -37,9 +37,13 @@ files_to_compare = {...
 %      [dir,'\Caskey_GPh2_99999_WIP_TemperatureMapping_CLEAR_7_1.PAR'],...
 %      [dir,'\Caskey_GPh2_99999_WIP_TemperatureMapping_CLEAR_13_1.PAR']
 %     };
+dir = 'C:\Users\Vandiver\Data\sonalleve\Phantom_20150915';
+files_to_compare = {...
+     [dir,'\Grissom_8888_WIP_TemperatureMapping_CLEAR_3_1.PAR'],...
+     [dir,'\Grissom_8888_WIP_TemperatureMapping_CLEAR_4_1.PAR']
+    };
 
-
-isRI=1;
+isRI=0;
 angle2tempFactor = 1.0 / (42.576*0.01*3.0*0.016*pi);
 
 [ deltaTseries1, axis0_mm1, axis1_mm1, slice_axis_mm1, dyntimes1, im1 ] = GetDeltaTemp4D_PAR( files_to_compare{1}, isRI, 0.01, angle2tempFactor );
@@ -55,8 +59,8 @@ deltaTseries1(mask) = deltaTseries1(mask) + 2*pi*angle2tempFactor;
 mask = (deltaTseries2/angle2tempFactor) <= -0.8*pi;
 deltaTseries2(mask) = deltaTseries2(mask) + 2*pi*angle2tempFactor;
 
-T01 = 25;
-T02 = 25;
+T01 = 22;
+T02 = 22;
 % calc cem
 rbase1 = 4.0*ones(size(deltaTseries1));
 rbase2 = 4.0*ones(size(deltaTseries2));
@@ -86,6 +90,11 @@ idx1 = 55:70;
 % sliceset = [3:7];
 % idx0 = 37:47;
 % idx1 = 33:49;
+
+%2015-09-15
+sliceset = [5:8];
+idx0 = 55:65;
+idx1 = 42:60;
 
 roiMask = zeros(im1.Dims(1:3));
 roiMask(idx0, idx1, sliceset)=1;
@@ -124,10 +133,11 @@ ylabel('ml');
 %plot( shift12:im2.Dims(5), avgTcurve2(1:end-shift12+1), '-*','Color',[0.1 0.4 0.9] );
 
 %%
-slicenum=9;
+slicenum=14;
 
-dyns = [20 30 39 49 60 70];
-%dyns = [15 20 23 26 29 32];
+%dyns = [20 30 39 49 60 70];
+dyns = [15 20 23 26 29 32];
+dyns = [8 15 20 29 37 47];
 ncol = 3;
 if ncol > length(dyns)
     ncol = length(dyns);
@@ -170,7 +180,7 @@ for d=1:length(dyns)
 end
 
 %%
-slicenum=8;
+slicenum=11;
 rf = 1; gf=0.4; bf=0.4;
 roiImSliceRGB = cat(3, rf*roiMask(:,:,slicenum), gf*roiMask(:,:,slicenum), bf*roiMask(:,:,slicenum));
 
@@ -193,8 +203,8 @@ for d=1:length(dyns)
     
     image(axis1_mm1, axis0_mm1, roiImSliceRGB, 'AlphaDataMapping', 'none', 'AlphaData', 0.4*roiMask(:,:,slicenum) );
     
-    contour(axis1_mm1, axis0_mm1, deltaTseries1(:,:,slicenum,dn), [2 20], 'LineWidth', 2.0, 'Color', [0.9 0.4 0.1] );
-    contour(axis1_mm2, axis0_mm2, deltaTseries2(:,:,slicenum,dn2), [2 20], 'LineWidth', 2.0, 'Color', [0.1 0.4 0.9] );
+    contour(axis1_mm1, axis0_mm1, deltaTseries1(:,:,slicenum,dn), [10 20], 'LineWidth', 2.0, 'Color', [0.9 0.4 0.1] );
+    contour(axis1_mm2, axis0_mm2, deltaTseries2(:,:,slicenum,dn2), [10 20], 'LineWidth', 2.0, 'Color', [0.1 0.4 0.9] );
 
     xlabel('mm','FontSize',18);
     ylabel('mm','FontSize',18);

@@ -19,7 +19,6 @@ void testintarr(int * invec, int n)
 
 void ShareMemoryMesh3( double * IN_ARRAY3, int DIM1, int DIM2, int DIM3, double * res, int ressz, MeshFunction3D<double> * infunc)
 {
-    cout << "test" <<endl;
     long dims[3] = {DIM1,DIM2,DIM3};
     infunc->useSharedData( dims, IN_ARRAY3, res );
 }
