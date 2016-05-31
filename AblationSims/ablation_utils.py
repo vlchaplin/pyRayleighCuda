@@ -535,6 +535,9 @@ def calc_heating(simPhysGrid,T,Tdot,Tmesh,Tdotmesh,kmesh,rhoCpmesh, duration, CE
                  T0=None, CEMinit=None, Tmax=None, Freeflow=0, verbose=False, GPU=False, useSimGrid=False):
     
     """
+    Returns (time, Tmax, timeList, TavgList)
+    where 'time' is the actual duration of that was calculated
+    
     simPhysGrid is a dict with the following keys:
         'Tmesh' - 4d PBHESwig mesh object, containing temperature data for the grid
         'Tdotmesh' - 3d PBHESwig mesh object, containing temperature source data for the grid
@@ -559,7 +562,8 @@ def calc_heating(simPhysGrid,T,Tdot,Tmesh,Tdotmesh,kmesh,rhoCpmesh, duration, CE
     Tavg=False , or True.
     voxmask = 3d mask of voxels for averaging temperature
         
-    return is (time, Tmax, timeList, TavgList), where 'time' is the actual duration of that was calculated
+    
+    
     
     If Tavg=True, ti
     """
