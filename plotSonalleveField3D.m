@@ -10,19 +10,24 @@ rho=1000;
 
 pxyz = [ [0.0 0.0 0.14] ]';
 
-% nfoci=3;
-% d = 0.0065;
-% h=d*sin(pi/3);
-% pxyz = [[-d/2, -h/2, 0.14]; [d/2, -h/2, 0.14]; [0, h/2, 0.14]; ]';
-% 
+nfoci=3;
+d = 0.0065;
+h=d*sin(pi/3);
+pxyz = [[-d/2, -h/2, 0.14]; [d/2, -h/2, 0.14]; [0, h/2, 0.14]; ]';
+
 %%
-nfoci=1;
-radius=0.000;
-pxyz = zeros(3,nfoci);
-thetas = (0:(2*pi/(nfoci)):2*pi) - pi/2  ;
-for k=1:nfoci
-    pxyz(:,k) = [ radius*cos(thetas(k)), radius*sin(thetas(k)), 0.14 ];
-end
+nfoci=4;
+sep = 0.005;
+pxyz = [ zeros(1,nfoci); ((1:nfoci)-0.5-nfoci/2)*sep; 0.14*ones(1,nfoci);  ];
+
+%%
+% nfoci=1;
+% radius=0.000;
+% pxyz = zeros(3,nfoci);
+% thetas = (0:(2*pi/(nfoci)):2*pi) - pi/2  ;
+% for k=1:nfoci
+%     pxyz(:,k) = [ radius*cos(thetas(k)), radius*sin(thetas(k)), 0.14 ];
+% end
 %%
 M = size(pxyz,2);
 pxyz = pxyz + repmat([0.00 0.00 0]',1,M);
@@ -37,17 +42,17 @@ uamp = get_transducer_vals( uxyz,f_0,rho,c0,pxyz,pvalue);
 %uopt = get_transducer_vals( u_pos, f_o, rho, c, p_control_xyz, p_control );
 
 
-simXp = 1e-3*(-10.0:0.25:10.0);
+simXp = 1e-3*(-20.0:0.25:20.0);
 simYp = simXp;
 simZp = 1e-3*(120:1.0:160.0);
 
 N = 256;
 unormals = repmat([0.0 0.0 0.14]', 1, N) - uxyz;
 
-[ pn, near_field_mask, gx, gy, gz ] = calc_finitexdc_pressure_field_ndgrid( kr, uamp, uxyz, simXp, simYp, simZp, [], [] );
+[ pn, near_field_mask, gx, gy, gz ] = calc_finitexdc_pressure_field_ndgrid( kr, uamp, uxyz, simXp, simYp, simZp, unormals, [] );
 
-Inten = conj(pn).*pn;
-
+%Inten = conj(pn).*pn;
+Inten = abs(pn);
 Inten = Inten / max(Inten(:));
 
 tx = 100*permute(gx,[2 1 3]);
@@ -97,7 +102,7 @@ axis tight;
 
 %%
 figure(1);
-clf;
+%clf;
 hold on;
 xlabel('X [cm]', 'Fontsize', 24);
 ylabel('Y [cm]', 'Fontsize', 24);
@@ -160,7 +165,7 @@ set(p3, 'Clipping', 'on', 'FaceColor', 'blue', 'EdgeColor', 'none','FaceAlpha',0
 xp = (-6.0:0.01:6.0);
 yp = (-6.0:0.01:6.0);
 zp = (4.0:0.05:16.0);
-[ yzPplane,nf,ndx,ndy,ndz  ] = calc_finitexdc_pressure_field_ndgrid( kr, uamp, uxyz, [0.0],1e-2*yp, 1e-2*zp, [], [] );
+[ yzPplane,nf,ndx,ndy,ndz  ] = calc_finitexdc_pressure_field_ndgrid( kr, uamp, uxyz, [0.0],1e-2*yp, 1e-2*zp, unormals, [] );
 
 yzPplane = squeeze( permute(yzPplane,[2 1 3]) );
 
