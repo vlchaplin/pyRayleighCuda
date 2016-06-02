@@ -1,6 +1,14 @@
 function [ pn, near_field_mask, gx, gy, gz ] = calc_finitexdc_pressure_field_ndgrid( kr, uamp, uxyz, simXp, simYp, simZp, u_normals, u_template )
-%UNTITLED5 Summary of this function goes here
-%   Detailed explanation goes here
+% Return the 3D pressure field calculated on the ndgrid defined by simXp, simYp, simZp.
+%   kr - wavenumber (1/meters).  So if c is sound speed (m/s) and f0 is frequency in Hz, kr = 2*pi*f0 / c
+%   uamp - complex amplituude of each array element.  Element amplitude and delays are defined with uamp. 
+%           Delays in radians can be calculated as  delay_rad = 2*pi*delay_seconds/f0
+%           
+%   uxyz - element position vectors (3xN)
+%   u_normals - normal vector of each element
+%   u_template - Disk or spherical set of point defining point sources (3xP) of each element. 
+%                The template coordinates will be interpreted so that its z-axis will be aligned to each element normal.
+%                Pass [] to use a single point source
 
 [gx, gy, gz] = ndgrid( simXp, simYp, simZp );
 

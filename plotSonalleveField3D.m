@@ -50,9 +50,22 @@ N = 256;
 unormals = repmat([0.0 0.0 0.14]', 1, N) - uxyz;
 
 [ pn, near_field_mask, gx, gy, gz ] = calc_finitexdc_pressure_field_ndgrid( kr, uamp, uxyz, simXp, simYp, simZp, unormals, [] );
+<<<<<<< HEAD
 
 %Inten = conj(pn).*pn;
 Inten = abs(pn);
+=======
+
+% re-normalize pn or intensity
+p_peak = 1e6; %pascals 
+pn = pn .* (p_peak / (max(abs(pn(:)))) );
+
+
+Inten = conj(pn).*pn /(2*rho*c0);
+
+
+%re-normalize intensity to plot dB change from max more easily
+>>>>>>> 1db686a94bd04715ebf20dde845c546670e00b50
 Inten = Inten / max(Inten(:));
 
 tx = 100*permute(gx,[2 1 3]);
