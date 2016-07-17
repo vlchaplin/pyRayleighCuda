@@ -8,7 +8,7 @@ import math
 import h5py
 import sys
 
-sys.path.append('C:\\Users\\Vandiver\\Documents\\HiFU\\code\\BioHeatCpp\\PBHEswig\\x64')
+sys.path.append('C:\\Users\\Vandiver\\Documents\\HiFU\\code\\BioHeat\\BioHeatCpp\\PBHEswig\\x64')
 import PBHEswig
 
 sys.path.append('C:\\Users\\Vandiver\\Documents\\HiFU\\code\\CUDA\\RSgpu\\Release')
@@ -281,7 +281,7 @@ def trajSumEnergy(xrp,yrp,zrp,maxR_mm, deltaR_mm, z_mm, avgSpd, dwellSec, waitSe
         
     return Itot
     
-def trajectorySettings(trajectorySpec,  doRotation=True, use_kohler_traj=False, AlternatePhases=False,
+def trajectorySettings(trajectorySpec,  is_path=False, doRotation=True, use_kohler_traj=False, AlternatePhases=False,
                         L1renorm=None, L2renorm=None, Npass=1, k0=4895.98855, tzero=0.0, PathRotMat=None,
                         uxyz=None, pxyz=None,  **kwargs):
 
@@ -318,7 +318,11 @@ def trajectorySettings(trajectorySpec,  doRotation=True, use_kohler_traj=False, 
             (maxR_mm, deltaR_mm, z_mm, avgSpd, dwellSec, waitSec) = trajectorySpec
         
         (focalpoint_coords_mm, nturns, num_sonications_per_turn) = kohler_trajectories(maxR_mm, z_mm)
-        
+    elif is_path:
+        #Trajectory is a Nx3 array of focal point centroids.  pxyz pattern will be applied at each point
+        (focalpoint_coords_mm, dwellSec, waitSec) = trajectorySpec
+        nturns=1
+        num_sonications_per_turn=[len(focalpoint_coords_mm)]
     else:
         (maxR_mm, deltaR_mm, z_mm, avgSpd, dwellSec, waitSec) = trajectorySpec
         (focalpoint_coords_mm, nturns, num_sonications_per_turn) = contstruct_circ_sonication_points(maxR_mm, deltaR_mm, z_mm, avgSpd, dwellSec, waitSec)

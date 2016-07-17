@@ -58,7 +58,7 @@ def Tpom_from_Orientation(patient_orientation_str):
         
     return Tpo.dot(Tpp)
         
-def read_TempScan(parrec_file,B0_T=3.0, TE_ms=16, MP_interleaved=True, phase_unwrap=None, pi_val=-1.0, diff=False ):
+def read_TempScan(parrec_file,B0_T=3.0,num_baselines=1, basedynes=None,TE_ms=16, MP_interleaved=True, phase_unwrap=None, pi_val=-1.0, diff=False ):
     """
     phase_unwrap:
             None- do nothing (default).
@@ -99,13 +99,21 @@ def read_TempScan(parrec_file,B0_T=3.0, TE_ms=16, MP_interleaved=True, phase_unw
     #B0_T = 3.0
     ang2temp = 1.0 / (42.576*0.01*B0_T*TE_ms*1e-3*math.pi)
     
+    if basedynes is None:
+        if num_baselines==1:
+            baseline=complexImgSeries[:,:,:,0] 
+        else:
+            baseline=np.mean( complexImgSeries[:,:,:,0:num_baselines], axis=3 ) 
+    else:
+        baseline=np.mean( complexImgSeries[:,:,:,basedynes], axis=3 ) 
+    
     tempSeries = np.zeros(complexImgSeries.shape)
     if diff:
         for dn in range(1,numdyns):
             tempSeries[:,:,:,dn] = np.angle( complexImgSeries[:,:,:,dn-1] * np.conj(complexImgSeries[:,:,:,dn]) )
     else:
         for dn in range(0,numdyns):
-            tempSeries[:,:,:,dn] = np.angle( complexImgSeries[:,:,:,0] * np.conj(complexImgSeries[:,:,:,dn]) )
+            tempSeries[:,:,:,dn] = np.angle( baseline * np.conj(complexImgSeries[:,:,:,dn]) )
     #orig=tempSeries[72,70,7,:].copy()
     
     #phase correct
