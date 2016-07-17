@@ -66,13 +66,14 @@ file = [dir,'\Caskey_20150926_WIP_TMap_Mult_40W_CLEAR_6_1.PAR'];
 % dir='C:\Users\Vandiver\Data\sonalleve\HifuVol_20160223B\';
 % file = [dir,'scan14_TempTrans_20160223B.PAR'];
 % 
-dir='C:\Users\Vandiver\Data\sonalleve\Hifu_20160310\';
+%dir='C:\Users\Vandiver\Data\sonalleve\Hifu_20160310\';
 %file = [dir,'scan45_Temp2Cor120W_20160310.PAR'];
 %file = [dir,'scan47_Temp2Cor120W_20160310.PAR'];
-%file = [dir,'scan13_TempCoron90W_20160310.PAR'];
+%file = [dir,'scan34_Temp2Cor40W_20160310.PAR'];
+%file = [dir,'scan36_Temp2Cor40W_20160310.PAR'];
 
 dir='C:\Users\Vandiver\Data\sonalleve\Hifu_20160314\';
-file = [dir,'scan45_TempCo_20160314.PAR'];
+file = [dir,'scan46_TempCo_20160314.PAR'];
 %file = [dir,'scan25_TempTr_20160314.PAR'];
 
 % dir='C:\Users\Vandiver\Data\sonalleve\Hifu_20160317\';
@@ -80,6 +81,9 @@ file = [dir,'scan45_TempCo_20160314.PAR'];
 
 % dir='C:\Users\Vandiver\Data\sonalleve\HifuPCD_20160323\scans\';
 % file = [dir,'scan20_Temp_20160323.PAR'];
+
+dir='C:\Users\Vandiver\Data\Verasonics\sonalleve_20160709\Scanner\';
+file=[dir,'scan25_TempCor_20160709.PAR'];
 
 %whether they are mag & phase or real and imaginary
 is_RI_image = 0;
@@ -155,7 +159,7 @@ end
 deltaTseriesCorr = deltaTseries;
 
 % simple phase un-wrapping (single wrapping only)
-mask = (deltaTseries/angle2tempFactor) <= -0.2*pi;
+mask = (deltaTseries/angle2tempFactor) <= -0.3*pi;
 deltaTseriesCorr = deltaTseries;
 deltaTseriesCorr(mask) = deltaTseriesCorr(mask) + 2*pi*angle2tempFactor;
 
@@ -236,7 +240,7 @@ hold on;
 dn=ndynamics;
 
 %dn=3;
-slicenum=12;
+slicenum=3;
 minC=0; maxC=30;
 %axis1_mm, axis0_mm, 
 magImGray = cat(3,im.Data(:,:,slicenum,1,dn),im.Data(:,:,slicenum,1,dn),im.Data(:,:,slicenum,1,dn));
@@ -425,29 +429,29 @@ idx1 = 61:84;
 % idx0 = 147:167;
 % idx1 = 132:155;
 % 
-dbid = mksqlite(0,'open','C:\Users\Vandiver\Data\sonalleve\sonalleve.db');
-[fdir,fbase,fext]=fileparts(file);
-query = sprintf('select * from data where file="%s%s";',fbase,fext)
-qrydata = mksqlite(dbid, query);
-mksqlite(dbid,'close');
-
-idx0 = qrydata.start0:qrydata.end0;
-idx1 = qrydata.start1:qrydata.end1;
-sliceset=qrydata.start2:qrydata.end2;
-
-% center_vox = [qrydata.start0 + qrydata.end0, qrydata.start1 + qrydata.end1, qrydata.start2 + qrydata.end2] /2.0;
-% 
-
-% roiM_mm = 20.0;
-% roiP_mm = 20.0;
-% roiS_mm = 25.0;
+% dbid = mksqlite(0,'open','C:\Users\Vandiver\Data\sonalleve\sonalleve.db');
+% [fdir,fbase,fext]=fileparts(file);
+% query = sprintf('select * from data where file="%s%s";',fbase,fext)
+% qrydata = mksqlite(dbid, query);
+% mksqlite(dbid,'close');
 % % 
-% center_vox = [78,84,8];
+% idx0 = qrydata.start0:qrydata.end0;
+% idx1 = qrydata.start1:qrydata.end1;
+% sliceset=qrydata.start2:qrydata.end2;
+% %sliceset=[3:12];
+% center_vox = [qrydata.start0 + qrydata.end0, qrydata.start1 + qrydata.end1, qrydata.start2 + qrydata.end2] /2.0;
+% % 
+
+roiM_mm = 15.0;
+roiP_mm = 15.0;
+roiS_mm = 20.0;
+% 
+center_vox = [64,66,3];
 % % 
 % % % 
-% idx0 = round(center_vox(1) - (0.5*roiM_mm/im.Spc(1))):round(center_vox(1) + (0.5*roiM_mm/im.Spc(1)));
-% idx1 = round(center_vox(2) - (0.5*roiP_mm/im.Spc(2))):round(center_vox(2) + (0.5*roiP_mm/im.Spc(2)));
-% sliceset = round(center_vox(3) - (0.5*roiS_mm/im.Spc(3))):round(center_vox(3) + (0.5*roiS_mm/im.Spc(3)));
+idx0 = round(center_vox(1) - (0.5*roiM_mm/im.Spc(1))):round(center_vox(1) + (0.5*roiM_mm/im.Spc(1)));
+idx1 = round(center_vox(2) - (0.5*roiP_mm/im.Spc(2))):round(center_vox(2) + (0.5*roiP_mm/im.Spc(2)));
+sliceset = round(center_vox(3) - (0.5*roiS_mm/im.Spc(3))):round(center_vox(3) + (0.5*roiS_mm/im.Spc(3)));
 
 idx0 = idx0(idx0 <= im.Dims(1));
 idx1 = idx1(idx1 <= im.Dims(2));
@@ -461,7 +465,9 @@ avgTcurve = squeeze(mean(mean(mean(deltaTseriesCorr(idx0, idx1, sliceset,:),1),2
 maxTcurve = squeeze(max(max(max(deltaTseriesCorr(idx0, idx1, sliceset,:), [],1), [],2), [],3 ));
 maxTcurveUnCorr = squeeze(max(max(max(deltaTseries(idx0, idx1, sliceset,:), [],1), [],2), [],3 ));
 sthresh = find( cumsum(avgTcurve) > 0.5 )+1;
-
+if length(sthresh)==0
+    sthresh=[2];
+end
 figure(5);
 
 startFloatIdx = sthresh(1) + ( 0.5 - maxTcurve(sthresh(1)-1) )*( 1.0 ) / ( maxTcurve(sthresh(1)) - maxTcurve(sthresh(1)-1) );
@@ -523,9 +529,9 @@ magmean = mean(magstack,3);
 magmean = magmean/max(magmean(:));
 
 dynidx = ndynamics;
-%dynidx = 15;
+%dynidx = 6;
 deltaTstack = max( deltaTseriesCorr(idx0range, idx1range, slices, 1:dynidx),[], 4);
-deltaTstack( magstack < 0.25 ) = 0.0;
+%deltaTstack( magstack < 0.25 ) = 0.0;
 deltaTstack = permute(deltaTstack,[2 1 3]);
 
 figure(11);
@@ -600,7 +606,8 @@ if tstartidx == 0
 end
 tstart=dyntimes(tstartidx);
 
-expdate='2016-03-14';
+%expdate='2016-03-14';
+expdate=regexprep(im.Parms.exam_date(1:10),'\.','-');
 
 [fdir,fbase,fext]=fileparts(file);
 [query,err] = sprintf( 'insert or ignore into data (fid,file,path,date,isRI,start0,end0,start1,end1,start2,end2,tstartidx,tstart) \n values ( (select max(fid)+1 from data), "%s", "%s", "%s" ,%d,%d,%d,%d,%d,%d,%d,%d,%f);' ...

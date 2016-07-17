@@ -90,6 +90,13 @@ files_to_plot = {...
     'Caskey_20160211_WIP_Temp_MultiTrajA_60W_CLEAR_13_1.PAR',...
     'Caskey_20160211_WIP_Temp_MultiTrajA_100W_CLEAR_15_1.PAR'};
 
+fid=fopen('/Users/Vandiver/Data/sonalleve/S_M_query_list.txt');
+files_to_plot=textscan(fid,'%s');
+files_to_plot=files_to_plot{1};
+fclose(fid);
+
+
+
 %files_to_compare={'QA_phantom_20150628\Caskey_9999_WIP_TemperatureMapping_CLEAR_7_1.PAR'};
 dbid = mksqlite(0,'open',db);
 

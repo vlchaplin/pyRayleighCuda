@@ -113,13 +113,21 @@ files_to_compare = {...
 dbid = mksqlite(0,'open',db);
 %singMultSetQry=['select file, groups.gid, tmp.gsize, condition from groups join (select gid, count(*) as gsize from groups where fid IN (select fid from data where quality==0) group by gid) as tmp ON groups.gid==tmp.gid where tmp.gsize ==2'];
 
-setQry=['select file from data where date = "2016-02-23"';];
+%setQry=['select file from data where date = "2016-02-23"';];
 %dataSetFromdb =mksqlite(dbid, singMultSetQry);
 %dataSetFromdb =mksqlite(dbid, setQry);
 
 %files_to_compare = {dataSetFromdb.file};
 
 mksqlite(dbid,'close');
+
+
+fid=fopen('/Users/Vandiver/Data/sonalleve/S_M_query_list.txt');
+files_to_compare=textscan(fid,'%s');
+files_to_compare=files_to_compare{1};
+fclose(fid);
+
+
 %%
 
 dbid = mksqlite(0,'open',db);
@@ -189,15 +197,16 @@ for fn=1:length(files_to_compare)
     end
     
     marker='none';
-    if isempty(displaydata.displayname)
-        displayName = fbase(end-12:end);
+    if (exist(displaydata.displayname,'var') ~= 1) || isempty(displaydata.displayname)
+        %displayName = fbase(end-12:end);
+        displayName=[qrydata.date 's ' sprintf('%d',qrydata.scan)]
         if mod(fn,2)
             marker='o';
         else
             marker='^';
         end
     else
-        displayName=[displaydata.displayname, ' ', qrydata.date, ' ' , displaydata.traj];
+        displayName=[displaydata.displayname ' ' qrydata.date ' ' sprintf('%d',qrydata.scan) ' '  displaydata.traj];
     end
     
     
@@ -324,7 +333,7 @@ for n=1:nPairs
     tempChange = tempInterp2 - tempInterp1;
     
     volDeltaFinal(end+1) = volChange(end) / t(end);
-    tempDeltaFinal(end+1) = tempChange(end) / t(end);
+    tempDeltaFinal(end+1) = tempChange(end) ;
     volDeltaFinalPct(end+1) = volChange(end) / volInterp1(end);
     tempDeltaFinalPct(end+1) = tempChange(end) / tempInterp2(end);
     
@@ -378,7 +387,7 @@ for n=1:length((volDeltaFinalPct))
 end
 
 sprintf('delta-volume (ml/min) = %f +/- %f, N=%d', 60*mean(volDeltaFinal), std(60*volDeltaFinal), length((volDeltaFinal)) )
-sprintf('delta delta-T (C/min) = %f +/- %f, N=%d', 60*mean(tempDeltaFinal), std(60*tempDeltaFinal), length((tempDeltaFinal)) )
+sprintf('delta delta-T (C) = %f +/- %f, N=%d', mean(tempDeltaFinal), std(tempDeltaFinal), length((tempDeltaFinal)) )
 
 sprintf('cumulative volume ratio multi/single %%: %f' , 100*multiVol / singleVol)
 
