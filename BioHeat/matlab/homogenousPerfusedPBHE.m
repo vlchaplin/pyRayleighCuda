@@ -29,6 +29,8 @@ function [ T, pixMultiplier, newDx, tdotsrc, newI ] = homogenousPerfusedPBHE( T0
 
  %mex -outdir 'C:\Users\vchaplin\Documents\HiFU\mex\' 'C:\Users\vchaplin\Documents\HiFU\code\BioHeatCpp\BioHeatCpp\PBHE_Perfused_mex.cpp'
 
+% TEST EDIT THIS LINE WILL APPEAR IF clone worked
+
 if downsample
     
     newI=I;
