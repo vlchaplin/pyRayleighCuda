@@ -60,7 +60,7 @@ Sfiles =[]
 Sdata={'avgT':[],'finalT':[],'maxT':[],'t':[],'fi':[]}
 
 MetaData={'file':[],'scan':[],'date':[],'roi':[],'fi':[],'unwrapped':[]}
-qrySet = pandas.read_sql_query("select file,path,interleave,scan,date from data where date='2016-07-09'", con )
+qrySet = pandas.read_sql_query("select file,path,interleave,scan,date from data where date='2016-07-09' and file like '%TempCor%'", con )
 
 #qrySet = qrySet[0:2]
 interactive=False
@@ -80,7 +80,7 @@ for fi in range(len(qrySet)):
 
     #reorder
     roi1 = np.array(roi1)[[2,3,0,1,4,5]]
-
+    #roi1 += [1,1,1,1,0,0]
     T1roi = tempdata1[roi1[0]-1:roi1[1] , roi1[2]-1:roi1[3], roi1[4]-1:roi1[5], : ]
     avgT1 = np.mean(T1roi,axis=(0,1,2))   
     maxT1 = np.max(T1roi,axis=(0,1,2))  
@@ -105,9 +105,9 @@ for fi in range(len(qrySet)):
         Tsl = tempdata1[:,:,sl,dyn]
         
         magImg = MRDataAnalysis.rescale( np.abs(complIm1[:,:,sl,0]) )
-        greyPix = Tsl < 1.0
+        greyPix = Tsl < 0.0
         cmin=0.0
-        cmax=30.0
+        cmax=20.0
         rgbIm = image.cm.hot( MRDataAnalysis.rescale(Tsl,vmin=cmin,vmax=cmax) )
         
         rgbIm[greyPix,3]=0
@@ -145,9 +145,16 @@ for fi in range(len(qrySet)):
         ax.set_ylabel('cm',fontsize=14)
         ax.tick_params(labelsize=14)      
         
+        
         roix = np.array([ roi1[2]-1, roi1[2]-1, roi1[3], roi1[3], roi1[2]-1 ])
         roiy = np.array([ roi1[0]-1, roi1[1], roi1[1], roi1[0]-1, roi1[0]-1 ])
         plt.plot( d1*roix, d0*roiy, color=(0.7,0.6,1.0),linewidth=2.0)
+        
+        xw=d1*abs(roix[2]-roix[0])
+        yw=d0*abs(roiy[1]-roiy[0])
+        
+        ax.set_xlim([-xw,2*xw]+d1*roix[0])
+        ax.set_ylim([-yw,2*yw]+d0*roiy[0])
         
         sc=mpl.cm.ScalarMappable(cmap=image.cm.hot)
         sc.set_array(rgbIm)
@@ -166,6 +173,9 @@ for fi in range(len(qrySet)):
     
     
 #%%
+    
+exit    
+    
 outpath='/Users/Vandiver/Data/Verasonics\sonalleve_20160709'
 
 df=pandas.DataFrame(Sdata)
