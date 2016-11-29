@@ -72,19 +72,21 @@ file = [dir,'\Caskey_20150926_WIP_TMap_Mult_40W_CLEAR_6_1.PAR'];
 %file = [dir,'scan34_Temp2Cor40W_20160310.PAR'];
 %file = [dir,'scan36_Temp2Cor40W_20160310.PAR'];
 
-dir='C:\Users\Vandiver\Data\sonalleve\Hifu_20160314\';
-file = [dir,'scan46_TempCo_20160314.PAR'];
+% dir='C:\Users\Vandiver\Data\sonalleve\HifuPCD_20160323\scans\';
+% file = [dir,'scan9_Temp_20160323.PAR'];
 %file = [dir,'scan25_TempTr_20160314.PAR'];
+
+dir='C:\Users\Vandiver\Data\sonalleve\Hifu_20160317\';
+file = [dir,'scan23_TempCo_20160317.PAR'];
 
 % dir='C:\Users\Vandiver\Data\sonalleve\Hifu_20160317\';
 % file = [dir,'scan23_TempCo_20160317.PAR'];
 
-% dir='C:\Users\Vandiver\Data\sonalleve\HifuPCD_20160323\scans\';
-% file = [dir,'scan20_Temp_20160323.PAR'];
-
-dir='C:\Users\Vandiver\Data\Verasonics\sonalleve_20160709\Scanner\';
-file=[dir,'scan25_TempCor_20160709.PAR'];
-
+% dir='C:\Users\Vandiver\Data\Verasonics\sonalleve_20160709\Scanner\';
+% file=[dir,'scan6_TempSag_20160709.PAR'];
+% 
+% dir='C:\Users\Vandiver\Data\sonalleve\HifuCav20160810\';
+% file=[dir 'scan37_TempSag_20160810.PAR'];
 %whether they are mag & phase or real and imaginary
 is_RI_image = 0;
 flipSliceDir=0;
@@ -125,7 +127,7 @@ dyntimes=unique(dyntimes);
 
 
 magmeanForMask = mean(im.Data(:,:,:, 1, :),5);
-outsideVox = ( magmeanForMask/ max(magmeanForMask(:)) < 0.03 );
+outsideVox = ( magmeanForMask/ max(magmeanForMask(:)) < 0.002 );
 
 
 
@@ -143,7 +145,7 @@ deltaTseriesCorr =  zeros(im.Dims([1,2,3,5]));
 
 refStack = (im.Data(:,:,:,1,1).*exp(1i*im.Data(:,:,:,2,1)));
 
-angle2tempFactor = 1.0 / (42.576*0.01*3.0*0.016*pi);
+angle2tempFactor = 1.0 / (42.576*0.01*3.0*0.016*2*pi);
 
 wrap_in_C = 2*pi * angle2tempFactor;
 
@@ -239,17 +241,17 @@ clf;
 hold on;
 dn=ndynamics;
 
-%dn=3;
+dn=8;
 slicenum=3;
-minC=0; maxC=30;
+minC=0; maxC=20;
 %axis1_mm, axis0_mm, 
-magImGray = cat(3,im.Data(:,:,slicenum,1,dn),im.Data(:,:,slicenum,1,dn),im.Data(:,:,slicenum,1,dn));
+magImGray = cat(3,im.Data(:,:,slicenum,1,2),im.Data(:,:,slicenum,1,2),im.Data(:,:,slicenum,1,2));
 magImGray = magImGray/max(magImGray(:));
 
 mask=squeeze(deltaTseriesCorr(:,:,slicenum,dn)) > minC;
 colormap('hot');
 
-use_mm_scale=0
+use_mm_scale=1;
 if use_mm_scale
     imagesc(axis1_mm, axis0_mm, magImGray);
     imagesc(axis1_mm, axis0_mm,deltaTseriesCorr(:,:,slicenum,dn), 'AlphaDataMapping', 'none', 'AlphaData', mask, [minC maxC]);
@@ -271,7 +273,7 @@ end
 % figure(2);
 % colormap('gray');
 % imagesc(im.Data(:,:,slicenum,1,dn));
-
+axis equal;
 
 %%
 
@@ -282,11 +284,11 @@ dynamicsToPlot = 1:ndynamics;
 %dynamicsToPlot = 1:30;
 %dynamicsToPlot=ndynamics-4:ndynamics;
 
-slicenum=9;
+slicenum=3;
 colormap('hot');
 clear('movie2DFrames');
 movie2DFrames(length(dynamicsToPlot)) = struct('cdata',[],'colormap',[]);
-
+ 
 magImGray = cat(3,im.Data(:,:,slicenum,1,1),im.Data(:,:,slicenum,1,1),im.Data(:,:,slicenum,1,1));
 magImGray = 1.2*magImGray/max(magImGray(:));
 
@@ -429,29 +431,29 @@ idx1 = 61:84;
 % idx0 = 147:167;
 % idx1 = 132:155;
 % 
-% dbid = mksqlite(0,'open','C:\Users\Vandiver\Data\sonalleve\sonalleve.db');
-% [fdir,fbase,fext]=fileparts(file);
-% query = sprintf('select * from data where file="%s%s";',fbase,fext)
-% qrydata = mksqlite(dbid, query);
-% mksqlite(dbid,'close');
-% % 
-% idx0 = qrydata.start0:qrydata.end0;
-% idx1 = qrydata.start1:qrydata.end1;
-% sliceset=qrydata.start2:qrydata.end2;
-% %sliceset=[3:12];
-% center_vox = [qrydata.start0 + qrydata.end0, qrydata.start1 + qrydata.end1, qrydata.start2 + qrydata.end2] /2.0;
+dbid = mksqlite(0,'open','C:\Users\Vandiver\Data\sonalleve\sonalleve.db');
+[fdir,fbase,fext]=fileparts(file);
+query = sprintf('select * from data where file="%s%s";',fbase,fext)
+qrydata = mksqlite(dbid, query);
+mksqlite(dbid,'close');
+% 
+idx0 = qrydata.start0:qrydata.end0;
+idx1 = qrydata.start1:qrydata.end1;
+sliceset=qrydata.start2:qrydata.end2;
+%sliceset=[3:12];
+center_vox = [qrydata.start0 + qrydata.end0, qrydata.start1 + qrydata.end1, qrydata.start2 + qrydata.end2] /2.0;
 % % 
 
-roiM_mm = 15.0;
-roiP_mm = 15.0;
-roiS_mm = 20.0;
-% 
-center_vox = [64,66,3];
+% roiM_mm = 15.0;
+% roiP_mm = 15.0;
+% roiS_mm = 15.0;
 % % 
+% center_vox = [81,77,3];
 % % % 
-idx0 = round(center_vox(1) - (0.5*roiM_mm/im.Spc(1))):round(center_vox(1) + (0.5*roiM_mm/im.Spc(1)));
-idx1 = round(center_vox(2) - (0.5*roiP_mm/im.Spc(2))):round(center_vox(2) + (0.5*roiP_mm/im.Spc(2)));
-sliceset = round(center_vox(3) - (0.5*roiS_mm/im.Spc(3))):round(center_vox(3) + (0.5*roiS_mm/im.Spc(3)));
+% % % % 
+% idx0 = round(center_vox(1) - (0.5*roiM_mm/im.Spc(1))):round(center_vox(1) + (0.5*roiM_mm/im.Spc(1)));
+% idx1 = round(center_vox(2) - (0.5*roiP_mm/im.Spc(2))):round(center_vox(2) + (0.5*roiP_mm/im.Spc(2)));
+% sliceset = round(center_vox(3) - (0.5*roiS_mm/im.Spc(3))):round(center_vox(3) + (0.5*roiS_mm/im.Spc(3)));
 
 idx0 = idx0(idx0 <= im.Dims(1));
 idx1 = idx1(idx1 <= im.Dims(2));
@@ -514,7 +516,10 @@ slices=1:im.Dims(3);
 %slices=1:5;
 
 roiVolume = 1e-3*prod(im.Spc.*[length(idx0) length(idx1) length(sliceset)]);
+disp('roi size') 
+im.Spc.*[length(idx0) length(idx1) length(sliceset)]
 disp(sprintf('roi volume(mL) = %f', roiVolume))
+
 [tx, ty, tz] = ndgrid( axis0_mm(idx0range), axis1_mm(idx1range), slice_axis_mm(slices) );
 %[tx, ty, tz] = meshgrid( axis1_mm, axis0_mm, slice_axis_mm );
 %[tx, ty, tz] = meshgrid( 1:64, 1:64, 1:7 );
@@ -529,18 +534,18 @@ magmean = mean(magstack,3);
 magmean = magmean/max(magmean(:));
 
 dynidx = ndynamics;
-%dynidx = 6;
+%dynidx = 15;
 deltaTstack = max( deltaTseriesCorr(idx0range, idx1range, slices, 1:dynidx),[], 4);
-%deltaTstack( magstack < 0.25 ) = 0.0;
+deltaTstack( magstack < 0.05 ) = 0.0;
 deltaTstack = permute(deltaTstack,[2 1 3]);
 
 figure(11);
 clf;
 hold on;
 
-xboxr=axis0_mm(idx0([1 end]));
-yboxr=axis1_mm(idx1([1 end]));
-zboxr=slice_axis_mm(sliceset([1 end]));
+xboxr=axis0_mm(idx0([1 end])) - [im.Spc(1) 0];
+yboxr=axis1_mm(idx1([1 end])) - [im.Spc(2) 0];
+zboxr=slice_axis_mm(sliceset([1 end])) - [im.Spc(3) 0];
 xyboxverts= [ xboxr([1 1 2 2 1]) ; yboxr([1 2 2 1 1]) ];
 plot3( xyboxverts(1,:), xyboxverts(2,:), zboxr(2) + zeros([1 5]), 'LineStyle','--','LineWidth',2, 'Color', [0.7 0.7 1.0] );
 plot3( xyboxverts(1,:), xyboxverts(2,:), zboxr(1) + zeros([1 5]), 'LineStyle','--','LineWidth',2, 'Color', [0.7 0.7 1.0] );
@@ -552,7 +557,7 @@ end
 light('Position', [-30 -30 100], 'Style', 'local');
 %light('Position', [40 0 10], 'Style', 'local');
 
-cval1 =30;
+cval1 =20;
 p1=patch( isosurface( tx, ty, tz, deltaTstack, cval1 ) );
 isonormals(tx, ty, tz, deltaTstack, p1);
 set(p1, 'FaceColor', 'red', 'EdgeColor', 'none', ...
@@ -610,7 +615,7 @@ tstart=dyntimes(tstartidx);
 expdate=regexprep(im.Parms.exam_date(1:10),'\.','-');
 
 [fdir,fbase,fext]=fileparts(file);
-[query,err] = sprintf( 'insert or ignore into data (fid,file,path,date,isRI,start0,end0,start1,end1,start2,end2,tstartidx,tstart) \n values ( (select max(fid)+1 from data), "%s", "%s", "%s" ,%d,%d,%d,%d,%d,%d,%d,%d,%f);' ...
+[query,err] = sprintf( 'insert into data (fid,file,path,date,isRI,start0,end0,start1,end1,start2,end2,tstartidx,tstart) \n values ( (select max(fid)+1 from data), "%s", "%s", "%s" ,%d,%d,%d,%d,%d,%d,%d,%d,%f);' ...
     , [fbase fext], fdir, expdate, is_RI_image, idx0(1), idx0(end), idx1(1),idx1(end), sliceset(1), sliceset(end), tstartidx, tstart )
 
 dbid = mksqlite(0,'open',db);
