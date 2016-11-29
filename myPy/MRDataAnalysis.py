@@ -57,6 +57,52 @@ def Tpom_from_Orientation(patient_orientation_str):
         Tpo = np.zeros([3,3])
         
     return Tpo.dot(Tpp)
+    
+def parse_scan_parts(imageset, num_dyns=None, num_parts=1, ordering=0):
+    """
+    Given an NX x NY x NS x D array of images, this routine 
+    parses the ordering of the last dimension into a set of
+    3D/4D image stacks, one per image part.
+    
+    The number of image parts (e.g., 'M','P', etc.)
+    is specified by num_parts, and the number of scan dynamics by num_dyns.
+    
+    num_parts*num_dyns must equal the length of the last dimension, D. 
+    
+    If ordering==0, the last dimension will be interpreted as sorted by 
+    dynamic first, then by image part:
+    (dyn0, part0)
+    (dyn0, part1)
+    (dyn1, part0)
+    (dyn1, part1)
+    etc.
+    
+    
+    If ordering!=0, the opposite ordering is assumed.
+    
+    Returns: a tuple of 4D image stacks of length num_parts.
+    """
+    
+    (nx,ny,ns,D) = imageset.shape   
+
+    if num_dyns is None:
+        num_dyns = int(D/num_parts)
+     
+    if D!=(num_dyns*num_parts):
+        raise ValueError("num_dyns*num_parts must equal length of last dimension")
+    
+    result_set = []
+    
+    for partnum in range(num_parts):
+        if ordering:
+            dynamics = partnum*num_dyns + np.arange(0,num_dyns,dtype=int)
+        else:
+            dynamics = np.arange(partnum,num_dyns*num_parts,num_parts,dtype=int)
+        
+        result_set.append(imageset[:,:,:, dynamics])
+    
+    return tuple(result_set)
+    
         
 def read_TempScan(parrec_file,B0_T=3.0,num_baselines=1, basedynes=None,TE_ms=16, MP_interleaved=True, phase_unwrap=None, pi_val=-1.0, diff=False ):
     """
@@ -97,7 +143,7 @@ def read_TempScan(parrec_file,B0_T=3.0,num_baselines=1, basedynes=None,TE_ms=16,
     
     #TE_ms = 16
     #B0_T = 3.0
-    ang2temp = 1.0 / (42.576*0.01*B0_T*TE_ms*1e-3*math.pi)
+    ang2temp = 1.0 / (42.576*0.01*B0_T*TE_ms*1e-3*2*math.pi)
     
     if basedynes is None:
         if num_baselines==1:
@@ -117,16 +163,29 @@ def read_TempScan(parrec_file,B0_T=3.0,num_baselines=1, basedynes=None,TE_ms=16,
     #orig=tempSeries[72,70,7,:].copy()
     
     #phase correct
+    num_cor_vox=0
+    max_cor_vox=0
+    max_cor_dyn=0
     if phase_unwrap==1:
         for dn in range(1,numdyns):
             mask= (tempSeries[:,:,:,dn] ) < (pi_val*math.pi)
             tempSeries[mask,dn] += 2*math.pi
+            num_cor_vox=np.sum(mask)
+            if num_cor_vox>max_cor_vox:
+                max_cor_vox=num_cor_vox
+                max_cor_dyn=dn
     
     elif phase_unwrap==2:
         for dn in range(1,numdyns):
             mask= (tempSeries[:,:,:,dn] - tempSeries[:,:,:,dn-1]) < (pi_val*math.pi)
             tempSeries[mask,dn] += 2*math.pi
+            num_cor_vox=np.sum(mask)
+            if num_cor_vox>max_cor_vox:
+                max_cor_vox=num_cor_vox
+                max_cor_dyn=dn
     
+    if max_cor_dyn>0:
+        print("Largest number of phase-corrected voxels: %d [dyn %d]"%(max_cor_vox,max_cor_dyn))
     
     tempSeries*=ang2temp
         
