@@ -33,9 +33,9 @@ def get_focused_element_vals(kwavenum, xyzVecs, focalPoints, focalPvals, L1renor
     uopt = (Hadj).dot(HHa_inv).dot(focalPvals)
     
     if L1renorm is not None:
-        uopt = L1renorm*uopt/sum(abs(uopt))
+        uopt = L1renorm*uopt/numpy.sum(numpy.abs(uopt))
     elif L2renorm is not None:
-        uopt = L2renorm*uopt*sqrt(1.0/sum(abs(uopt)**2))
+        uopt = L2renorm*uopt*sqrt(1.0/numpy.sum(numpy.abs(uopt)**2))
     
     return uopt
 
