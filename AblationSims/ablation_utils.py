@@ -427,7 +427,11 @@ def sonicate4D(simPhysGrid, tstarts, tstops, uamplitudes, uxyz, unvecs, calcFiel
     """
     Returns CEM.
     uxyz - an Nx3 or kk x N x 3
+    
     subsampN=subsampN, subsampDiam=0.0033, ROC=0.14, gpublocks=512
+    
+    PBkeys:
+    see calc_heating()
     """
     xrp = simPhysGrid['xrp']
     yrp = simPhysGrid['yrp']
