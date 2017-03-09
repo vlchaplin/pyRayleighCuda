@@ -125,15 +125,15 @@ def NDrebin( NDorig, inputAxisLocations, outputAxisLocations, preserve_norm=True
         raise ValueError("len(outputAxisLocations) != NDorig.ndim")
     
     newArray = NDorig.copy()
-    axes = tuple(map(lambda x: [x], range(1,nd) ) )
+    #axes = tuple(map(lambda x: [x], range(1,nd) ) )
     
     filters = []
     for ax in range(nd):
-        filters[ax] = calc_bin2bin_Filter( inputAxisLocations[ax], outputAxisLocations[ax],preserve_norm=preserve_norm )
+        filters.append( calc_bin2bin_Filter( inputAxisLocations[ax], outputAxisLocations[ax],preserve_norm=preserve_norm )) 
         
     for ax in range(nd-1, -1, -1):
         
-        newArray = np.tensordot(filters[ax], newArray, axes=axes)
+        newArray = np.tensordot(filters[ax], newArray, axes=( [1], [nd-1] ))
         
     return newArray, filters
     
@@ -257,6 +257,82 @@ def calc_bin2bin_Filter( X, Y, preserve_norm=True ):
         
     return F
 
+def calc_Interpolation_Filter( X, Y, preserve_norm=True ):
+    """
+    
+    Computes linear interpolation operator
+    
+    X-original points
+    Y-inerpolation points
+    
+    returns matrix F
+    
+    N = len(X)
+    M = len(Y)
+    F = matrix size MxN
+    
+    
+    Result used like
+    fy = F.dot(fx)
+    
+    where fx and fy are functions sampled at X and Y, respectively.
+    """
+    
+    N = len(X)
+    M = len(Y)
+    
+    F = np.zeros([M,N])
+    
+    n=0
+    m=0
+    
+    up_x=True
+    up_y=True
+    while( (n<(N-1)) and (m<(M)) ):
+        
+        if up_x:
+            xa=X[n]
+            xb=X[n+1]
+            up_x=False
+        if up_y:
+            ya=Y[m]
+            up_y=False
+        
+        #X:   a    b
+        #     |    |
+        #  | 
+        #Y:y  
+        if xa > ya:
+            #print(" 1: ",(m,n))
+            m = m+1
+            up_y=True
+            continue
+        
+        #X: a    b
+        #   |    |
+        #         | 
+        #Y:       y  
+        if ya > xb:
+            #print(" 2: ",(m,n))
+            n = n+1;
+            up_x=True
+            
+            continue;
 
+        
+        #X:  a      b
+        #    |---   |
+        #     1-u| u
+        #Y:     y 
+        u = (ya - xa)/(xb - xa)
+        F[m,n] += 1-u;
+        F[m,n+1] += u;
+        
+        m = m+1;
+
+        up_y=True
+
+        
+    return F
 
 
