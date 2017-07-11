@@ -4,6 +4,29 @@ import numpy as np;
 
 from math import *;
 
+def rescale(inArray,newmin=0.0,newmax=1.0,vmin=None,vmax=None,trunc=False):
+    """
+    Rescale input array values to the range [newmin, newmax]
+    Keywords & defaults: newmin=0.0, newmin=1.0
+        vmin=  The value in input array that will be mapped to newmin. Default=min(inArray)
+        vmax=  The value in input array that will be mapped to newmax. Default=max(inArray)
+        trunc=  If true, truncate the output range. Values less than newmin will be set to newmin. Likewise for newmax.
+    """
+    oldmin = np.min(inArray)
+    oldmax = np.max(inArray)
+    
+    if vmin is None:
+        vmin = oldmin
+    if vmax is None:
+        vmax = oldmax
+        
+    newim = (inArray - vmin)*(newmax - newmin) / (vmax - vmin) + newmin
+    
+    if trunc:
+        newim[newim < newmin] = newmin
+        newim[newim > newmax] = newmax
+        
+    return newim
 
 
 def fwhm1D( X, Y, pp_mode=False, quantile=0.5 ):
