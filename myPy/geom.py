@@ -23,6 +23,46 @@ def readNDI_csv(filename, nmax=None, startcol=0):
     q0xyz = np.array( list(map( lambda x: x[startcol + 5:startcol + 9], text )), dtype='float')
     
     return (q0xyz, txyz, err)
+    
+
+def new_stipled_spherecap_array(sphereRadius, capDiam, nn):
+
+    
+    nr=0
+    nk=0
+    nb=0
+    while(nk < nn):
+        nr+=1
+        nb=nk
+        nk = sum( map( lambda j: floor((2*pi)*j), range(0,nr) ) ) + nr
+        
+    nr-=1
+    
+       
+    maxtheta = asin( (capDiam/2.0)/sphereRadius )
+    
+    if nr > 1:
+        dth = maxtheta / (nr-1)
+        nphi = list(map(lambda x:1+floor( x*2*pi), range(0,nr)))
+    else:
+        dth=0
+        nphi=[1]
+    
+    nn=sum(nphi)
+    
+    uxyz=numpy.zeros([nn,3],dtype=numpy.float64)
+    n=0
+    for i in range(0,nr):
+        theta=i*dth
+        dphi=2*pi/nphi[i]
+        for j in range(0,nphi[i]):
+            phi = dphi*j
+            uxyz[n,:] = sphereRadius*numpy.array( [sin(theta)*cos(phi) , sin(theta)*sin(phi), 1-cos(theta)] )
+            n+=1
+            
+        
+        
+    return [uxyz  , nn]
 
 def write_VTK_points(filename, xyz):
 
