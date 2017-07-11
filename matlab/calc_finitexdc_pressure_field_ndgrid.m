@@ -47,7 +47,7 @@ for n=1:N
     
         cosines = (u_normals_unit(1,n).*dvx + u_normals_unit(2,n).*dvy + u_normals_unit(3,n).*dvz)./d;
         
-        thisSource = cosines.*integral_coeffs(n).*exp(-1i*kr.*(d))./d;
+        thisSource = cosines.*integral_coeffs(n).*( exp(-1i*kr.*(d)) )./d;
     
         pn = thisSource+pn;
         
