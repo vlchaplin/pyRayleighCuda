@@ -12,10 +12,10 @@ sys.path.append('C:\\Users\\Vandiver\\Documents\\HiFU\\code\\BioHeat\\BioHeatCpp
 import PBHEswig
 
 
-try
+try:
     sys.path.append('C:\\Users\\Vandiver\\Documents\\HiFU\\code\\CUDA\\RSgpu\\Release')
     import PBHE_CUDA
-except NameError:
+except ImportError:
     print('PBHE_CUDA not loaded, using PBHEswig interface to BioHeat')
 
 import transducers
@@ -71,9 +71,9 @@ def makeSimPhysGrid(dtype=np.float32,nx=64,ny=64,nz=64,nt=30, dt=0.1, xr=[-2.0, 
     CEM=np.zeros([nx,ny,nz],dtype=dataType)
     CEM0=np.zeros_like(CEM)
 
-    xrp = 1e-2*np.linspace(xr[0],xr[1], nx, dtype=dataType)
-    yrp = 1e-2*np.linspace(yr[0],yr[1], ny, dtype=dataType)
-    zrp = 1e-2*np.linspace(zr[0],zr[1], nz, dtype=dataType)
+    xrp = 0.01*np.linspace(xr[0],xr[1], nx, dtype=dataType)
+    yrp = 0.01*np.linspace(yr[0],yr[1], ny, dtype=dataType)
+    zrp = 0.01*np.linspace(zr[0],zr[1], nz, dtype=dataType)
     dx=xrp[1]-xrp[0]
     dy=yrp[1]-yrp[0]
     dz=zrp[1]-zrp[0]
@@ -89,17 +89,17 @@ def makeSimPhysGrid(dtype=np.float32,nx=64,ny=64,nz=64,nt=30, dt=0.1, xr=[-2.0, 
     rhoCp[:]= rho*Cp
 
 
-    try
+    try:
         #If the CUDA version is loaded, use it
         PBHE = PBHE_CUDA
     except NameError:
         PBHE = PBHEswig
 
     if dataType == np.float32:
-        Tmesh = PBHE_CUDA.mesh4d_f()
-        Tdotmesh = PBHE_CUDA.mesh34d_f();
-        kmesh = PBHE_CUDA.mesh3d_f();
-        rhoCpmesh = PBHE_CUDA.mesh3d_f();
+        Tmesh = PBHE.mesh4d_f()
+        Tdotmesh = PBHE.mesh34d_f();
+        kmesh = PBHE.mesh3d_f();
+        rhoCpmesh = PBHE.mesh3d_f();
 
 
         PBHE.ShareMemoryMesh4_f(T, res, Tmesh)
