@@ -1,8 +1,19 @@
 
+%% kwave_multifoc.m
+% This script creates a 2D simulation of a spherically-focused transducer
+% with multiple elements. It shows you how to apply delays to multiple
+% elements.
+%
+% The transducer geometry is arbitrary and is in the script generated below.
+
+% The function 'get_transducer_vals' computes complex element amplitudes,
+% from which you compute phase delays and then use sonication frequency to derive a time delay.
+% 
+
 
 %% define compute grid
 Nz = 1024; %ctM          % number of grid points in the z (row) direction
-Nx = 1024; %ctN           % number of grid points in the y (column) direction
+Nx = 1024; %ctN           % number of grid points in the x (column) direction
 
 Nz = 512; %ctM          % number of grid points in the z (row) direction
 Nx = 512;
@@ -101,13 +112,16 @@ end
 % in RELATIVE COORDINATES wrt TRANSDUCER (centered x,y,z=0 and pointing up)
 foci=[ [0.004 0.0 trans_r_foc]' [-0.004 0.0 trans_r_foc]' ];
 %foci=[ [0.02 0.0 trans_r_foc]'];
+
+%compute complex array encoding 'uamp'
 uamp = get_transducer_vals( uxyz2d, f0, mean(medium.density(:)), mean(medium.sound_speed(:)), foci, ones([1 size(foci,2)]) ); 
+%normalize
 uamp = uamp/sum(abs(uamp));
 
 tth=linspace(-ellarc/2.0,ellarc/2.0,100)/trans_r_foc;
 template2d = trans_r_foc*[sin(tth); zeros(size(tth)); 1-cos(tth);];
 
-
+%compute relative delays and amplitudes
 relative_amps = abs(uamp);
 relative_delays_sec = (angle(uamp) + pi) /(2*pi*f0);
 relative_delays_sec = dt*round(relative_delays_sec/dt);
@@ -131,6 +145,7 @@ source.p_mask = zeros(Nz, Nx);
 
 transducerLookup = zeros([Nz,Nx],'int32');
 
+%this finds the pixels related adjacent to each element center
 figure(1);
 clf;
 hold on;
@@ -155,6 +170,7 @@ numActiveSimPixels = length(activePixInds);
 
 %will have size = [numActiveSimPixels Nt]
 
+
 %total pressure across face (MPa) 
 tot_source_pressure = 10e6;
 
@@ -171,15 +187,13 @@ filtered_signal = filterTimeSeries(kgrid, medium, cos(2*pi*f0*kgrid.t_array));
 
 source_press=zeros(size(source.p_mask));
 source_press(activePixInds) = src_pix_MPa;
-%%
+%% This just does a quick preview of the field using Rayleigh Sommerfeld 
 figure(1);
 clf;
-subplot(121);
-imagesc(source_press,[min(src_pix_MPa) max(src_pix_MPa)]);
 
-subplot(122);
 uampTest=relative_amps .* exp(1j*2*pi*f0*relative_delays_sec);
 un = repmat([0. 0. trans_r_foc]',[1 Nell]) - uxyz2d;
+%the rayleigh sommerfeld part:
 pp=calc_finitexdc_pressure_field_ndgrid( 2*pi*f0/mean(medium.sound_speed(:)), uampTest, uxyz2d, simxp, [0.0], simzp, un, [] );
 
 imagesc(abs(squeeze(pp)')./max(abs(pp(:))), [0.0 0.01] );
@@ -202,16 +216,16 @@ sensor_nx = length(idx_sens_x);
 sensor.mask = mask_im;
 
 
-sensor.mask(:)=0;
-sensor.mask(382,333)=1;
+%sensor.mask(:)=0;
+%sensor.mask(382,333)=1;
 
-break;
 %% sensor
 
 % define the acoustic parameters to record
-%sensor.record = {'p_final', 'p_max', 'p_rms'};
+sensor.record = {'p_final', 'p_max', 'p_rms'};
 
-sensor.record = {'p'};
+%sensor.record = {'p'}; %<--- you will probably want to record the actual
+%time series
 
 input_args = {'PlotSim', true, 'DisplayMask', sensor.mask, 'DataCast', 'single', 'PMLInside', false, 'PlotPML', false,'PlotScale','auto','RecordMovie',true};
 
@@ -227,7 +241,7 @@ mask_im = logical(mask_im);
 figure(2);
 clf;
 imagesc(p_rms);
-%%
+%% This is some plotting stuff I used a long time ago, might not work now:
 
 % convert pressure to Ispta
 I=(p_rms);
