@@ -92,6 +92,7 @@ int New_PBHE_GPUmem(int nt, int nx, int ny, int nz, pbhe_gpu_algorithm_session<d
 int ResetGPUDevice(int dev)
 {
 	checkCudaErrors(cudaDeviceReset());
+	return 0;
 }
 
 template<typename pbhe_t>

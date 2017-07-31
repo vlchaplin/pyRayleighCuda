@@ -33,7 +33,7 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)%(Filename)_wrap.cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)%(Filename)_wrap.cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">swig.exe -c++ -python -o $(ProjectDir)%(Filename)_wrap.cpp %(FullPath)</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">swig.exe -c++ -python -IC:\Users\vchaplin\Anaconda3\Lib\site-packages\numpy\core\include -IC:\Users\vchaplin\Documents\HiFU\code\BioHeatCpp\PBHEswig -I$(SolutionDir)\BioHeatCpp -o $(OutDir)%(Filename)_wrap.cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">swig.exe -c++ -python -I$(NUMPY_INCLUDE) -IC:\Users\Vandiver\Documents\HiFU\code\BioHeat\BioHeatCpp\PBHEswig -IC:\Users\Vandiver\Documents\HiFU\code\BioHeat\BioHeatCpp\BioHeatCpp -o $(OutDir)%(Filename)_wrap.cpp %(FullPath)</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)%(Filename)_wrap.cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)%(Filename)_wrap.cpp</Outputs>
     </CustomBuild>
@@ -167,7 +167,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;PBHESWIG_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(NUMPY_INCLUDE)\..;$(NUMPY_INCLUDE);C:\Users\vchaplin\Anaconda3\include;$(SolutionDir)\BioHeatCpp\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(NUMPY_INCLUDE)\..;$(NUMPY_INCLUDE);C:\Users\Vandiver\Anaconda3\envs\py35\include;C:\Users\Vandiver\Documents\HiFU\code\BioHeat\BioHeatCpp\BioHeatCpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -175,8 +175,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <OutputFile>$(OutDir)_$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>C:\Users\vchaplin\Anaconda3\Lib\site-packages\numpy\core\lib;C:\Users\vchaplin\Downloads\swigwin-3.0.3\swigwin-3.0.3;C:\Users\vchaplin\Anaconda3\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>python34.lib;npymath.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\vchaplin\Anaconda3\envs\py35\Lib\site-packages\numpy\core\lib;C:\Users\vchaplin\Downloads\swigwin-3.0.3\swigwin-3.0.3;C:\Users\Vandiver\Anaconda3\envs\py35\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>python35.lib;npymath.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

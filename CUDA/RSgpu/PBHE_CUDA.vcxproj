@@ -14,10 +14,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\BioHeatCpp\BioHeatCpp\BioHeatModel1.h" />
-    <ClInclude Include="..\..\BioHeatCpp\BioHeatCpp\MeshFunction.h" />
-    <ClInclude Include="..\..\BioHeatCpp\BioHeatCpp\MeshFunction3D.h" />
-    <ClInclude Include="..\..\BioHeatCpp\BioHeatCpp\MeshFunction4D.h" />
+    <ClInclude Include="..\..\BioHeat\BioHeatCpp\BioHeatCpp\BioHeatModel1.h" />
+    <ClInclude Include="..\..\BioHeat\BioHeatCpp\BioHeatCpp\MeshFunction.h" />
+    <ClInclude Include="..\..\BioHeat\BioHeatCpp\BioHeatCpp\MeshFunction3D.h" />
+    <ClInclude Include="..\..\BioHeat\BioHeatCpp\BioHeatCpp\MeshFunction4D.h" />
     <ClInclude Include="..\..\myIncludes\MultiDimArrays.h" />
     <ClInclude Include="BioheatCUDA.cuh">
       <FileType>CppHeader</FileType>
@@ -40,9 +40,10 @@
   <ItemGroup>
     <CustomBuild Include="PBHE_CUDA.i">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">swig.exe -c++ -python -IC:\Users\vchaplin\Anaconda3\Lib\site-packages\numpy\core\include -I$(SolutionDir) -IC:\Users\Vandiver\Documents\HiFU\code\BioHeatCpp\BioHeatCpp  -o $(OutDir)%(Filename)_wrap.cpp %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">swig.exe -c++ -python -I%(CONDA_ACTIVE)%/include -I%(CONDA_ACTIVE)%\Lib\site-packages\numpy\core\include -I$(SolutionDir) -IC:\Users\Vandiver\Documents\HiFU\code\BioHeat\BioHeatCpp\BioHeatCpp  -o $(OutDir)%(Filename)_wrap.cpp %(FullPath)</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)%(Filename)_wrap.cpp</Outputs>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </CustomBuild>
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -72,7 +73,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <IntDir>$(Platform)/$(Configuration)/</IntDir>
+    <IntDir>$(Platform)/$(ProjectName)/$(Configuration)/</IntDir>
     <IncludePath>$(IncludePath)</IncludePath>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules />
@@ -93,12 +94,12 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./;$(ProjectDir);$(NUMPY_INCLUDE)\..;$(NUMPY_INCLUDE);C:\Users\vchaplin\Anaconda3\include;$(CudaToolkitDir)/include;C:\ProgramData\NVIDIA Corporation\CUDA Samples\v7.5/common/inc;inc;C:\Users\Vandiver\Documents\HiFU\code\myIncludes;C:\Users\Vandiver\Documents\HiFU\code\BioHeatCpp\BioHeatCpp;C:\Users\Vandiver\Documents\HiFU\code\BioHeatCpp</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;C:\Users\Vandiver\Anaconda3\envs\py35\include;$(ProjectDir);$(NUMPY_INCLUDE)\..;$(NUMPY_INCLUDE);$(CudaToolkitDir)/include;C:\ProgramData\NVIDIA Corporation\CUDA Samples\v7.5/common/inc;inc;C:\Users\Vandiver\Documents\HiFU\code\myIncludes;C:\Users\Vandiver\Documents\HiFU\code\BioHeat\BioHeatCpp\BioHeatCpp</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <AdditionalDependencies>cudart_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(CudaToolkitLibDir);C:\Users\vchaplin\Anaconda3\Lib\site-packages\numpy\core\lib;C:\Users\vchaplin\Downloads\swigwin-3.0.3\swigwin-3.0.3;C:\Users\vchaplin\Anaconda3\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(CudaToolkitLibDir);C:\Users\Vandiver\Anaconda3\envs\py35\Lib\site-packages\numpy\core\lib;C:\Users\vchaplin\Downloads\swigwin-3.0.3\swigwin-3.0.3;C:\Users\Vandiver\Anaconda3\envs\py35\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
     <CudaCompile>
