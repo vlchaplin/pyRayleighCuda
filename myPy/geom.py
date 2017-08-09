@@ -4,7 +4,7 @@ import numpy
 import re;
 import csv;
 
-from math import sin,asin, cos,pi,floor
+from math import sin,asin, cos,acos,pi,floor
 
 def readNDI_csv(filename, nmax=None, startcol=0):
     csvfile=open(filename)
@@ -24,7 +24,69 @@ def readNDI_csv(filename, nmax=None, startcol=0):
 
     return (q0xyz, txyz, err)
 
+def mag(vec,axis=-1):
+    """
+    Return L2-norm of vector along the specified axis.
+    """
+    return numpy.sqrt(numpy.sum(vec**2,axis=axis))
+    
+def normalize(vec,axis=-1):
+    return numpy.apply_along_axis(lambda x: x / numpy.sqrt(numpy.sum(x**2)), axis, vec.copy() )
+    
+def new_randomized_spherecap_array(sphereRadius, capDiam, N, elementDiam=0.0, iterations=1000):
+    """
+    Create a spherical cap of N sources that have randomized locations, 
+    and constrained such that elements of width 'elementDiam' do not overlap.
+    The resulting cap starts at the origin and opens/extends along the +z axis.
 
+    The optional elementDiam is a number >=0. The default is to treat each source as a point source.
+
+    """
+
+    ucenters = numpy.zeros([N,3]);
+    Dsquared =elementDiam**2;
+    k=0
+    annular_opening = asin(0.5*capDiam/sphereRadius );
+
+    ThetaInterval = numpy.array([0.0, annular_opening])
+    PhiInterval = numpy.array([0, 2*pi])
+    
+    theta_r = ThetaInterval[1]-ThetaInterval[0]
+    phi_r = PhiInterval[1]-PhiInterval[0]
+    iter=0
+    while(k<N and iter<iterations):
+
+        iter+=1
+        #take a random point
+        theta=numpy.random.ranf()*theta_r + ThetaInterval[0]
+        phi=numpy.random.ranf()*phi_r + PhiInterval[0]
+
+        uxyz = sphereRadius*numpy.array([ numpy.cos(phi)*numpy.sin(theta), numpy.sin(phi)*numpy.sin(theta), 1-numpy.cos(theta) ]);
+
+        if k==0:
+            ucenters[k] = uxyz;
+            k+=1
+            continue;
+
+        #Check if the distance from the current uxyz point conflicts with any of the previously added points.
+        distancesSq = numpy.sum( (uxyz - ucenters[0:(k-1)])**2, axis=-1)
+
+        conflicts = sum(distancesSq <= Dsquared);
+
+        if conflicts > 0:
+            continue;
+
+
+        #if no conflicts, add this position to the list
+        ucenters[k] = uxyz;
+        k=k+1;
+        
+    if iter==iterations:
+        raise RuntimeWarning("Max iterations reached before filling array (completed %d / %d)." %(k,N))
+
+    return ucenters
+
+    
 def new_stipled_spherecap_array(sphereRadius, capDiam, nn):
 
 
@@ -63,6 +125,7 @@ def new_stipled_spherecap_array(sphereRadius, capDiam, nn):
 
 
     return [uxyz  , nn]
+	
 
 def write_VTK_points(filename, xyz):
 
