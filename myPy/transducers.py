@@ -1,8 +1,6 @@
-#!/usr/bin/env python3
-
 import geom
 from math import floor,pi,sin,cos,asin,sqrt
-import numpy
+import numpy as np
 
 #CUDA-enabled library
 import sys
@@ -18,27 +16,27 @@ def get_focused_element_vals(kwavenum, xyzVecs, focalPoints, focalPvals, L1renor
     M = len(focalPvals)
     N = len(xyzVecs)
 
-    H = 1j*numpy.zeros( [M,N] )
+    H = 1j*np.zeros( [M,N] )
 
     if AlternatePhases:
-        focalPvals = focalPvals.copy()*numpy.exp(1j*numpy.arange(0,M)*pi)
+        focalPvals = focalPvals.copy()*np.exp(1j*np.arange(0,M)*pi)
 
     for m in range(0,M):
 
-        Rmnvec = numpy.array(list(map( lambda x: numpy.sqrt(sum( x**2 )),  xyzVecs - focalPoints[m] ) ))
+        Rmnvec = np.array(list(map( lambda x: np.sqrt(sum( x**2 )),  xyzVecs - focalPoints[m] ) ))
 
-        H[m] = 1j*numpy.exp(-1j*kwavenum*Rmnvec ) / Rmnvec
+        H[m] = 1j*np.exp(-1j*kwavenum*Rmnvec ) / Rmnvec
 
 
-    Hadj=numpy.conjugate( H.transpose() )
-    HHa_inv=numpy.linalg.pinv(H.dot(Hadj))
+    Hadj=np.conjugate( H.transpose() )
+    HHa_inv=np.linalg.pinv(H.dot(Hadj))
 
     uopt = (Hadj).dot(HHa_inv).dot(focalPvals)
 
     if L1renorm is not None:
-        uopt = L1renorm*uopt/numpy.sum(numpy.abs(uopt))
+        uopt = L1renorm*uopt/np.sum(np.abs(uopt))
     elif L2renorm is not None:
-        uopt = L2renorm*uopt*sqrt(1.0/numpy.sum(numpy.abs(uopt)**2))
+        uopt = L2renorm*uopt*sqrt(1.0/np.sum(np.abs(uopt)**2))
 
     return uopt
 
@@ -68,14 +66,14 @@ def new_stipled_spherecap_array(sphereRadius, capDiam, nn):
 
     nn=sum(nphi)
 
-    uxyz=numpy.zeros([nn,3],dtype=numpy.float64)
+    uxyz=np.zeros([nn,3],dtype=np.float64)
     n=0
     for i in range(0,nr):
         theta=i*dth
         dphi=2*pi/nphi[i]
         for j in range(0,nphi[i]):
             phi = dphi*j
-            uxyz[n,:] = sphereRadius*numpy.array( [sin(theta)*cos(phi) , sin(theta)*sin(phi), 1-cos(theta)] )
+            uxyz[n,:] = sphereRadius*np.array( [sin(theta)*cos(phi) , sin(theta)*sin(phi), 1-cos(theta)] )
             n+=1
 
 
@@ -116,10 +114,10 @@ def subsample_transducer_array( upos, diam, Nmax, unormvecs=None, ROC=None, arra
         Arr_i = arrays_to_grow[vec_i]
         newshape_i = list(Arr_i.shape)
         newshape_i[0] = N*ns
-        newArr_i = numpy.zeros(tuple(newshape_i),dtype=Arr_i.dtype.type)
+        newArr_i = np.zeros(tuple(newshape_i),dtype=Arr_i.dtype.type)
         returnSet.append(newArr_i)
 
-    newxyz = numpy.zeros([N*ns,3])
+    newxyz = np.zeros([N*ns,3])
 
     for n in range(0,N):
 
@@ -142,39 +140,41 @@ def subsample_transducer_array( upos, diam, Nmax, unormvecs=None, ROC=None, arra
 
 
 
-def calc_pressure_profile(kwavenum, upos, uamp, vecs, unormals=None):
+def calc_pressure_profile(kwavenum, upos, uamp, vecs, unormals=None, alpha=None):
 
     nv = len(vecs)
 
-    P = 1j*numpy.zeros([nv]);
+    P = 1j*np.zeros([nv]);
 
-    #gx,gy,gz = numpy.meshgrid(xarray, yarray, zarray, sparse=False, indexing='ij')
+    #gx,gy,gz = np.meshgrid(xarray, yarray, zarray, sparse=False, indexing='ij')
 
-    calcdist= lambda rr: numpy.sqrt((vecs[:,0]-rr[0])**2 + (vecs[:,1]-rr[1])**2 + (vecs[:,2]-rr[2])**2)
+    calcdist= lambda rr: np.sqrt((vecs[:,0]-rr[0])**2 + (vecs[:,1]-rr[1])**2 + (vecs[:,2]-rr[2])**2)
     calcdot = lambda un: vecs[:,0]*un[0] + vecs[:,1]*un[1] + vecs[:,2]*un[2]
 
     if unormals is not None:
-        unormals = numpy.apply_along_axis(lambda x: x / numpy.sqrt(numpy.sum(x**2)), 1, unormals.copy() )
+        unormals = np.apply_along_axis(lambda x: x / np.sqrt(np.sum(x**2)), 1, unormals.copy() )
 
     N = len(uamp)
-    cosines = 1
+    cosines = 1.0
+    attenuator = 1.0
     for n in range(0,N):
         Rn = calcdist(upos[n])
-        P += uamp[n]*1j*numpy.exp(-1j*kwavenum*Rn ) / Rn
 
         if unormals is not None:
             cosines = calcdot(unormals[n])
-
-        P += cosines*uamp[n]*1j*numpy.exp(-1j*kwavenum*Rn ) / Rn
+        if alpha is not None:
+            attenuator = np.exp(-alpha*Rn)
+            
+        P += attenuator*cosines*uamp[n]*1j*np.exp(-1j*kwavenum*Rn ) / Rn
 
 
     return P
 
-# upos is an Nx3 numpy array of transducer positions
+# upos is an Nx3 np array of transducer positions
 # uamp is a N-length 1d array of amplitudes
 
 
-def calc_pressure_field(kwavenum, upos, uamp, xarray, yarray, zarray, unormals=None):
+def calc_pressure_field(kwavenum, upos, uamp, xarray, yarray, zarray, unormals=None, alpha=None):
     """
     Return Rayleigh-Sommerfield calculation over the ndgrid formed from the Cartesian product space of {xarray x yarray x zarray}
     Returned field is complex, with dimensions Nx, Ny, Nz.
@@ -183,30 +183,34 @@ def calc_pressure_field(kwavenum, upos, uamp, xarray, yarray, zarray, unormals=N
     ny = len(yarray)
     nz = len(zarray)
 
-    P = 1j*numpy.zeros([nx,ny,nz]);
+    P = 1j*np.zeros([nx,ny,nz]);
 
-    gx,gy,gz = numpy.meshgrid(xarray, yarray, zarray, sparse=False, indexing='ij')
+    gx,gy,gz = np.meshgrid(xarray, yarray, zarray, sparse=False, indexing='ij')
 
-    calcdist= lambda rr: numpy.sqrt((gx-rr[0])**2 + (gy-rr[1])**2 + (gz-rr[2])**2)
+    calcdist= lambda rr: np.sqrt((gx-rr[0])**2 + (gy-rr[1])**2 + (gz-rr[2])**2)
     calcdot = lambda un: gx*un[0] + gy*un[1] + gz*un[2]
 
     if unormals is not None:
-        unormals = numpy.apply_along_axis(lambda x: x / numpy.sqrt(numpy.sum(x**2)), 1, unormals.copy() )
+        unormals = np.apply_along_axis(lambda x: x / np.sqrt(np.sum(x**2)), 1, unormals.copy() )
 
     N = len(uamp)
     cosines = 1
+    attenuator=1.0
     for n in range(0,N):
         Rn = calcdist(upos[n])
         if unormals is not None:
             cosines = calcdot(unormals[n])
 
-        P += cosines*uamp[n]*1j*numpy.exp(-1j*kwavenum*Rn ) / Rn
+        if alpha is not None:
+            attenuator = np.exp(-alpha*Rn)
+            
+        P += attenuator*cosines*uamp[n]*1j*np.exp(-1j*kwavenum*Rn ) / Rn
 
 
     return P
 
 
-def calc_pressure_field_cuda(kwavenum, upos, unormals, uamp, xarray, yarray, zarray, gpublocks=0,subsampN=None, subsampDiam=None, ROC=None):
+def calc_pressure_field_cuda(kwavenum, upos, unormals, uamp, xarray, yarray, zarray, gpublocks=0,subsampN=None, subsampDiam=None, ROC=None, alpha=0.0):
     """
     Same as calc_pressure_field() but use the CUDA-enabled version compiled in the RSgpuPySwig libary.
 
@@ -229,14 +233,14 @@ def calc_pressure_field_cuda(kwavenum, upos, unormals, uamp, xarray, yarray, zar
 
     N = len(uamp)
 
-    Pre = numpy.zeros([nx,ny,nz]);
-    Pim = numpy.zeros([nx,ny,nz]);
+    Pre = np.zeros([nx,ny,nz]);
+    Pim = np.zeros([nx,ny,nz]);
 
-    coeffs = numpy.ones([N])
-    ure = numpy.real(uamp)
-    uim = numpy.imag(uamp)
+    coeffs = np.ones([N])
+    ure = np.real(uamp)
+    uim = np.imag(uamp)
 
-    unormals = numpy.apply_along_axis(lambda x: x / numpy.sqrt(numpy.sum(x**2)), 1, unormals.copy() )
+    unormals = np.apply_along_axis(lambda x: x / np.sqrt(np.sum(x**2)), 1, unormals.copy() )
 
     if subsampN is not None and subsampDiam is not None:
 
@@ -247,12 +251,12 @@ def calc_pressure_field_cuda(kwavenum, upos, unormals, uamp, xarray, yarray, zar
 
     #print( upos.shape, unormals.shape, coeffs.shape, ure.shape, uim.shape)
 
-    RSgpuPySwig.RSgpuCalcField(kwavenum, Pre, Pim, xarray, yarray, zarray, ure, uim, coeffs, upos[:,0], upos[:,1], upos[:,2], unormals[:,0], unormals[:,1], unormals[:,2], gpublocks)
+    RSgpuPySwig.RSgpuCalcField(kwavenum, alpha, Pre, Pim, xarray, yarray, zarray, ure, uim, coeffs, upos[:,0], upos[:,1], upos[:,2], unormals[:,0], unormals[:,1], unormals[:,2], gpublocks)
 
     return Pre + 1j*Pim
 
 
-def calc_pressure_profile_cuda(kwavenum, upos, unormals, uamp, xvalues, yvalues, zvalues, gpublocks=0,subsampN=None, subsampDiam=None, ROC=None):
+def calc_pressure_profile_cuda(kwavenum, upos, unormals, uamp, xvalues, yvalues, zvalues, gpublocks=0,subsampN=None, subsampDiam=None, ROC=None, alpha=0.0):
     """
     Same as calc_pressure_profile() but use the CUDA-enabled version compiled in the RSgpuPySwig libary.
 
@@ -281,14 +285,14 @@ def calc_pressure_profile_cuda(kwavenum, upos, unormals, uamp, xvalues, yvalues,
     if (nx != ny) or (nx != nz) or (ny != nz):
         return -1
 
-    Pre = numpy.zeros([nx]);
-    Pim = numpy.zeros([nx]);
+    Pre = np.zeros([nx]);
+    Pim = np.zeros([nx]);
 
-    coeffs = numpy.ones([N])
-    ure = numpy.real(uamp)
-    uim = numpy.imag(uamp)
+    coeffs = np.ones([N])
+    ure = np.real(uamp)
+    uim = np.imag(uamp)
 
-    unormals = numpy.apply_along_axis(lambda x: x / numpy.sqrt(numpy.sum(x**2)), 1, unormals.copy() )
+    unormals = np.apply_along_axis(lambda x: x / np.sqrt(np.sum(x**2)), 1, unormals.copy() )
 
     if subsampN is not None and subsampDiam is not None:
 
@@ -299,13 +303,13 @@ def calc_pressure_profile_cuda(kwavenum, upos, unormals, uamp, xvalues, yvalues,
 
     #print( upos.shape, unormals.shape, coeffs.shape, ure.shape, uim.shape)
 
-    RSgpuPySwig.RSgpuCalcOnPoints1D(kwavenum, Pre, Pim, xvalues, yvalues, zvalues, ure, uim, coeffs, upos[:,0], upos[:,1], upos[:,2], unormals[:,0], unormals[:,1], unormals[:,2], gpublocks)
+    RSgpuPySwig.RSgpuCalcOnPoints1D(kwavenum, alpha, Pre, Pim, xvalues, yvalues, zvalues, ure, uim, coeffs, upos[:,0], upos[:,1], upos[:,2], unormals[:,0], unormals[:,1], unormals[:,2], gpublocks)
 
 
     return Pre + 1j*Pim
 
 
-def calc_pressure_mesh3D_cuda(kwavenum, upos, unormals, uamp, mxxx, myyy, mzzz, gpublocks=0,subsampN=None, subsampDiam=None, ROC=None):
+def calc_pressure_mesh3D_cuda(kwavenum, upos, unormals, uamp, mxxx, myyy, mzzz, gpublocks=0,subsampN=None, subsampDiam=None, ROC=None, alpha=0.0):
     """
     Same method used in calc_pressure_profile_cuda, except input coorinates are in equally-shaped 3D arrays, similar to those returned by meshgrid.
     The returned pressure has the same shape.  Computed pressure P[i,j,k] corresponds to that at position x,y,z={mxxx[i,j,k], myyy[i,j,k], mzzz[i,j,k]}
@@ -315,7 +319,7 @@ def calc_pressure_mesh3D_cuda(kwavenum, upos, unormals, uamp, mxxx, myyy, mzzz, 
 
     Example: if xp,yp,zp are 1D arrays, the format of mxxx,myyy,mzzz is like
 
-        mxxx, myyy, mzzz = numpy.meshgrid(xp,yp,zp, indexing='ij')
+        mxxx, myyy, mzzz = np.meshgrid(xp,yp,zp, indexing='ij')
         P = calc_pressure_mesh3D_cuda(k0, u, un, mxxx,myyy,mzzz,...)
 
     The returned pressure has dimensions len(xp) x len(yp) x len(zp)
@@ -336,23 +340,23 @@ def calc_pressure_mesh3D_cuda(kwavenum, upos, unormals, uamp, mxxx, myyy, mzzz, 
         print('RSgpuPySwig module not loaded, so _cuda functions are not available.')
         return
 
-    nx = numpy.product(mxxx.shape)
-    ny = numpy.product(myyy.shape)
-    nz = numpy.product(mzzz.shape)
+    nx = np.product(mxxx.shape)
+    ny = np.product(myyy.shape)
+    nz = np.product(mzzz.shape)
 
     N = len(uamp)
 
     if (nx != ny) or (nx != nz) or (ny != nz):
         return -1
 
-    Pre = numpy.zeros(mxxx.shape);
-    Pim = numpy.zeros(mxxx.shape);
+    Pre = np.zeros(mxxx.shape);
+    Pim = np.zeros(mxxx.shape);
 
-    coeffs = numpy.ones([N])
-    ure = numpy.real(uamp)
-    uim = numpy.imag(uamp)
+    coeffs = np.ones([N])
+    ure = np.real(uamp)
+    uim = np.imag(uamp)
 
-    unormals = numpy.apply_along_axis(lambda x: x / numpy.sqrt(numpy.sum(x**2)), 1, unormals.copy() )
+    unormals = np.apply_along_axis(lambda x: x / np.sqrt(np.sum(x**2)), 1, unormals.copy() )
 
     if subsampN is not None and subsampDiam is not None:
 
@@ -363,7 +367,7 @@ def calc_pressure_mesh3D_cuda(kwavenum, upos, unormals, uamp, mxxx, myyy, mzzz, 
 
     #print( upos.shape, unormals.shape, coeffs.shape, ure.shape, uim.shape)
 
-    RSgpuPySwig.RSgpuCalcOnPoints(kwavenum, Pre, Pim, mxxx.flatten(), myyy.flatten(), mzzz.flatten(), ure, uim, coeffs, upos[:,0], upos[:,1], upos[:,2], unormals[:,0], unormals[:,1], unormals[:,2], gpublocks)
+    RSgpuPySwig.RSgpuCalcOnPoints(kwavenum, alpha, Pre, Pim, mxxx.flatten(), myyy.flatten(), mzzz.flatten(), ure, uim, coeffs, upos[:,0], upos[:,1], upos[:,2], unormals[:,0], unormals[:,1], unormals[:,2], gpublocks)
 
 
     return Pre + 1j*Pim

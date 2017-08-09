@@ -28,7 +28,7 @@ row-major access. i.e., the real part of pressure at index i,j,k  is output_real
 */
 __global__ void CalculatePressureExpandMeshKernel(
 	gpureal *output_real, gpureal * output_imag,
-	gpureal kr,
+	gpureal kr, gpureal alpha_nepers,
 	const gpureal * xp, const int nx, const gpureal * yp, const int ny, const gpureal * zp, const int nz, 
 	const gpureal * u_real, const gpureal * u_imag, const gpureal * coefficients,
 	const gpureal * uX, const gpureal * uY, const gpureal * uZ, 
@@ -79,10 +79,10 @@ __global__ void CalculatePressureExpandMeshKernel(
 			sepZ = (zp[gk] - uZ[n]);
 
 			dist = sqrt(sepX*sepX + sepY*sepY + sepZ*sepZ);
+			//Attenuation and direction acounted for
+			dirCosine = exp(-alpha_nepers*dist)*(sepX*unormalX[n] + sepY*unormalY[n] + sepZ*unormalZ[n]) / dist;
 
-			dirCosine = (sepX*unormalX[n] + sepY*unormalY[n] + sepZ*unormalZ[n]) / dist;
 
-			//need the negative!
 			arg = -kr*dist;
 			//sin() and cos() cause problems for some reason
 			sincos(arg, &sinarg, &cosarg);
@@ -101,73 +101,13 @@ __global__ void CalculatePressureExpandMeshKernel(
 };
 
 
-
-
-__global__ void CalculatePressureExpandMeshKernel_singleElement(
-	gpureal *output_real, gpureal * output_imag,
-	gpureal kr,
-	const gpureal * xp, const int nx, const gpureal * yp, const int ny, const gpureal * zp, const int nz,
-	const gpureal * u_real, const gpureal * u_imag, const gpureal * coefficients,
-	const gpureal * uX, const gpureal * uY, const gpureal * uZ,
-	const gpureal * unormalX, const gpureal * unormalY, const gpureal * unormalZ, const int n, unsigned long wrapSize=0)
-
-{
-	//Uses scalar (1d) thread and block sizes. i.e. << B, T >>
-	unsigned long gtidx = blockIdx.x * blockDim.x + threadIdx.x;
-	unsigned long numVox = nx;
-	numVox *= ny;
-	numVox *= nz;
-
-	unsigned long voxidx;
-	int gi, gj, gk;
-	gpureal sepX, sepY, sepZ, dist, dirCosine, arg, sinarg, cosarg;
-
-	voxidx = gtidx + wrapSize;
-	if (voxidx > (numVox - 1))
-		return;
-
-	gi = (voxidx / (ny*nz));
-	gj = (voxidx / nz) % ny;
-	gk = voxidx % nz;
-
-	if (gi >= nx)
-		assert(0);
-	if (gj >= ny)
-		assert(0);
-	if (gk >= nz)
-		assert(0);
-
-	sepX = (xp[gi] - uX[n]);
-	sepY = (yp[gj] - uY[n]);
-	sepZ = (zp[gk] - uZ[n]);
-
-	dist = sqrt(sepX*sepX + sepY*sepY + sepZ*sepZ);
-
-	dirCosine = (sepX*unormalX[n] + sepY*unormalY[n] + sepZ*unormalZ[n]) / dist;
-
-	arg = kr*dist;
-	sincos(arg, &sinarg, &cosarg);
-
-	output_real[voxidx] = dirCosine*coefficients[n] * (u_real[n] * (-sinarg) - u_imag[n] * cosarg);
-	output_imag[voxidx] += dirCosine*coefficients[n] * (u_real[n] * cosarg + u_imag[n] * (-sinarg));
-
-	return;
-};
-
-
-#endif
-
-
-
-
-
 //! CalculatePressureKernel.
 /*!
-Calculate the pressure on the set of input points.  locs_x, locs_y, locs_z must have the same size
+Calculate the pressure on the set of input points using the Rayleign Integral II.  locs_x, locs_y, locs_z must have the same size
 */
 __global__ void CalculatePressureKernel(
 	gpureal *output_real, gpureal * output_imag,
-	gpureal kr,
+	gpureal kr, gpureal alpha_nepers,
 	const gpureal * locs_x, const gpureal * locs_y, const gpureal * locs_z, const int nlocs,
 	const gpureal * u_real, const gpureal * u_imag, const gpureal * coefficients,
 	const gpureal * uX, const gpureal * uY, const gpureal * uZ,
@@ -194,9 +134,8 @@ __global__ void CalculatePressureKernel(
 
 		dist = sqrt(sepX*sepX + sepY*sepY + sepZ*sepZ);
 
-		dirCosine = (sepX*unormalX[n] + sepY*unormalY[n] + sepZ*unormalZ[n]) / dist;
+		dirCosine = exp(-alpha_nepers*dist)*(sepX*unormalX[n] + sepY*unormalY[n] + sepZ*unormalZ[n]) / dist;
 
-		//need the negative!
 		arg = -kr*dist;
 		//sin() and cos() cause problems for some reason
 		sincos(arg, &sinarg, &cosarg);
@@ -213,3 +152,5 @@ __global__ void CalculatePressureKernel(
 
 	return;
 };
+
+#endif

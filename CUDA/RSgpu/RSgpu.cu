@@ -22,7 +22,7 @@ void CudaTestInf(int blocks, int threads)
 }
 
 bool RSgpu_CalcPressureField(
-	gpureal * p_Re, gpureal * p_Im, gpureal kr,
+	gpureal * p_Re, gpureal * p_Im, gpureal kr, gpureal alpha_nepers,
 	gpureal * xpoints, int dimx, gpureal * ypoints, int dimy, gpureal * zpoints, int dimz,
 	gpureal * u_real, gpureal * u_imag, gpureal * coefficients,
 	gpureal * ux, gpureal * uy, gpureal * uz,
@@ -149,7 +149,7 @@ bool RSgpu_CalcPressureField(
 	{
 		std::cout << "RS Voxel chunk " << w + 1 << " / " << numVoxPerKernel << std::endl;
 		CalculatePressureExpandMeshKernel << < numBlocks, threadsPerBlock >> > (
-			d_pRe, d_pIm, kr,
+			d_pRe, d_pIm, kr, alpha_nepers,
 			d_xp, dimx, d_yp, dimy, d_zp, dimz,
 			d_uRe, d_uIm, d_coeff,
 			d_uX, d_uY, d_uZ,
@@ -163,26 +163,6 @@ bool RSgpu_CalcPressureField(
 		offset += threadToVoxWrap;
 	}
 	
-
-	/*
-	for (int n = 0; n < Nells; n++)
-	{
-		//std::cout << "Element number " << n + 1 << std::endl;
-		CalculatePressureExpandMeshKernel_singleElement << < numBlocks, threadsPerBlock >> > (
-			d_pRe, d_pIm, kr,
-			d_xp, dimx, d_yp, dimy, d_zp, dimz,
-			d_uRe, d_uIm, d_coeff,
-			d_uX, d_uY, d_uZ,
-			d_uvX, d_uvY, d_uvZ, n, 0
-			);
-
-		checkCudaErrors(cudaGetLastError());
-		// Wait for the kernels to complete
-		checkCudaErrors(cudaDeviceSynchronize());
-
-		//offset += threadToVoxWrap;
-	}
-	*/
 
 	//checkCudaErrors(cudaDeviceSynchronize());
 	//Copy result
@@ -217,7 +197,7 @@ bool RSgpu_CalcPressureField(
 
 
 bool RSgpu_CalcPressurePoints(
-	gpureal * p_Re, gpureal * p_Im, gpureal kr,
+	gpureal * p_Re, gpureal * p_Im, gpureal kr, gpureal alpha_nepers,
 	gpureal * loc_x, gpureal * loc_y, gpureal * loc_z, int nlocs,
 	gpureal * u_real, gpureal * u_imag, gpureal * coefficients,
 	gpureal * ux, gpureal * uy, gpureal * uz,
@@ -343,7 +323,7 @@ bool RSgpu_CalcPressurePoints(
 	{
 		std::cout << "RS Voxel chunk " << w + 1 << " / " << numVoxPerKernel << std::endl;
 		CalculatePressureKernel << < numBlocks, threadsPerBlock >> > (
-			d_pRe, d_pIm, kr,
+			d_pRe, d_pIm, kr, alpha_nepers,
 			d_xp, d_yp, d_zp, nlocs,
 			d_uRe, d_uIm, d_coeff,
 			d_uX, d_uY, d_uZ,

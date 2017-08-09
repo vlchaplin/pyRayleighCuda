@@ -3718,69 +3718,486 @@ fail:
 SWIGINTERN PyObject *_wrap_RSgpuCalcField__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   double arg1 ;
-  gpureal *arg2 = (gpureal *) 0 ;
-  int arg3 ;
+  double arg2 ;
+  gpureal *arg3 = (gpureal *) 0 ;
   int arg4 ;
   int arg5 ;
-  gpureal *arg6 = (gpureal *) 0 ;
-  int arg7 ;
+  int arg6 ;
+  gpureal *arg7 = (gpureal *) 0 ;
   int arg8 ;
   int arg9 ;
-  gpureal *arg10 = (gpureal *) 0 ;
-  int arg11 ;
-  gpureal *arg12 = (gpureal *) 0 ;
-  int arg13 ;
-  gpureal *arg14 = (gpureal *) 0 ;
-  int arg15 ;
-  gpureal *arg16 = (gpureal *) 0 ;
-  int arg17 ;
-  gpureal *arg18 = (gpureal *) 0 ;
-  int arg19 ;
-  gpureal *arg20 = (gpureal *) 0 ;
-  int arg21 ;
-  gpureal *arg22 = (gpureal *) 0 ;
-  int arg23 ;
-  gpureal *arg24 = (gpureal *) 0 ;
-  int arg25 ;
-  gpureal *arg26 = (gpureal *) 0 ;
-  int arg27 ;
-  gpureal *arg28 = (gpureal *) 0 ;
-  int arg29 ;
-  gpureal *arg30 = (gpureal *) 0 ;
-  int arg31 ;
-  gpureal *arg32 = (gpureal *) 0 ;
-  int arg33 ;
+  int arg10 ;
+  gpureal *arg11 = (gpureal *) 0 ;
+  int arg12 ;
+  gpureal *arg13 = (gpureal *) 0 ;
+  int arg14 ;
+  gpureal *arg15 = (gpureal *) 0 ;
+  int arg16 ;
+  gpureal *arg17 = (gpureal *) 0 ;
+  int arg18 ;
+  gpureal *arg19 = (gpureal *) 0 ;
+  int arg20 ;
+  gpureal *arg21 = (gpureal *) 0 ;
+  int arg22 ;
+  gpureal *arg23 = (gpureal *) 0 ;
+  int arg24 ;
+  gpureal *arg25 = (gpureal *) 0 ;
+  int arg26 ;
+  gpureal *arg27 = (gpureal *) 0 ;
+  int arg28 ;
+  gpureal *arg29 = (gpureal *) 0 ;
+  int arg30 ;
+  gpureal *arg31 = (gpureal *) 0 ;
+  int arg32 ;
+  gpureal *arg33 = (gpureal *) 0 ;
+  int arg34 ;
+  int arg35 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  PyArrayObject *array3 = NULL ;
+  PyArrayObject *array7 = NULL ;
+  PyArrayObject *array11 = NULL ;
+  int is_new_object11 = 0 ;
+  PyArrayObject *array13 = NULL ;
+  int is_new_object13 = 0 ;
+  PyArrayObject *array15 = NULL ;
+  int is_new_object15 = 0 ;
+  PyArrayObject *array17 = NULL ;
+  int is_new_object17 = 0 ;
+  PyArrayObject *array19 = NULL ;
+  int is_new_object19 = 0 ;
+  PyArrayObject *array21 = NULL ;
+  int is_new_object21 = 0 ;
+  PyArrayObject *array23 = NULL ;
+  int is_new_object23 = 0 ;
+  PyArrayObject *array25 = NULL ;
+  int is_new_object25 = 0 ;
+  PyArrayObject *array27 = NULL ;
+  int is_new_object27 = 0 ;
+  PyArrayObject *array29 = NULL ;
+  int is_new_object29 = 0 ;
+  PyArrayObject *array31 = NULL ;
+  int is_new_object31 = 0 ;
+  PyArrayObject *array33 = NULL ;
+  int is_new_object33 = 0 ;
+  int val35 ;
+  int ecode35 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  PyObject * obj4 = 0 ;
+  PyObject * obj5 = 0 ;
+  PyObject * obj6 = 0 ;
+  PyObject * obj7 = 0 ;
+  PyObject * obj8 = 0 ;
+  PyObject * obj9 = 0 ;
+  PyObject * obj10 = 0 ;
+  PyObject * obj11 = 0 ;
+  PyObject * obj12 = 0 ;
+  PyObject * obj13 = 0 ;
+  PyObject * obj14 = 0 ;
+  PyObject * obj15 = 0 ;
+  PyObject * obj16 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOOOOOOOOOOOOOOO:RSgpuCalcField",&obj0,&obj1,&obj2,&obj3,&obj4,&obj5,&obj6,&obj7,&obj8,&obj9,&obj10,&obj11,&obj12,&obj13,&obj14,&obj15,&obj16)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "RSgpuCalcField" "', argument " "1"" of type '" "double""'");
+  } 
+  arg1 = static_cast< double >(val1);
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "RSgpuCalcField" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  {
+    array3 = obj_to_array_no_conversion(obj2, NPY_DOUBLE);
+    if (!array3 || !require_dimensions(array3,3) || !require_contiguous(array3) ||
+      !require_native(array3)) SWIG_fail;
+    arg3 = (double*) array_data(array3);
+    arg4 = (int) array_size(array3,0);
+    arg5 = (int) array_size(array3,1);
+    arg6 = (int) array_size(array3,2);
+  }
+  {
+    array7 = obj_to_array_no_conversion(obj3, NPY_DOUBLE);
+    if (!array7 || !require_dimensions(array7,3) || !require_contiguous(array7) ||
+      !require_native(array7)) SWIG_fail;
+    arg7 = (double*) array_data(array7);
+    arg8 = (int) array_size(array7,0);
+    arg9 = (int) array_size(array7,1);
+    arg10 = (int) array_size(array7,2);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array11 = obj_to_array_contiguous_allow_conversion(obj4,
+      NPY_DOUBLE,
+      &is_new_object11);
+    if (!array11 || !require_dimensions(array11, 1) ||
+      !require_size(array11, size, 1)) SWIG_fail;
+    arg11 = (double*) array_data(array11);
+    arg12 = (int) array_size(array11,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array13 = obj_to_array_contiguous_allow_conversion(obj5,
+      NPY_DOUBLE,
+      &is_new_object13);
+    if (!array13 || !require_dimensions(array13, 1) ||
+      !require_size(array13, size, 1)) SWIG_fail;
+    arg13 = (double*) array_data(array13);
+    arg14 = (int) array_size(array13,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array15 = obj_to_array_contiguous_allow_conversion(obj6,
+      NPY_DOUBLE,
+      &is_new_object15);
+    if (!array15 || !require_dimensions(array15, 1) ||
+      !require_size(array15, size, 1)) SWIG_fail;
+    arg15 = (double*) array_data(array15);
+    arg16 = (int) array_size(array15,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array17 = obj_to_array_contiguous_allow_conversion(obj7,
+      NPY_DOUBLE,
+      &is_new_object17);
+    if (!array17 || !require_dimensions(array17, 1) ||
+      !require_size(array17, size, 1)) SWIG_fail;
+    arg17 = (double*) array_data(array17);
+    arg18 = (int) array_size(array17,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array19 = obj_to_array_contiguous_allow_conversion(obj8,
+      NPY_DOUBLE,
+      &is_new_object19);
+    if (!array19 || !require_dimensions(array19, 1) ||
+      !require_size(array19, size, 1)) SWIG_fail;
+    arg19 = (double*) array_data(array19);
+    arg20 = (int) array_size(array19,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array21 = obj_to_array_contiguous_allow_conversion(obj9,
+      NPY_DOUBLE,
+      &is_new_object21);
+    if (!array21 || !require_dimensions(array21, 1) ||
+      !require_size(array21, size, 1)) SWIG_fail;
+    arg21 = (double*) array_data(array21);
+    arg22 = (int) array_size(array21,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array23 = obj_to_array_contiguous_allow_conversion(obj10,
+      NPY_DOUBLE,
+      &is_new_object23);
+    if (!array23 || !require_dimensions(array23, 1) ||
+      !require_size(array23, size, 1)) SWIG_fail;
+    arg23 = (double*) array_data(array23);
+    arg24 = (int) array_size(array23,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array25 = obj_to_array_contiguous_allow_conversion(obj11,
+      NPY_DOUBLE,
+      &is_new_object25);
+    if (!array25 || !require_dimensions(array25, 1) ||
+      !require_size(array25, size, 1)) SWIG_fail;
+    arg25 = (double*) array_data(array25);
+    arg26 = (int) array_size(array25,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array27 = obj_to_array_contiguous_allow_conversion(obj12,
+      NPY_DOUBLE,
+      &is_new_object27);
+    if (!array27 || !require_dimensions(array27, 1) ||
+      !require_size(array27, size, 1)) SWIG_fail;
+    arg27 = (double*) array_data(array27);
+    arg28 = (int) array_size(array27,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array29 = obj_to_array_contiguous_allow_conversion(obj13,
+      NPY_DOUBLE,
+      &is_new_object29);
+    if (!array29 || !require_dimensions(array29, 1) ||
+      !require_size(array29, size, 1)) SWIG_fail;
+    arg29 = (double*) array_data(array29);
+    arg30 = (int) array_size(array29,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array31 = obj_to_array_contiguous_allow_conversion(obj14,
+      NPY_DOUBLE,
+      &is_new_object31);
+    if (!array31 || !require_dimensions(array31, 1) ||
+      !require_size(array31, size, 1)) SWIG_fail;
+    arg31 = (double*) array_data(array31);
+    arg32 = (int) array_size(array31,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array33 = obj_to_array_contiguous_allow_conversion(obj15,
+      NPY_DOUBLE,
+      &is_new_object33);
+    if (!array33 || !require_dimensions(array33, 1) ||
+      !require_size(array33, size, 1)) SWIG_fail;
+    arg33 = (double*) array_data(array33);
+    arg34 = (int) array_size(array33,0);
+  }
+  ecode35 = SWIG_AsVal_int(obj16, &val35);
+  if (!SWIG_IsOK(ecode35)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode35), "in method '" "RSgpuCalcField" "', argument " "35"" of type '" "int""'");
+  } 
+  arg35 = static_cast< int >(val35);
+  RSgpuCalcField(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15,arg16,arg17,arg18,arg19,arg20,arg21,arg22,arg23,arg24,arg25,arg26,arg27,arg28,arg29,arg30,arg31,arg32,arg33,arg34,arg35);
+  resultobj = SWIG_Py_Void();
+  {
+    if (is_new_object11 && array11)
+    {
+      Py_DECREF(array11); 
+    }
+  }
+  {
+    if (is_new_object13 && array13)
+    {
+      Py_DECREF(array13); 
+    }
+  }
+  {
+    if (is_new_object15 && array15)
+    {
+      Py_DECREF(array15); 
+    }
+  }
+  {
+    if (is_new_object17 && array17)
+    {
+      Py_DECREF(array17); 
+    }
+  }
+  {
+    if (is_new_object19 && array19)
+    {
+      Py_DECREF(array19); 
+    }
+  }
+  {
+    if (is_new_object21 && array21)
+    {
+      Py_DECREF(array21); 
+    }
+  }
+  {
+    if (is_new_object23 && array23)
+    {
+      Py_DECREF(array23); 
+    }
+  }
+  {
+    if (is_new_object25 && array25)
+    {
+      Py_DECREF(array25); 
+    }
+  }
+  {
+    if (is_new_object27 && array27)
+    {
+      Py_DECREF(array27); 
+    }
+  }
+  {
+    if (is_new_object29 && array29)
+    {
+      Py_DECREF(array29); 
+    }
+  }
+  {
+    if (is_new_object31 && array31)
+    {
+      Py_DECREF(array31); 
+    }
+  }
+  {
+    if (is_new_object33 && array33)
+    {
+      Py_DECREF(array33); 
+    }
+  }
+  return resultobj;
+fail:
+  {
+    if (is_new_object11 && array11)
+    {
+      Py_DECREF(array11); 
+    }
+  }
+  {
+    if (is_new_object13 && array13)
+    {
+      Py_DECREF(array13); 
+    }
+  }
+  {
+    if (is_new_object15 && array15)
+    {
+      Py_DECREF(array15); 
+    }
+  }
+  {
+    if (is_new_object17 && array17)
+    {
+      Py_DECREF(array17); 
+    }
+  }
+  {
+    if (is_new_object19 && array19)
+    {
+      Py_DECREF(array19); 
+    }
+  }
+  {
+    if (is_new_object21 && array21)
+    {
+      Py_DECREF(array21); 
+    }
+  }
+  {
+    if (is_new_object23 && array23)
+    {
+      Py_DECREF(array23); 
+    }
+  }
+  {
+    if (is_new_object25 && array25)
+    {
+      Py_DECREF(array25); 
+    }
+  }
+  {
+    if (is_new_object27 && array27)
+    {
+      Py_DECREF(array27); 
+    }
+  }
+  {
+    if (is_new_object29 && array29)
+    {
+      Py_DECREF(array29); 
+    }
+  }
+  {
+    if (is_new_object31 && array31)
+    {
+      Py_DECREF(array31); 
+    }
+  }
+  {
+    if (is_new_object33 && array33)
+    {
+      Py_DECREF(array33); 
+    }
+  }
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_RSgpuCalcField__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  double arg1 ;
+  double arg2 ;
+  gpureal *arg3 = (gpureal *) 0 ;
+  int arg4 ;
+  int arg5 ;
+  int arg6 ;
+  gpureal *arg7 = (gpureal *) 0 ;
+  int arg8 ;
+  int arg9 ;
+  int arg10 ;
+  gpureal *arg11 = (gpureal *) 0 ;
+  int arg12 ;
+  gpureal *arg13 = (gpureal *) 0 ;
+  int arg14 ;
+  gpureal *arg15 = (gpureal *) 0 ;
+  int arg16 ;
+  gpureal *arg17 = (gpureal *) 0 ;
+  int arg18 ;
+  gpureal *arg19 = (gpureal *) 0 ;
+  int arg20 ;
+  gpureal *arg21 = (gpureal *) 0 ;
+  int arg22 ;
+  gpureal *arg23 = (gpureal *) 0 ;
+  int arg24 ;
+  gpureal *arg25 = (gpureal *) 0 ;
+  int arg26 ;
+  gpureal *arg27 = (gpureal *) 0 ;
+  int arg28 ;
+  gpureal *arg29 = (gpureal *) 0 ;
+  int arg30 ;
+  gpureal *arg31 = (gpureal *) 0 ;
+  int arg32 ;
+  gpureal *arg33 = (gpureal *) 0 ;
   int arg34 ;
   double val1 ;
   int ecode1 = 0 ;
-  PyArrayObject *array2 = NULL ;
-  PyArrayObject *array6 = NULL ;
-  PyArrayObject *array10 = NULL ;
-  int is_new_object10 = 0 ;
-  PyArrayObject *array12 = NULL ;
-  int is_new_object12 = 0 ;
-  PyArrayObject *array14 = NULL ;
-  int is_new_object14 = 0 ;
-  PyArrayObject *array16 = NULL ;
-  int is_new_object16 = 0 ;
-  PyArrayObject *array18 = NULL ;
-  int is_new_object18 = 0 ;
-  PyArrayObject *array20 = NULL ;
-  int is_new_object20 = 0 ;
-  PyArrayObject *array22 = NULL ;
-  int is_new_object22 = 0 ;
-  PyArrayObject *array24 = NULL ;
-  int is_new_object24 = 0 ;
-  PyArrayObject *array26 = NULL ;
-  int is_new_object26 = 0 ;
-  PyArrayObject *array28 = NULL ;
-  int is_new_object28 = 0 ;
-  PyArrayObject *array30 = NULL ;
-  int is_new_object30 = 0 ;
-  PyArrayObject *array32 = NULL ;
-  int is_new_object32 = 0 ;
-  int val34 ;
-  int ecode34 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  PyArrayObject *array3 = NULL ;
+  PyArrayObject *array7 = NULL ;
+  PyArrayObject *array11 = NULL ;
+  int is_new_object11 = 0 ;
+  PyArrayObject *array13 = NULL ;
+  int is_new_object13 = 0 ;
+  PyArrayObject *array15 = NULL ;
+  int is_new_object15 = 0 ;
+  PyArrayObject *array17 = NULL ;
+  int is_new_object17 = 0 ;
+  PyArrayObject *array19 = NULL ;
+  int is_new_object19 = 0 ;
+  PyArrayObject *array21 = NULL ;
+  int is_new_object21 = 0 ;
+  PyArrayObject *array23 = NULL ;
+  int is_new_object23 = 0 ;
+  PyArrayObject *array25 = NULL ;
+  int is_new_object25 = 0 ;
+  PyArrayObject *array27 = NULL ;
+  int is_new_object27 = 0 ;
+  PyArrayObject *array29 = NULL ;
+  int is_new_object29 = 0 ;
+  PyArrayObject *array31 = NULL ;
+  int is_new_object31 = 0 ;
+  PyArrayObject *array33 = NULL ;
+  int is_new_object33 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   PyObject * obj2 = 0 ;
@@ -3804,718 +4221,319 @@ SWIGINTERN PyObject *_wrap_RSgpuCalcField__SWIG_0(PyObject *SWIGUNUSEDPARM(self)
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "RSgpuCalcField" "', argument " "1"" of type '" "double""'");
   } 
   arg1 = static_cast< double >(val1);
-  {
-    array2 = obj_to_array_no_conversion(obj1, NPY_DOUBLE);
-    if (!array2 || !require_dimensions(array2,3) || !require_contiguous(array2) ||
-      !require_native(array2)) SWIG_fail;
-    arg2 = (double*) array_data(array2);
-    arg3 = (int) array_size(array2,0);
-    arg4 = (int) array_size(array2,1);
-    arg5 = (int) array_size(array2,2);
-  }
-  {
-    array6 = obj_to_array_no_conversion(obj2, NPY_DOUBLE);
-    if (!array6 || !require_dimensions(array6,3) || !require_contiguous(array6) ||
-      !require_native(array6)) SWIG_fail;
-    arg6 = (double*) array_data(array6);
-    arg7 = (int) array_size(array6,0);
-    arg8 = (int) array_size(array6,1);
-    arg9 = (int) array_size(array6,2);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array10 = obj_to_array_contiguous_allow_conversion(obj3,
-      NPY_DOUBLE,
-      &is_new_object10);
-    if (!array10 || !require_dimensions(array10, 1) ||
-      !require_size(array10, size, 1)) SWIG_fail;
-    arg10 = (double*) array_data(array10);
-    arg11 = (int) array_size(array10,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array12 = obj_to_array_contiguous_allow_conversion(obj4,
-      NPY_DOUBLE,
-      &is_new_object12);
-    if (!array12 || !require_dimensions(array12, 1) ||
-      !require_size(array12, size, 1)) SWIG_fail;
-    arg12 = (double*) array_data(array12);
-    arg13 = (int) array_size(array12,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array14 = obj_to_array_contiguous_allow_conversion(obj5,
-      NPY_DOUBLE,
-      &is_new_object14);
-    if (!array14 || !require_dimensions(array14, 1) ||
-      !require_size(array14, size, 1)) SWIG_fail;
-    arg14 = (double*) array_data(array14);
-    arg15 = (int) array_size(array14,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array16 = obj_to_array_contiguous_allow_conversion(obj6,
-      NPY_DOUBLE,
-      &is_new_object16);
-    if (!array16 || !require_dimensions(array16, 1) ||
-      !require_size(array16, size, 1)) SWIG_fail;
-    arg16 = (double*) array_data(array16);
-    arg17 = (int) array_size(array16,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array18 = obj_to_array_contiguous_allow_conversion(obj7,
-      NPY_DOUBLE,
-      &is_new_object18);
-    if (!array18 || !require_dimensions(array18, 1) ||
-      !require_size(array18, size, 1)) SWIG_fail;
-    arg18 = (double*) array_data(array18);
-    arg19 = (int) array_size(array18,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array20 = obj_to_array_contiguous_allow_conversion(obj8,
-      NPY_DOUBLE,
-      &is_new_object20);
-    if (!array20 || !require_dimensions(array20, 1) ||
-      !require_size(array20, size, 1)) SWIG_fail;
-    arg20 = (double*) array_data(array20);
-    arg21 = (int) array_size(array20,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array22 = obj_to_array_contiguous_allow_conversion(obj9,
-      NPY_DOUBLE,
-      &is_new_object22);
-    if (!array22 || !require_dimensions(array22, 1) ||
-      !require_size(array22, size, 1)) SWIG_fail;
-    arg22 = (double*) array_data(array22);
-    arg23 = (int) array_size(array22,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array24 = obj_to_array_contiguous_allow_conversion(obj10,
-      NPY_DOUBLE,
-      &is_new_object24);
-    if (!array24 || !require_dimensions(array24, 1) ||
-      !require_size(array24, size, 1)) SWIG_fail;
-    arg24 = (double*) array_data(array24);
-    arg25 = (int) array_size(array24,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array26 = obj_to_array_contiguous_allow_conversion(obj11,
-      NPY_DOUBLE,
-      &is_new_object26);
-    if (!array26 || !require_dimensions(array26, 1) ||
-      !require_size(array26, size, 1)) SWIG_fail;
-    arg26 = (double*) array_data(array26);
-    arg27 = (int) array_size(array26,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array28 = obj_to_array_contiguous_allow_conversion(obj12,
-      NPY_DOUBLE,
-      &is_new_object28);
-    if (!array28 || !require_dimensions(array28, 1) ||
-      !require_size(array28, size, 1)) SWIG_fail;
-    arg28 = (double*) array_data(array28);
-    arg29 = (int) array_size(array28,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array30 = obj_to_array_contiguous_allow_conversion(obj13,
-      NPY_DOUBLE,
-      &is_new_object30);
-    if (!array30 || !require_dimensions(array30, 1) ||
-      !require_size(array30, size, 1)) SWIG_fail;
-    arg30 = (double*) array_data(array30);
-    arg31 = (int) array_size(array30,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array32 = obj_to_array_contiguous_allow_conversion(obj14,
-      NPY_DOUBLE,
-      &is_new_object32);
-    if (!array32 || !require_dimensions(array32, 1) ||
-      !require_size(array32, size, 1)) SWIG_fail;
-    arg32 = (double*) array_data(array32);
-    arg33 = (int) array_size(array32,0);
-  }
-  ecode34 = SWIG_AsVal_int(obj15, &val34);
-  if (!SWIG_IsOK(ecode34)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode34), "in method '" "RSgpuCalcField" "', argument " "34"" of type '" "int""'");
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "RSgpuCalcField" "', argument " "2"" of type '" "double""'");
   } 
-  arg34 = static_cast< int >(val34);
+  arg2 = static_cast< double >(val2);
+  {
+    array3 = obj_to_array_no_conversion(obj2, NPY_DOUBLE);
+    if (!array3 || !require_dimensions(array3,3) || !require_contiguous(array3) ||
+      !require_native(array3)) SWIG_fail;
+    arg3 = (double*) array_data(array3);
+    arg4 = (int) array_size(array3,0);
+    arg5 = (int) array_size(array3,1);
+    arg6 = (int) array_size(array3,2);
+  }
+  {
+    array7 = obj_to_array_no_conversion(obj3, NPY_DOUBLE);
+    if (!array7 || !require_dimensions(array7,3) || !require_contiguous(array7) ||
+      !require_native(array7)) SWIG_fail;
+    arg7 = (double*) array_data(array7);
+    arg8 = (int) array_size(array7,0);
+    arg9 = (int) array_size(array7,1);
+    arg10 = (int) array_size(array7,2);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array11 = obj_to_array_contiguous_allow_conversion(obj4,
+      NPY_DOUBLE,
+      &is_new_object11);
+    if (!array11 || !require_dimensions(array11, 1) ||
+      !require_size(array11, size, 1)) SWIG_fail;
+    arg11 = (double*) array_data(array11);
+    arg12 = (int) array_size(array11,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array13 = obj_to_array_contiguous_allow_conversion(obj5,
+      NPY_DOUBLE,
+      &is_new_object13);
+    if (!array13 || !require_dimensions(array13, 1) ||
+      !require_size(array13, size, 1)) SWIG_fail;
+    arg13 = (double*) array_data(array13);
+    arg14 = (int) array_size(array13,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array15 = obj_to_array_contiguous_allow_conversion(obj6,
+      NPY_DOUBLE,
+      &is_new_object15);
+    if (!array15 || !require_dimensions(array15, 1) ||
+      !require_size(array15, size, 1)) SWIG_fail;
+    arg15 = (double*) array_data(array15);
+    arg16 = (int) array_size(array15,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array17 = obj_to_array_contiguous_allow_conversion(obj7,
+      NPY_DOUBLE,
+      &is_new_object17);
+    if (!array17 || !require_dimensions(array17, 1) ||
+      !require_size(array17, size, 1)) SWIG_fail;
+    arg17 = (double*) array_data(array17);
+    arg18 = (int) array_size(array17,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array19 = obj_to_array_contiguous_allow_conversion(obj8,
+      NPY_DOUBLE,
+      &is_new_object19);
+    if (!array19 || !require_dimensions(array19, 1) ||
+      !require_size(array19, size, 1)) SWIG_fail;
+    arg19 = (double*) array_data(array19);
+    arg20 = (int) array_size(array19,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array21 = obj_to_array_contiguous_allow_conversion(obj9,
+      NPY_DOUBLE,
+      &is_new_object21);
+    if (!array21 || !require_dimensions(array21, 1) ||
+      !require_size(array21, size, 1)) SWIG_fail;
+    arg21 = (double*) array_data(array21);
+    arg22 = (int) array_size(array21,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array23 = obj_to_array_contiguous_allow_conversion(obj10,
+      NPY_DOUBLE,
+      &is_new_object23);
+    if (!array23 || !require_dimensions(array23, 1) ||
+      !require_size(array23, size, 1)) SWIG_fail;
+    arg23 = (double*) array_data(array23);
+    arg24 = (int) array_size(array23,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array25 = obj_to_array_contiguous_allow_conversion(obj11,
+      NPY_DOUBLE,
+      &is_new_object25);
+    if (!array25 || !require_dimensions(array25, 1) ||
+      !require_size(array25, size, 1)) SWIG_fail;
+    arg25 = (double*) array_data(array25);
+    arg26 = (int) array_size(array25,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array27 = obj_to_array_contiguous_allow_conversion(obj12,
+      NPY_DOUBLE,
+      &is_new_object27);
+    if (!array27 || !require_dimensions(array27, 1) ||
+      !require_size(array27, size, 1)) SWIG_fail;
+    arg27 = (double*) array_data(array27);
+    arg28 = (int) array_size(array27,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array29 = obj_to_array_contiguous_allow_conversion(obj13,
+      NPY_DOUBLE,
+      &is_new_object29);
+    if (!array29 || !require_dimensions(array29, 1) ||
+      !require_size(array29, size, 1)) SWIG_fail;
+    arg29 = (double*) array_data(array29);
+    arg30 = (int) array_size(array29,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array31 = obj_to_array_contiguous_allow_conversion(obj14,
+      NPY_DOUBLE,
+      &is_new_object31);
+    if (!array31 || !require_dimensions(array31, 1) ||
+      !require_size(array31, size, 1)) SWIG_fail;
+    arg31 = (double*) array_data(array31);
+    arg32 = (int) array_size(array31,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array33 = obj_to_array_contiguous_allow_conversion(obj15,
+      NPY_DOUBLE,
+      &is_new_object33);
+    if (!array33 || !require_dimensions(array33, 1) ||
+      !require_size(array33, size, 1)) SWIG_fail;
+    arg33 = (double*) array_data(array33);
+    arg34 = (int) array_size(array33,0);
+  }
   RSgpuCalcField(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15,arg16,arg17,arg18,arg19,arg20,arg21,arg22,arg23,arg24,arg25,arg26,arg27,arg28,arg29,arg30,arg31,arg32,arg33,arg34);
   resultobj = SWIG_Py_Void();
   {
-    if (is_new_object10 && array10)
+    if (is_new_object11 && array11)
     {
-      Py_DECREF(array10); 
+      Py_DECREF(array11); 
     }
   }
   {
-    if (is_new_object12 && array12)
+    if (is_new_object13 && array13)
     {
-      Py_DECREF(array12); 
+      Py_DECREF(array13); 
     }
   }
   {
-    if (is_new_object14 && array14)
+    if (is_new_object15 && array15)
     {
-      Py_DECREF(array14); 
+      Py_DECREF(array15); 
     }
   }
   {
-    if (is_new_object16 && array16)
+    if (is_new_object17 && array17)
     {
-      Py_DECREF(array16); 
+      Py_DECREF(array17); 
     }
   }
   {
-    if (is_new_object18 && array18)
+    if (is_new_object19 && array19)
     {
-      Py_DECREF(array18); 
+      Py_DECREF(array19); 
     }
   }
   {
-    if (is_new_object20 && array20)
+    if (is_new_object21 && array21)
     {
-      Py_DECREF(array20); 
+      Py_DECREF(array21); 
     }
   }
   {
-    if (is_new_object22 && array22)
+    if (is_new_object23 && array23)
     {
-      Py_DECREF(array22); 
+      Py_DECREF(array23); 
     }
   }
   {
-    if (is_new_object24 && array24)
+    if (is_new_object25 && array25)
     {
-      Py_DECREF(array24); 
+      Py_DECREF(array25); 
     }
   }
   {
-    if (is_new_object26 && array26)
+    if (is_new_object27 && array27)
     {
-      Py_DECREF(array26); 
+      Py_DECREF(array27); 
     }
   }
   {
-    if (is_new_object28 && array28)
+    if (is_new_object29 && array29)
     {
-      Py_DECREF(array28); 
+      Py_DECREF(array29); 
     }
   }
   {
-    if (is_new_object30 && array30)
+    if (is_new_object31 && array31)
     {
-      Py_DECREF(array30); 
+      Py_DECREF(array31); 
     }
   }
   {
-    if (is_new_object32 && array32)
+    if (is_new_object33 && array33)
     {
-      Py_DECREF(array32); 
-    }
-  }
-  return resultobj;
-fail:
-  {
-    if (is_new_object10 && array10)
-    {
-      Py_DECREF(array10); 
-    }
-  }
-  {
-    if (is_new_object12 && array12)
-    {
-      Py_DECREF(array12); 
-    }
-  }
-  {
-    if (is_new_object14 && array14)
-    {
-      Py_DECREF(array14); 
-    }
-  }
-  {
-    if (is_new_object16 && array16)
-    {
-      Py_DECREF(array16); 
-    }
-  }
-  {
-    if (is_new_object18 && array18)
-    {
-      Py_DECREF(array18); 
-    }
-  }
-  {
-    if (is_new_object20 && array20)
-    {
-      Py_DECREF(array20); 
-    }
-  }
-  {
-    if (is_new_object22 && array22)
-    {
-      Py_DECREF(array22); 
-    }
-  }
-  {
-    if (is_new_object24 && array24)
-    {
-      Py_DECREF(array24); 
-    }
-  }
-  {
-    if (is_new_object26 && array26)
-    {
-      Py_DECREF(array26); 
-    }
-  }
-  {
-    if (is_new_object28 && array28)
-    {
-      Py_DECREF(array28); 
-    }
-  }
-  {
-    if (is_new_object30 && array30)
-    {
-      Py_DECREF(array30); 
-    }
-  }
-  {
-    if (is_new_object32 && array32)
-    {
-      Py_DECREF(array32); 
-    }
-  }
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_RSgpuCalcField__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  double arg1 ;
-  gpureal *arg2 = (gpureal *) 0 ;
-  int arg3 ;
-  int arg4 ;
-  int arg5 ;
-  gpureal *arg6 = (gpureal *) 0 ;
-  int arg7 ;
-  int arg8 ;
-  int arg9 ;
-  gpureal *arg10 = (gpureal *) 0 ;
-  int arg11 ;
-  gpureal *arg12 = (gpureal *) 0 ;
-  int arg13 ;
-  gpureal *arg14 = (gpureal *) 0 ;
-  int arg15 ;
-  gpureal *arg16 = (gpureal *) 0 ;
-  int arg17 ;
-  gpureal *arg18 = (gpureal *) 0 ;
-  int arg19 ;
-  gpureal *arg20 = (gpureal *) 0 ;
-  int arg21 ;
-  gpureal *arg22 = (gpureal *) 0 ;
-  int arg23 ;
-  gpureal *arg24 = (gpureal *) 0 ;
-  int arg25 ;
-  gpureal *arg26 = (gpureal *) 0 ;
-  int arg27 ;
-  gpureal *arg28 = (gpureal *) 0 ;
-  int arg29 ;
-  gpureal *arg30 = (gpureal *) 0 ;
-  int arg31 ;
-  gpureal *arg32 = (gpureal *) 0 ;
-  int arg33 ;
-  double val1 ;
-  int ecode1 = 0 ;
-  PyArrayObject *array2 = NULL ;
-  PyArrayObject *array6 = NULL ;
-  PyArrayObject *array10 = NULL ;
-  int is_new_object10 = 0 ;
-  PyArrayObject *array12 = NULL ;
-  int is_new_object12 = 0 ;
-  PyArrayObject *array14 = NULL ;
-  int is_new_object14 = 0 ;
-  PyArrayObject *array16 = NULL ;
-  int is_new_object16 = 0 ;
-  PyArrayObject *array18 = NULL ;
-  int is_new_object18 = 0 ;
-  PyArrayObject *array20 = NULL ;
-  int is_new_object20 = 0 ;
-  PyArrayObject *array22 = NULL ;
-  int is_new_object22 = 0 ;
-  PyArrayObject *array24 = NULL ;
-  int is_new_object24 = 0 ;
-  PyArrayObject *array26 = NULL ;
-  int is_new_object26 = 0 ;
-  PyArrayObject *array28 = NULL ;
-  int is_new_object28 = 0 ;
-  PyArrayObject *array30 = NULL ;
-  int is_new_object30 = 0 ;
-  PyArrayObject *array32 = NULL ;
-  int is_new_object32 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  PyObject * obj3 = 0 ;
-  PyObject * obj4 = 0 ;
-  PyObject * obj5 = 0 ;
-  PyObject * obj6 = 0 ;
-  PyObject * obj7 = 0 ;
-  PyObject * obj8 = 0 ;
-  PyObject * obj9 = 0 ;
-  PyObject * obj10 = 0 ;
-  PyObject * obj11 = 0 ;
-  PyObject * obj12 = 0 ;
-  PyObject * obj13 = 0 ;
-  PyObject * obj14 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOOOOOOOOOOOOOO:RSgpuCalcField",&obj0,&obj1,&obj2,&obj3,&obj4,&obj5,&obj6,&obj7,&obj8,&obj9,&obj10,&obj11,&obj12,&obj13,&obj14)) SWIG_fail;
-  ecode1 = SWIG_AsVal_double(obj0, &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "RSgpuCalcField" "', argument " "1"" of type '" "double""'");
-  } 
-  arg1 = static_cast< double >(val1);
-  {
-    array2 = obj_to_array_no_conversion(obj1, NPY_DOUBLE);
-    if (!array2 || !require_dimensions(array2,3) || !require_contiguous(array2) ||
-      !require_native(array2)) SWIG_fail;
-    arg2 = (double*) array_data(array2);
-    arg3 = (int) array_size(array2,0);
-    arg4 = (int) array_size(array2,1);
-    arg5 = (int) array_size(array2,2);
-  }
-  {
-    array6 = obj_to_array_no_conversion(obj2, NPY_DOUBLE);
-    if (!array6 || !require_dimensions(array6,3) || !require_contiguous(array6) ||
-      !require_native(array6)) SWIG_fail;
-    arg6 = (double*) array_data(array6);
-    arg7 = (int) array_size(array6,0);
-    arg8 = (int) array_size(array6,1);
-    arg9 = (int) array_size(array6,2);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array10 = obj_to_array_contiguous_allow_conversion(obj3,
-      NPY_DOUBLE,
-      &is_new_object10);
-    if (!array10 || !require_dimensions(array10, 1) ||
-      !require_size(array10, size, 1)) SWIG_fail;
-    arg10 = (double*) array_data(array10);
-    arg11 = (int) array_size(array10,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array12 = obj_to_array_contiguous_allow_conversion(obj4,
-      NPY_DOUBLE,
-      &is_new_object12);
-    if (!array12 || !require_dimensions(array12, 1) ||
-      !require_size(array12, size, 1)) SWIG_fail;
-    arg12 = (double*) array_data(array12);
-    arg13 = (int) array_size(array12,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array14 = obj_to_array_contiguous_allow_conversion(obj5,
-      NPY_DOUBLE,
-      &is_new_object14);
-    if (!array14 || !require_dimensions(array14, 1) ||
-      !require_size(array14, size, 1)) SWIG_fail;
-    arg14 = (double*) array_data(array14);
-    arg15 = (int) array_size(array14,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array16 = obj_to_array_contiguous_allow_conversion(obj6,
-      NPY_DOUBLE,
-      &is_new_object16);
-    if (!array16 || !require_dimensions(array16, 1) ||
-      !require_size(array16, size, 1)) SWIG_fail;
-    arg16 = (double*) array_data(array16);
-    arg17 = (int) array_size(array16,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array18 = obj_to_array_contiguous_allow_conversion(obj7,
-      NPY_DOUBLE,
-      &is_new_object18);
-    if (!array18 || !require_dimensions(array18, 1) ||
-      !require_size(array18, size, 1)) SWIG_fail;
-    arg18 = (double*) array_data(array18);
-    arg19 = (int) array_size(array18,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array20 = obj_to_array_contiguous_allow_conversion(obj8,
-      NPY_DOUBLE,
-      &is_new_object20);
-    if (!array20 || !require_dimensions(array20, 1) ||
-      !require_size(array20, size, 1)) SWIG_fail;
-    arg20 = (double*) array_data(array20);
-    arg21 = (int) array_size(array20,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array22 = obj_to_array_contiguous_allow_conversion(obj9,
-      NPY_DOUBLE,
-      &is_new_object22);
-    if (!array22 || !require_dimensions(array22, 1) ||
-      !require_size(array22, size, 1)) SWIG_fail;
-    arg22 = (double*) array_data(array22);
-    arg23 = (int) array_size(array22,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array24 = obj_to_array_contiguous_allow_conversion(obj10,
-      NPY_DOUBLE,
-      &is_new_object24);
-    if (!array24 || !require_dimensions(array24, 1) ||
-      !require_size(array24, size, 1)) SWIG_fail;
-    arg24 = (double*) array_data(array24);
-    arg25 = (int) array_size(array24,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array26 = obj_to_array_contiguous_allow_conversion(obj11,
-      NPY_DOUBLE,
-      &is_new_object26);
-    if (!array26 || !require_dimensions(array26, 1) ||
-      !require_size(array26, size, 1)) SWIG_fail;
-    arg26 = (double*) array_data(array26);
-    arg27 = (int) array_size(array26,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array28 = obj_to_array_contiguous_allow_conversion(obj12,
-      NPY_DOUBLE,
-      &is_new_object28);
-    if (!array28 || !require_dimensions(array28, 1) ||
-      !require_size(array28, size, 1)) SWIG_fail;
-    arg28 = (double*) array_data(array28);
-    arg29 = (int) array_size(array28,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array30 = obj_to_array_contiguous_allow_conversion(obj13,
-      NPY_DOUBLE,
-      &is_new_object30);
-    if (!array30 || !require_dimensions(array30, 1) ||
-      !require_size(array30, size, 1)) SWIG_fail;
-    arg30 = (double*) array_data(array30);
-    arg31 = (int) array_size(array30,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array32 = obj_to_array_contiguous_allow_conversion(obj14,
-      NPY_DOUBLE,
-      &is_new_object32);
-    if (!array32 || !require_dimensions(array32, 1) ||
-      !require_size(array32, size, 1)) SWIG_fail;
-    arg32 = (double*) array_data(array32);
-    arg33 = (int) array_size(array32,0);
-  }
-  RSgpuCalcField(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15,arg16,arg17,arg18,arg19,arg20,arg21,arg22,arg23,arg24,arg25,arg26,arg27,arg28,arg29,arg30,arg31,arg32,arg33);
-  resultobj = SWIG_Py_Void();
-  {
-    if (is_new_object10 && array10)
-    {
-      Py_DECREF(array10); 
-    }
-  }
-  {
-    if (is_new_object12 && array12)
-    {
-      Py_DECREF(array12); 
-    }
-  }
-  {
-    if (is_new_object14 && array14)
-    {
-      Py_DECREF(array14); 
-    }
-  }
-  {
-    if (is_new_object16 && array16)
-    {
-      Py_DECREF(array16); 
-    }
-  }
-  {
-    if (is_new_object18 && array18)
-    {
-      Py_DECREF(array18); 
-    }
-  }
-  {
-    if (is_new_object20 && array20)
-    {
-      Py_DECREF(array20); 
-    }
-  }
-  {
-    if (is_new_object22 && array22)
-    {
-      Py_DECREF(array22); 
-    }
-  }
-  {
-    if (is_new_object24 && array24)
-    {
-      Py_DECREF(array24); 
-    }
-  }
-  {
-    if (is_new_object26 && array26)
-    {
-      Py_DECREF(array26); 
-    }
-  }
-  {
-    if (is_new_object28 && array28)
-    {
-      Py_DECREF(array28); 
-    }
-  }
-  {
-    if (is_new_object30 && array30)
-    {
-      Py_DECREF(array30); 
-    }
-  }
-  {
-    if (is_new_object32 && array32)
-    {
-      Py_DECREF(array32); 
+      Py_DECREF(array33); 
     }
   }
   return resultobj;
 fail:
   {
-    if (is_new_object10 && array10)
+    if (is_new_object11 && array11)
     {
-      Py_DECREF(array10); 
+      Py_DECREF(array11); 
     }
   }
   {
-    if (is_new_object12 && array12)
+    if (is_new_object13 && array13)
     {
-      Py_DECREF(array12); 
+      Py_DECREF(array13); 
     }
   }
   {
-    if (is_new_object14 && array14)
+    if (is_new_object15 && array15)
     {
-      Py_DECREF(array14); 
+      Py_DECREF(array15); 
     }
   }
   {
-    if (is_new_object16 && array16)
+    if (is_new_object17 && array17)
     {
-      Py_DECREF(array16); 
+      Py_DECREF(array17); 
     }
   }
   {
-    if (is_new_object18 && array18)
+    if (is_new_object19 && array19)
     {
-      Py_DECREF(array18); 
+      Py_DECREF(array19); 
     }
   }
   {
-    if (is_new_object20 && array20)
+    if (is_new_object21 && array21)
     {
-      Py_DECREF(array20); 
+      Py_DECREF(array21); 
     }
   }
   {
-    if (is_new_object22 && array22)
+    if (is_new_object23 && array23)
     {
-      Py_DECREF(array22); 
+      Py_DECREF(array23); 
     }
   }
   {
-    if (is_new_object24 && array24)
+    if (is_new_object25 && array25)
     {
-      Py_DECREF(array24); 
+      Py_DECREF(array25); 
     }
   }
   {
-    if (is_new_object26 && array26)
+    if (is_new_object27 && array27)
     {
-      Py_DECREF(array26); 
+      Py_DECREF(array27); 
     }
   }
   {
-    if (is_new_object28 && array28)
+    if (is_new_object29 && array29)
     {
-      Py_DECREF(array28); 
+      Py_DECREF(array29); 
     }
   }
   {
-    if (is_new_object30 && array30)
+    if (is_new_object31 && array31)
     {
-      Py_DECREF(array30); 
+      Py_DECREF(array31); 
     }
   }
   {
-    if (is_new_object32 && array32)
+    if (is_new_object33 && array33)
     {
-      Py_DECREF(array32); 
+      Py_DECREF(array33); 
     }
   }
   return NULL;
@@ -4524,100 +4542,15 @@ fail:
 
 SWIGINTERN PyObject *_wrap_RSgpuCalcField(PyObject *self, PyObject *args) {
   int argc;
-  PyObject *argv[17] = {
+  PyObject *argv[18] = {
     0
   };
   int ii;
   
   if (!PyTuple_Check(args)) SWIG_fail;
   argc = args ? (int)PyObject_Length(args) : 0;
-  for (ii = 0; (ii < 16) && (ii < argc); ii++) {
+  for (ii = 0; (ii < 17) && (ii < argc); ii++) {
     argv[ii] = PyTuple_GET_ITEM(args,ii);
-  }
-  if (argc == 15) {
-    int _v;
-    {
-      int res = SWIG_AsVal_double(argv[0], NULL);
-      _v = SWIG_CheckState(res);
-    }
-    if (_v) {
-      {
-        _v = is_array(argv[1]) && PyArray_EquivTypenums(array_type(argv[1]),
-          NPY_DOUBLE);
-      }
-      if (_v) {
-        {
-          _v = is_array(argv[2]) && PyArray_EquivTypenums(array_type(argv[2]),
-            NPY_DOUBLE);
-        }
-        if (_v) {
-          {
-            _v = is_array(argv[3]) || PySequence_Check(argv[3]);
-          }
-          if (_v) {
-            {
-              _v = is_array(argv[4]) || PySequence_Check(argv[4]);
-            }
-            if (_v) {
-              {
-                _v = is_array(argv[5]) || PySequence_Check(argv[5]);
-              }
-              if (_v) {
-                {
-                  _v = is_array(argv[6]) || PySequence_Check(argv[6]);
-                }
-                if (_v) {
-                  {
-                    _v = is_array(argv[7]) || PySequence_Check(argv[7]);
-                  }
-                  if (_v) {
-                    {
-                      _v = is_array(argv[8]) || PySequence_Check(argv[8]);
-                    }
-                    if (_v) {
-                      {
-                        _v = is_array(argv[9]) || PySequence_Check(argv[9]);
-                      }
-                      if (_v) {
-                        {
-                          _v = is_array(argv[10]) || PySequence_Check(argv[10]);
-                        }
-                        if (_v) {
-                          {
-                            _v = is_array(argv[11]) || PySequence_Check(argv[11]);
-                          }
-                          if (_v) {
-                            {
-                              _v = is_array(argv[12]) || PySequence_Check(argv[12]);
-                            }
-                            if (_v) {
-                              {
-                                _v = is_array(argv[13]) || PySequence_Check(argv[13]);
-                              }
-                              if (_v) {
-                                {
-                                  _v = is_array(argv[14]) || PySequence_Check(argv[14]);
-                                }
-                                if (_v) {
-                                  if (argc <= 15) {
-                                    return _wrap_RSgpuCalcField__SWIG_1(self, args);
-                                  }
-                                  return _wrap_RSgpuCalcField__SWIG_1(self, args);
-                                }
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
   }
   if (argc == 16) {
     int _v;
@@ -4627,8 +4560,8 @@ SWIGINTERN PyObject *_wrap_RSgpuCalcField(PyObject *self, PyObject *args) {
     }
     if (_v) {
       {
-        _v = is_array(argv[1]) && PyArray_EquivTypenums(array_type(argv[1]),
-          NPY_DOUBLE);
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
       }
       if (_v) {
         {
@@ -4637,7 +4570,8 @@ SWIGINTERN PyObject *_wrap_RSgpuCalcField(PyObject *self, PyObject *args) {
         }
         if (_v) {
           {
-            _v = is_array(argv[3]) || PySequence_Check(argv[3]);
+            _v = is_array(argv[3]) && PyArray_EquivTypenums(array_type(argv[3]),
+              NPY_DOUBLE);
           }
           if (_v) {
             {
@@ -4685,11 +4619,107 @@ SWIGINTERN PyObject *_wrap_RSgpuCalcField(PyObject *self, PyObject *args) {
                                 }
                                 if (_v) {
                                   {
-                                    int res = SWIG_AsVal_int(argv[15], NULL);
-                                    _v = SWIG_CheckState(res);
+                                    _v = is_array(argv[15]) || PySequence_Check(argv[15]);
                                   }
                                   if (_v) {
-                                    return _wrap_RSgpuCalcField__SWIG_0(self, args);
+                                    if (argc <= 16) {
+                                      return _wrap_RSgpuCalcField__SWIG_1(self, args);
+                                    }
+                                    return _wrap_RSgpuCalcField__SWIG_1(self, args);
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  if (argc == 17) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          _v = is_array(argv[2]) && PyArray_EquivTypenums(array_type(argv[2]),
+            NPY_DOUBLE);
+        }
+        if (_v) {
+          {
+            _v = is_array(argv[3]) && PyArray_EquivTypenums(array_type(argv[3]),
+              NPY_DOUBLE);
+          }
+          if (_v) {
+            {
+              _v = is_array(argv[4]) || PySequence_Check(argv[4]);
+            }
+            if (_v) {
+              {
+                _v = is_array(argv[5]) || PySequence_Check(argv[5]);
+              }
+              if (_v) {
+                {
+                  _v = is_array(argv[6]) || PySequence_Check(argv[6]);
+                }
+                if (_v) {
+                  {
+                    _v = is_array(argv[7]) || PySequence_Check(argv[7]);
+                  }
+                  if (_v) {
+                    {
+                      _v = is_array(argv[8]) || PySequence_Check(argv[8]);
+                    }
+                    if (_v) {
+                      {
+                        _v = is_array(argv[9]) || PySequence_Check(argv[9]);
+                      }
+                      if (_v) {
+                        {
+                          _v = is_array(argv[10]) || PySequence_Check(argv[10]);
+                        }
+                        if (_v) {
+                          {
+                            _v = is_array(argv[11]) || PySequence_Check(argv[11]);
+                          }
+                          if (_v) {
+                            {
+                              _v = is_array(argv[12]) || PySequence_Check(argv[12]);
+                            }
+                            if (_v) {
+                              {
+                                _v = is_array(argv[13]) || PySequence_Check(argv[13]);
+                              }
+                              if (_v) {
+                                {
+                                  _v = is_array(argv[14]) || PySequence_Check(argv[14]);
+                                }
+                                if (_v) {
+                                  {
+                                    _v = is_array(argv[15]) || PySequence_Check(argv[15]);
+                                  }
+                                  if (_v) {
+                                    {
+                                      int res = SWIG_AsVal_int(argv[16], NULL);
+                                      _v = SWIG_CheckState(res);
+                                    }
+                                    if (_v) {
+                                      return _wrap_RSgpuCalcField__SWIG_0(self, args);
+                                    }
                                   }
                                 }
                               }
@@ -4711,8 +4741,8 @@ SWIGINTERN PyObject *_wrap_RSgpuCalcField(PyObject *self, PyObject *args) {
 fail:
   SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'RSgpuCalcField'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    RSgpuCalcField(double,gpureal *,int,int,int,gpureal *,int,int,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,int)\n"
-    "    RSgpuCalcField(double,gpureal *,int,int,int,gpureal *,int,int,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int)\n");
+    "    RSgpuCalcField(double,double,gpureal *,int,int,int,gpureal *,int,int,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,int)\n"
+    "    RSgpuCalcField(double,double,gpureal *,int,int,int,gpureal *,int,int,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int)\n");
   return 0;
 }
 
@@ -4720,69 +4750,486 @@ fail:
 SWIGINTERN PyObject *_wrap_RSgpuCalcOnPoints__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   double arg1 ;
-  gpureal *arg2 = (gpureal *) 0 ;
-  int arg3 ;
+  double arg2 ;
+  gpureal *arg3 = (gpureal *) 0 ;
   int arg4 ;
   int arg5 ;
-  gpureal *arg6 = (gpureal *) 0 ;
-  int arg7 ;
+  int arg6 ;
+  gpureal *arg7 = (gpureal *) 0 ;
   int arg8 ;
   int arg9 ;
-  gpureal *arg10 = (gpureal *) 0 ;
-  int arg11 ;
-  gpureal *arg12 = (gpureal *) 0 ;
-  int arg13 ;
-  gpureal *arg14 = (gpureal *) 0 ;
-  int arg15 ;
-  gpureal *arg16 = (gpureal *) 0 ;
-  int arg17 ;
-  gpureal *arg18 = (gpureal *) 0 ;
-  int arg19 ;
-  gpureal *arg20 = (gpureal *) 0 ;
-  int arg21 ;
-  gpureal *arg22 = (gpureal *) 0 ;
-  int arg23 ;
-  gpureal *arg24 = (gpureal *) 0 ;
-  int arg25 ;
-  gpureal *arg26 = (gpureal *) 0 ;
-  int arg27 ;
-  gpureal *arg28 = (gpureal *) 0 ;
-  int arg29 ;
-  gpureal *arg30 = (gpureal *) 0 ;
-  int arg31 ;
-  gpureal *arg32 = (gpureal *) 0 ;
-  int arg33 ;
+  int arg10 ;
+  gpureal *arg11 = (gpureal *) 0 ;
+  int arg12 ;
+  gpureal *arg13 = (gpureal *) 0 ;
+  int arg14 ;
+  gpureal *arg15 = (gpureal *) 0 ;
+  int arg16 ;
+  gpureal *arg17 = (gpureal *) 0 ;
+  int arg18 ;
+  gpureal *arg19 = (gpureal *) 0 ;
+  int arg20 ;
+  gpureal *arg21 = (gpureal *) 0 ;
+  int arg22 ;
+  gpureal *arg23 = (gpureal *) 0 ;
+  int arg24 ;
+  gpureal *arg25 = (gpureal *) 0 ;
+  int arg26 ;
+  gpureal *arg27 = (gpureal *) 0 ;
+  int arg28 ;
+  gpureal *arg29 = (gpureal *) 0 ;
+  int arg30 ;
+  gpureal *arg31 = (gpureal *) 0 ;
+  int arg32 ;
+  gpureal *arg33 = (gpureal *) 0 ;
+  int arg34 ;
+  int arg35 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  PyArrayObject *array3 = NULL ;
+  PyArrayObject *array7 = NULL ;
+  PyArrayObject *array11 = NULL ;
+  int is_new_object11 = 0 ;
+  PyArrayObject *array13 = NULL ;
+  int is_new_object13 = 0 ;
+  PyArrayObject *array15 = NULL ;
+  int is_new_object15 = 0 ;
+  PyArrayObject *array17 = NULL ;
+  int is_new_object17 = 0 ;
+  PyArrayObject *array19 = NULL ;
+  int is_new_object19 = 0 ;
+  PyArrayObject *array21 = NULL ;
+  int is_new_object21 = 0 ;
+  PyArrayObject *array23 = NULL ;
+  int is_new_object23 = 0 ;
+  PyArrayObject *array25 = NULL ;
+  int is_new_object25 = 0 ;
+  PyArrayObject *array27 = NULL ;
+  int is_new_object27 = 0 ;
+  PyArrayObject *array29 = NULL ;
+  int is_new_object29 = 0 ;
+  PyArrayObject *array31 = NULL ;
+  int is_new_object31 = 0 ;
+  PyArrayObject *array33 = NULL ;
+  int is_new_object33 = 0 ;
+  int val35 ;
+  int ecode35 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  PyObject * obj4 = 0 ;
+  PyObject * obj5 = 0 ;
+  PyObject * obj6 = 0 ;
+  PyObject * obj7 = 0 ;
+  PyObject * obj8 = 0 ;
+  PyObject * obj9 = 0 ;
+  PyObject * obj10 = 0 ;
+  PyObject * obj11 = 0 ;
+  PyObject * obj12 = 0 ;
+  PyObject * obj13 = 0 ;
+  PyObject * obj14 = 0 ;
+  PyObject * obj15 = 0 ;
+  PyObject * obj16 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOOOOOOOOOOOOOOO:RSgpuCalcOnPoints",&obj0,&obj1,&obj2,&obj3,&obj4,&obj5,&obj6,&obj7,&obj8,&obj9,&obj10,&obj11,&obj12,&obj13,&obj14,&obj15,&obj16)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "RSgpuCalcOnPoints" "', argument " "1"" of type '" "double""'");
+  } 
+  arg1 = static_cast< double >(val1);
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "RSgpuCalcOnPoints" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  {
+    array3 = obj_to_array_no_conversion(obj2, NPY_DOUBLE);
+    if (!array3 || !require_dimensions(array3,3) || !require_contiguous(array3) ||
+      !require_native(array3)) SWIG_fail;
+    arg3 = (double*) array_data(array3);
+    arg4 = (int) array_size(array3,0);
+    arg5 = (int) array_size(array3,1);
+    arg6 = (int) array_size(array3,2);
+  }
+  {
+    array7 = obj_to_array_no_conversion(obj3, NPY_DOUBLE);
+    if (!array7 || !require_dimensions(array7,3) || !require_contiguous(array7) ||
+      !require_native(array7)) SWIG_fail;
+    arg7 = (double*) array_data(array7);
+    arg8 = (int) array_size(array7,0);
+    arg9 = (int) array_size(array7,1);
+    arg10 = (int) array_size(array7,2);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array11 = obj_to_array_contiguous_allow_conversion(obj4,
+      NPY_DOUBLE,
+      &is_new_object11);
+    if (!array11 || !require_dimensions(array11, 1) ||
+      !require_size(array11, size, 1)) SWIG_fail;
+    arg11 = (double*) array_data(array11);
+    arg12 = (int) array_size(array11,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array13 = obj_to_array_contiguous_allow_conversion(obj5,
+      NPY_DOUBLE,
+      &is_new_object13);
+    if (!array13 || !require_dimensions(array13, 1) ||
+      !require_size(array13, size, 1)) SWIG_fail;
+    arg13 = (double*) array_data(array13);
+    arg14 = (int) array_size(array13,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array15 = obj_to_array_contiguous_allow_conversion(obj6,
+      NPY_DOUBLE,
+      &is_new_object15);
+    if (!array15 || !require_dimensions(array15, 1) ||
+      !require_size(array15, size, 1)) SWIG_fail;
+    arg15 = (double*) array_data(array15);
+    arg16 = (int) array_size(array15,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array17 = obj_to_array_contiguous_allow_conversion(obj7,
+      NPY_DOUBLE,
+      &is_new_object17);
+    if (!array17 || !require_dimensions(array17, 1) ||
+      !require_size(array17, size, 1)) SWIG_fail;
+    arg17 = (double*) array_data(array17);
+    arg18 = (int) array_size(array17,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array19 = obj_to_array_contiguous_allow_conversion(obj8,
+      NPY_DOUBLE,
+      &is_new_object19);
+    if (!array19 || !require_dimensions(array19, 1) ||
+      !require_size(array19, size, 1)) SWIG_fail;
+    arg19 = (double*) array_data(array19);
+    arg20 = (int) array_size(array19,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array21 = obj_to_array_contiguous_allow_conversion(obj9,
+      NPY_DOUBLE,
+      &is_new_object21);
+    if (!array21 || !require_dimensions(array21, 1) ||
+      !require_size(array21, size, 1)) SWIG_fail;
+    arg21 = (double*) array_data(array21);
+    arg22 = (int) array_size(array21,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array23 = obj_to_array_contiguous_allow_conversion(obj10,
+      NPY_DOUBLE,
+      &is_new_object23);
+    if (!array23 || !require_dimensions(array23, 1) ||
+      !require_size(array23, size, 1)) SWIG_fail;
+    arg23 = (double*) array_data(array23);
+    arg24 = (int) array_size(array23,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array25 = obj_to_array_contiguous_allow_conversion(obj11,
+      NPY_DOUBLE,
+      &is_new_object25);
+    if (!array25 || !require_dimensions(array25, 1) ||
+      !require_size(array25, size, 1)) SWIG_fail;
+    arg25 = (double*) array_data(array25);
+    arg26 = (int) array_size(array25,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array27 = obj_to_array_contiguous_allow_conversion(obj12,
+      NPY_DOUBLE,
+      &is_new_object27);
+    if (!array27 || !require_dimensions(array27, 1) ||
+      !require_size(array27, size, 1)) SWIG_fail;
+    arg27 = (double*) array_data(array27);
+    arg28 = (int) array_size(array27,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array29 = obj_to_array_contiguous_allow_conversion(obj13,
+      NPY_DOUBLE,
+      &is_new_object29);
+    if (!array29 || !require_dimensions(array29, 1) ||
+      !require_size(array29, size, 1)) SWIG_fail;
+    arg29 = (double*) array_data(array29);
+    arg30 = (int) array_size(array29,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array31 = obj_to_array_contiguous_allow_conversion(obj14,
+      NPY_DOUBLE,
+      &is_new_object31);
+    if (!array31 || !require_dimensions(array31, 1) ||
+      !require_size(array31, size, 1)) SWIG_fail;
+    arg31 = (double*) array_data(array31);
+    arg32 = (int) array_size(array31,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array33 = obj_to_array_contiguous_allow_conversion(obj15,
+      NPY_DOUBLE,
+      &is_new_object33);
+    if (!array33 || !require_dimensions(array33, 1) ||
+      !require_size(array33, size, 1)) SWIG_fail;
+    arg33 = (double*) array_data(array33);
+    arg34 = (int) array_size(array33,0);
+  }
+  ecode35 = SWIG_AsVal_int(obj16, &val35);
+  if (!SWIG_IsOK(ecode35)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode35), "in method '" "RSgpuCalcOnPoints" "', argument " "35"" of type '" "int""'");
+  } 
+  arg35 = static_cast< int >(val35);
+  RSgpuCalcOnPoints(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15,arg16,arg17,arg18,arg19,arg20,arg21,arg22,arg23,arg24,arg25,arg26,arg27,arg28,arg29,arg30,arg31,arg32,arg33,arg34,arg35);
+  resultobj = SWIG_Py_Void();
+  {
+    if (is_new_object11 && array11)
+    {
+      Py_DECREF(array11); 
+    }
+  }
+  {
+    if (is_new_object13 && array13)
+    {
+      Py_DECREF(array13); 
+    }
+  }
+  {
+    if (is_new_object15 && array15)
+    {
+      Py_DECREF(array15); 
+    }
+  }
+  {
+    if (is_new_object17 && array17)
+    {
+      Py_DECREF(array17); 
+    }
+  }
+  {
+    if (is_new_object19 && array19)
+    {
+      Py_DECREF(array19); 
+    }
+  }
+  {
+    if (is_new_object21 && array21)
+    {
+      Py_DECREF(array21); 
+    }
+  }
+  {
+    if (is_new_object23 && array23)
+    {
+      Py_DECREF(array23); 
+    }
+  }
+  {
+    if (is_new_object25 && array25)
+    {
+      Py_DECREF(array25); 
+    }
+  }
+  {
+    if (is_new_object27 && array27)
+    {
+      Py_DECREF(array27); 
+    }
+  }
+  {
+    if (is_new_object29 && array29)
+    {
+      Py_DECREF(array29); 
+    }
+  }
+  {
+    if (is_new_object31 && array31)
+    {
+      Py_DECREF(array31); 
+    }
+  }
+  {
+    if (is_new_object33 && array33)
+    {
+      Py_DECREF(array33); 
+    }
+  }
+  return resultobj;
+fail:
+  {
+    if (is_new_object11 && array11)
+    {
+      Py_DECREF(array11); 
+    }
+  }
+  {
+    if (is_new_object13 && array13)
+    {
+      Py_DECREF(array13); 
+    }
+  }
+  {
+    if (is_new_object15 && array15)
+    {
+      Py_DECREF(array15); 
+    }
+  }
+  {
+    if (is_new_object17 && array17)
+    {
+      Py_DECREF(array17); 
+    }
+  }
+  {
+    if (is_new_object19 && array19)
+    {
+      Py_DECREF(array19); 
+    }
+  }
+  {
+    if (is_new_object21 && array21)
+    {
+      Py_DECREF(array21); 
+    }
+  }
+  {
+    if (is_new_object23 && array23)
+    {
+      Py_DECREF(array23); 
+    }
+  }
+  {
+    if (is_new_object25 && array25)
+    {
+      Py_DECREF(array25); 
+    }
+  }
+  {
+    if (is_new_object27 && array27)
+    {
+      Py_DECREF(array27); 
+    }
+  }
+  {
+    if (is_new_object29 && array29)
+    {
+      Py_DECREF(array29); 
+    }
+  }
+  {
+    if (is_new_object31 && array31)
+    {
+      Py_DECREF(array31); 
+    }
+  }
+  {
+    if (is_new_object33 && array33)
+    {
+      Py_DECREF(array33); 
+    }
+  }
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_RSgpuCalcOnPoints__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  double arg1 ;
+  double arg2 ;
+  gpureal *arg3 = (gpureal *) 0 ;
+  int arg4 ;
+  int arg5 ;
+  int arg6 ;
+  gpureal *arg7 = (gpureal *) 0 ;
+  int arg8 ;
+  int arg9 ;
+  int arg10 ;
+  gpureal *arg11 = (gpureal *) 0 ;
+  int arg12 ;
+  gpureal *arg13 = (gpureal *) 0 ;
+  int arg14 ;
+  gpureal *arg15 = (gpureal *) 0 ;
+  int arg16 ;
+  gpureal *arg17 = (gpureal *) 0 ;
+  int arg18 ;
+  gpureal *arg19 = (gpureal *) 0 ;
+  int arg20 ;
+  gpureal *arg21 = (gpureal *) 0 ;
+  int arg22 ;
+  gpureal *arg23 = (gpureal *) 0 ;
+  int arg24 ;
+  gpureal *arg25 = (gpureal *) 0 ;
+  int arg26 ;
+  gpureal *arg27 = (gpureal *) 0 ;
+  int arg28 ;
+  gpureal *arg29 = (gpureal *) 0 ;
+  int arg30 ;
+  gpureal *arg31 = (gpureal *) 0 ;
+  int arg32 ;
+  gpureal *arg33 = (gpureal *) 0 ;
   int arg34 ;
   double val1 ;
   int ecode1 = 0 ;
-  PyArrayObject *array2 = NULL ;
-  PyArrayObject *array6 = NULL ;
-  PyArrayObject *array10 = NULL ;
-  int is_new_object10 = 0 ;
-  PyArrayObject *array12 = NULL ;
-  int is_new_object12 = 0 ;
-  PyArrayObject *array14 = NULL ;
-  int is_new_object14 = 0 ;
-  PyArrayObject *array16 = NULL ;
-  int is_new_object16 = 0 ;
-  PyArrayObject *array18 = NULL ;
-  int is_new_object18 = 0 ;
-  PyArrayObject *array20 = NULL ;
-  int is_new_object20 = 0 ;
-  PyArrayObject *array22 = NULL ;
-  int is_new_object22 = 0 ;
-  PyArrayObject *array24 = NULL ;
-  int is_new_object24 = 0 ;
-  PyArrayObject *array26 = NULL ;
-  int is_new_object26 = 0 ;
-  PyArrayObject *array28 = NULL ;
-  int is_new_object28 = 0 ;
-  PyArrayObject *array30 = NULL ;
-  int is_new_object30 = 0 ;
-  PyArrayObject *array32 = NULL ;
-  int is_new_object32 = 0 ;
-  int val34 ;
-  int ecode34 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  PyArrayObject *array3 = NULL ;
+  PyArrayObject *array7 = NULL ;
+  PyArrayObject *array11 = NULL ;
+  int is_new_object11 = 0 ;
+  PyArrayObject *array13 = NULL ;
+  int is_new_object13 = 0 ;
+  PyArrayObject *array15 = NULL ;
+  int is_new_object15 = 0 ;
+  PyArrayObject *array17 = NULL ;
+  int is_new_object17 = 0 ;
+  PyArrayObject *array19 = NULL ;
+  int is_new_object19 = 0 ;
+  PyArrayObject *array21 = NULL ;
+  int is_new_object21 = 0 ;
+  PyArrayObject *array23 = NULL ;
+  int is_new_object23 = 0 ;
+  PyArrayObject *array25 = NULL ;
+  int is_new_object25 = 0 ;
+  PyArrayObject *array27 = NULL ;
+  int is_new_object27 = 0 ;
+  PyArrayObject *array29 = NULL ;
+  int is_new_object29 = 0 ;
+  PyArrayObject *array31 = NULL ;
+  int is_new_object31 = 0 ;
+  PyArrayObject *array33 = NULL ;
+  int is_new_object33 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   PyObject * obj2 = 0 ;
@@ -4806,718 +5253,319 @@ SWIGINTERN PyObject *_wrap_RSgpuCalcOnPoints__SWIG_0(PyObject *SWIGUNUSEDPARM(se
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "RSgpuCalcOnPoints" "', argument " "1"" of type '" "double""'");
   } 
   arg1 = static_cast< double >(val1);
-  {
-    array2 = obj_to_array_no_conversion(obj1, NPY_DOUBLE);
-    if (!array2 || !require_dimensions(array2,3) || !require_contiguous(array2) ||
-      !require_native(array2)) SWIG_fail;
-    arg2 = (double*) array_data(array2);
-    arg3 = (int) array_size(array2,0);
-    arg4 = (int) array_size(array2,1);
-    arg5 = (int) array_size(array2,2);
-  }
-  {
-    array6 = obj_to_array_no_conversion(obj2, NPY_DOUBLE);
-    if (!array6 || !require_dimensions(array6,3) || !require_contiguous(array6) ||
-      !require_native(array6)) SWIG_fail;
-    arg6 = (double*) array_data(array6);
-    arg7 = (int) array_size(array6,0);
-    arg8 = (int) array_size(array6,1);
-    arg9 = (int) array_size(array6,2);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array10 = obj_to_array_contiguous_allow_conversion(obj3,
-      NPY_DOUBLE,
-      &is_new_object10);
-    if (!array10 || !require_dimensions(array10, 1) ||
-      !require_size(array10, size, 1)) SWIG_fail;
-    arg10 = (double*) array_data(array10);
-    arg11 = (int) array_size(array10,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array12 = obj_to_array_contiguous_allow_conversion(obj4,
-      NPY_DOUBLE,
-      &is_new_object12);
-    if (!array12 || !require_dimensions(array12, 1) ||
-      !require_size(array12, size, 1)) SWIG_fail;
-    arg12 = (double*) array_data(array12);
-    arg13 = (int) array_size(array12,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array14 = obj_to_array_contiguous_allow_conversion(obj5,
-      NPY_DOUBLE,
-      &is_new_object14);
-    if (!array14 || !require_dimensions(array14, 1) ||
-      !require_size(array14, size, 1)) SWIG_fail;
-    arg14 = (double*) array_data(array14);
-    arg15 = (int) array_size(array14,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array16 = obj_to_array_contiguous_allow_conversion(obj6,
-      NPY_DOUBLE,
-      &is_new_object16);
-    if (!array16 || !require_dimensions(array16, 1) ||
-      !require_size(array16, size, 1)) SWIG_fail;
-    arg16 = (double*) array_data(array16);
-    arg17 = (int) array_size(array16,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array18 = obj_to_array_contiguous_allow_conversion(obj7,
-      NPY_DOUBLE,
-      &is_new_object18);
-    if (!array18 || !require_dimensions(array18, 1) ||
-      !require_size(array18, size, 1)) SWIG_fail;
-    arg18 = (double*) array_data(array18);
-    arg19 = (int) array_size(array18,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array20 = obj_to_array_contiguous_allow_conversion(obj8,
-      NPY_DOUBLE,
-      &is_new_object20);
-    if (!array20 || !require_dimensions(array20, 1) ||
-      !require_size(array20, size, 1)) SWIG_fail;
-    arg20 = (double*) array_data(array20);
-    arg21 = (int) array_size(array20,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array22 = obj_to_array_contiguous_allow_conversion(obj9,
-      NPY_DOUBLE,
-      &is_new_object22);
-    if (!array22 || !require_dimensions(array22, 1) ||
-      !require_size(array22, size, 1)) SWIG_fail;
-    arg22 = (double*) array_data(array22);
-    arg23 = (int) array_size(array22,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array24 = obj_to_array_contiguous_allow_conversion(obj10,
-      NPY_DOUBLE,
-      &is_new_object24);
-    if (!array24 || !require_dimensions(array24, 1) ||
-      !require_size(array24, size, 1)) SWIG_fail;
-    arg24 = (double*) array_data(array24);
-    arg25 = (int) array_size(array24,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array26 = obj_to_array_contiguous_allow_conversion(obj11,
-      NPY_DOUBLE,
-      &is_new_object26);
-    if (!array26 || !require_dimensions(array26, 1) ||
-      !require_size(array26, size, 1)) SWIG_fail;
-    arg26 = (double*) array_data(array26);
-    arg27 = (int) array_size(array26,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array28 = obj_to_array_contiguous_allow_conversion(obj12,
-      NPY_DOUBLE,
-      &is_new_object28);
-    if (!array28 || !require_dimensions(array28, 1) ||
-      !require_size(array28, size, 1)) SWIG_fail;
-    arg28 = (double*) array_data(array28);
-    arg29 = (int) array_size(array28,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array30 = obj_to_array_contiguous_allow_conversion(obj13,
-      NPY_DOUBLE,
-      &is_new_object30);
-    if (!array30 || !require_dimensions(array30, 1) ||
-      !require_size(array30, size, 1)) SWIG_fail;
-    arg30 = (double*) array_data(array30);
-    arg31 = (int) array_size(array30,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array32 = obj_to_array_contiguous_allow_conversion(obj14,
-      NPY_DOUBLE,
-      &is_new_object32);
-    if (!array32 || !require_dimensions(array32, 1) ||
-      !require_size(array32, size, 1)) SWIG_fail;
-    arg32 = (double*) array_data(array32);
-    arg33 = (int) array_size(array32,0);
-  }
-  ecode34 = SWIG_AsVal_int(obj15, &val34);
-  if (!SWIG_IsOK(ecode34)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode34), "in method '" "RSgpuCalcOnPoints" "', argument " "34"" of type '" "int""'");
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "RSgpuCalcOnPoints" "', argument " "2"" of type '" "double""'");
   } 
-  arg34 = static_cast< int >(val34);
+  arg2 = static_cast< double >(val2);
+  {
+    array3 = obj_to_array_no_conversion(obj2, NPY_DOUBLE);
+    if (!array3 || !require_dimensions(array3,3) || !require_contiguous(array3) ||
+      !require_native(array3)) SWIG_fail;
+    arg3 = (double*) array_data(array3);
+    arg4 = (int) array_size(array3,0);
+    arg5 = (int) array_size(array3,1);
+    arg6 = (int) array_size(array3,2);
+  }
+  {
+    array7 = obj_to_array_no_conversion(obj3, NPY_DOUBLE);
+    if (!array7 || !require_dimensions(array7,3) || !require_contiguous(array7) ||
+      !require_native(array7)) SWIG_fail;
+    arg7 = (double*) array_data(array7);
+    arg8 = (int) array_size(array7,0);
+    arg9 = (int) array_size(array7,1);
+    arg10 = (int) array_size(array7,2);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array11 = obj_to_array_contiguous_allow_conversion(obj4,
+      NPY_DOUBLE,
+      &is_new_object11);
+    if (!array11 || !require_dimensions(array11, 1) ||
+      !require_size(array11, size, 1)) SWIG_fail;
+    arg11 = (double*) array_data(array11);
+    arg12 = (int) array_size(array11,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array13 = obj_to_array_contiguous_allow_conversion(obj5,
+      NPY_DOUBLE,
+      &is_new_object13);
+    if (!array13 || !require_dimensions(array13, 1) ||
+      !require_size(array13, size, 1)) SWIG_fail;
+    arg13 = (double*) array_data(array13);
+    arg14 = (int) array_size(array13,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array15 = obj_to_array_contiguous_allow_conversion(obj6,
+      NPY_DOUBLE,
+      &is_new_object15);
+    if (!array15 || !require_dimensions(array15, 1) ||
+      !require_size(array15, size, 1)) SWIG_fail;
+    arg15 = (double*) array_data(array15);
+    arg16 = (int) array_size(array15,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array17 = obj_to_array_contiguous_allow_conversion(obj7,
+      NPY_DOUBLE,
+      &is_new_object17);
+    if (!array17 || !require_dimensions(array17, 1) ||
+      !require_size(array17, size, 1)) SWIG_fail;
+    arg17 = (double*) array_data(array17);
+    arg18 = (int) array_size(array17,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array19 = obj_to_array_contiguous_allow_conversion(obj8,
+      NPY_DOUBLE,
+      &is_new_object19);
+    if (!array19 || !require_dimensions(array19, 1) ||
+      !require_size(array19, size, 1)) SWIG_fail;
+    arg19 = (double*) array_data(array19);
+    arg20 = (int) array_size(array19,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array21 = obj_to_array_contiguous_allow_conversion(obj9,
+      NPY_DOUBLE,
+      &is_new_object21);
+    if (!array21 || !require_dimensions(array21, 1) ||
+      !require_size(array21, size, 1)) SWIG_fail;
+    arg21 = (double*) array_data(array21);
+    arg22 = (int) array_size(array21,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array23 = obj_to_array_contiguous_allow_conversion(obj10,
+      NPY_DOUBLE,
+      &is_new_object23);
+    if (!array23 || !require_dimensions(array23, 1) ||
+      !require_size(array23, size, 1)) SWIG_fail;
+    arg23 = (double*) array_data(array23);
+    arg24 = (int) array_size(array23,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array25 = obj_to_array_contiguous_allow_conversion(obj11,
+      NPY_DOUBLE,
+      &is_new_object25);
+    if (!array25 || !require_dimensions(array25, 1) ||
+      !require_size(array25, size, 1)) SWIG_fail;
+    arg25 = (double*) array_data(array25);
+    arg26 = (int) array_size(array25,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array27 = obj_to_array_contiguous_allow_conversion(obj12,
+      NPY_DOUBLE,
+      &is_new_object27);
+    if (!array27 || !require_dimensions(array27, 1) ||
+      !require_size(array27, size, 1)) SWIG_fail;
+    arg27 = (double*) array_data(array27);
+    arg28 = (int) array_size(array27,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array29 = obj_to_array_contiguous_allow_conversion(obj13,
+      NPY_DOUBLE,
+      &is_new_object29);
+    if (!array29 || !require_dimensions(array29, 1) ||
+      !require_size(array29, size, 1)) SWIG_fail;
+    arg29 = (double*) array_data(array29);
+    arg30 = (int) array_size(array29,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array31 = obj_to_array_contiguous_allow_conversion(obj14,
+      NPY_DOUBLE,
+      &is_new_object31);
+    if (!array31 || !require_dimensions(array31, 1) ||
+      !require_size(array31, size, 1)) SWIG_fail;
+    arg31 = (double*) array_data(array31);
+    arg32 = (int) array_size(array31,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array33 = obj_to_array_contiguous_allow_conversion(obj15,
+      NPY_DOUBLE,
+      &is_new_object33);
+    if (!array33 || !require_dimensions(array33, 1) ||
+      !require_size(array33, size, 1)) SWIG_fail;
+    arg33 = (double*) array_data(array33);
+    arg34 = (int) array_size(array33,0);
+  }
   RSgpuCalcOnPoints(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15,arg16,arg17,arg18,arg19,arg20,arg21,arg22,arg23,arg24,arg25,arg26,arg27,arg28,arg29,arg30,arg31,arg32,arg33,arg34);
   resultobj = SWIG_Py_Void();
   {
-    if (is_new_object10 && array10)
+    if (is_new_object11 && array11)
     {
-      Py_DECREF(array10); 
+      Py_DECREF(array11); 
     }
   }
   {
-    if (is_new_object12 && array12)
+    if (is_new_object13 && array13)
     {
-      Py_DECREF(array12); 
+      Py_DECREF(array13); 
     }
   }
   {
-    if (is_new_object14 && array14)
+    if (is_new_object15 && array15)
     {
-      Py_DECREF(array14); 
+      Py_DECREF(array15); 
     }
   }
   {
-    if (is_new_object16 && array16)
+    if (is_new_object17 && array17)
     {
-      Py_DECREF(array16); 
+      Py_DECREF(array17); 
     }
   }
   {
-    if (is_new_object18 && array18)
+    if (is_new_object19 && array19)
     {
-      Py_DECREF(array18); 
+      Py_DECREF(array19); 
     }
   }
   {
-    if (is_new_object20 && array20)
+    if (is_new_object21 && array21)
     {
-      Py_DECREF(array20); 
+      Py_DECREF(array21); 
     }
   }
   {
-    if (is_new_object22 && array22)
+    if (is_new_object23 && array23)
     {
-      Py_DECREF(array22); 
+      Py_DECREF(array23); 
     }
   }
   {
-    if (is_new_object24 && array24)
+    if (is_new_object25 && array25)
     {
-      Py_DECREF(array24); 
+      Py_DECREF(array25); 
     }
   }
   {
-    if (is_new_object26 && array26)
+    if (is_new_object27 && array27)
     {
-      Py_DECREF(array26); 
+      Py_DECREF(array27); 
     }
   }
   {
-    if (is_new_object28 && array28)
+    if (is_new_object29 && array29)
     {
-      Py_DECREF(array28); 
+      Py_DECREF(array29); 
     }
   }
   {
-    if (is_new_object30 && array30)
+    if (is_new_object31 && array31)
     {
-      Py_DECREF(array30); 
+      Py_DECREF(array31); 
     }
   }
   {
-    if (is_new_object32 && array32)
+    if (is_new_object33 && array33)
     {
-      Py_DECREF(array32); 
-    }
-  }
-  return resultobj;
-fail:
-  {
-    if (is_new_object10 && array10)
-    {
-      Py_DECREF(array10); 
-    }
-  }
-  {
-    if (is_new_object12 && array12)
-    {
-      Py_DECREF(array12); 
-    }
-  }
-  {
-    if (is_new_object14 && array14)
-    {
-      Py_DECREF(array14); 
-    }
-  }
-  {
-    if (is_new_object16 && array16)
-    {
-      Py_DECREF(array16); 
-    }
-  }
-  {
-    if (is_new_object18 && array18)
-    {
-      Py_DECREF(array18); 
-    }
-  }
-  {
-    if (is_new_object20 && array20)
-    {
-      Py_DECREF(array20); 
-    }
-  }
-  {
-    if (is_new_object22 && array22)
-    {
-      Py_DECREF(array22); 
-    }
-  }
-  {
-    if (is_new_object24 && array24)
-    {
-      Py_DECREF(array24); 
-    }
-  }
-  {
-    if (is_new_object26 && array26)
-    {
-      Py_DECREF(array26); 
-    }
-  }
-  {
-    if (is_new_object28 && array28)
-    {
-      Py_DECREF(array28); 
-    }
-  }
-  {
-    if (is_new_object30 && array30)
-    {
-      Py_DECREF(array30); 
-    }
-  }
-  {
-    if (is_new_object32 && array32)
-    {
-      Py_DECREF(array32); 
-    }
-  }
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_RSgpuCalcOnPoints__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  double arg1 ;
-  gpureal *arg2 = (gpureal *) 0 ;
-  int arg3 ;
-  int arg4 ;
-  int arg5 ;
-  gpureal *arg6 = (gpureal *) 0 ;
-  int arg7 ;
-  int arg8 ;
-  int arg9 ;
-  gpureal *arg10 = (gpureal *) 0 ;
-  int arg11 ;
-  gpureal *arg12 = (gpureal *) 0 ;
-  int arg13 ;
-  gpureal *arg14 = (gpureal *) 0 ;
-  int arg15 ;
-  gpureal *arg16 = (gpureal *) 0 ;
-  int arg17 ;
-  gpureal *arg18 = (gpureal *) 0 ;
-  int arg19 ;
-  gpureal *arg20 = (gpureal *) 0 ;
-  int arg21 ;
-  gpureal *arg22 = (gpureal *) 0 ;
-  int arg23 ;
-  gpureal *arg24 = (gpureal *) 0 ;
-  int arg25 ;
-  gpureal *arg26 = (gpureal *) 0 ;
-  int arg27 ;
-  gpureal *arg28 = (gpureal *) 0 ;
-  int arg29 ;
-  gpureal *arg30 = (gpureal *) 0 ;
-  int arg31 ;
-  gpureal *arg32 = (gpureal *) 0 ;
-  int arg33 ;
-  double val1 ;
-  int ecode1 = 0 ;
-  PyArrayObject *array2 = NULL ;
-  PyArrayObject *array6 = NULL ;
-  PyArrayObject *array10 = NULL ;
-  int is_new_object10 = 0 ;
-  PyArrayObject *array12 = NULL ;
-  int is_new_object12 = 0 ;
-  PyArrayObject *array14 = NULL ;
-  int is_new_object14 = 0 ;
-  PyArrayObject *array16 = NULL ;
-  int is_new_object16 = 0 ;
-  PyArrayObject *array18 = NULL ;
-  int is_new_object18 = 0 ;
-  PyArrayObject *array20 = NULL ;
-  int is_new_object20 = 0 ;
-  PyArrayObject *array22 = NULL ;
-  int is_new_object22 = 0 ;
-  PyArrayObject *array24 = NULL ;
-  int is_new_object24 = 0 ;
-  PyArrayObject *array26 = NULL ;
-  int is_new_object26 = 0 ;
-  PyArrayObject *array28 = NULL ;
-  int is_new_object28 = 0 ;
-  PyArrayObject *array30 = NULL ;
-  int is_new_object30 = 0 ;
-  PyArrayObject *array32 = NULL ;
-  int is_new_object32 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  PyObject * obj3 = 0 ;
-  PyObject * obj4 = 0 ;
-  PyObject * obj5 = 0 ;
-  PyObject * obj6 = 0 ;
-  PyObject * obj7 = 0 ;
-  PyObject * obj8 = 0 ;
-  PyObject * obj9 = 0 ;
-  PyObject * obj10 = 0 ;
-  PyObject * obj11 = 0 ;
-  PyObject * obj12 = 0 ;
-  PyObject * obj13 = 0 ;
-  PyObject * obj14 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOOOOOOOOOOOOOO:RSgpuCalcOnPoints",&obj0,&obj1,&obj2,&obj3,&obj4,&obj5,&obj6,&obj7,&obj8,&obj9,&obj10,&obj11,&obj12,&obj13,&obj14)) SWIG_fail;
-  ecode1 = SWIG_AsVal_double(obj0, &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "RSgpuCalcOnPoints" "', argument " "1"" of type '" "double""'");
-  } 
-  arg1 = static_cast< double >(val1);
-  {
-    array2 = obj_to_array_no_conversion(obj1, NPY_DOUBLE);
-    if (!array2 || !require_dimensions(array2,3) || !require_contiguous(array2) ||
-      !require_native(array2)) SWIG_fail;
-    arg2 = (double*) array_data(array2);
-    arg3 = (int) array_size(array2,0);
-    arg4 = (int) array_size(array2,1);
-    arg5 = (int) array_size(array2,2);
-  }
-  {
-    array6 = obj_to_array_no_conversion(obj2, NPY_DOUBLE);
-    if (!array6 || !require_dimensions(array6,3) || !require_contiguous(array6) ||
-      !require_native(array6)) SWIG_fail;
-    arg6 = (double*) array_data(array6);
-    arg7 = (int) array_size(array6,0);
-    arg8 = (int) array_size(array6,1);
-    arg9 = (int) array_size(array6,2);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array10 = obj_to_array_contiguous_allow_conversion(obj3,
-      NPY_DOUBLE,
-      &is_new_object10);
-    if (!array10 || !require_dimensions(array10, 1) ||
-      !require_size(array10, size, 1)) SWIG_fail;
-    arg10 = (double*) array_data(array10);
-    arg11 = (int) array_size(array10,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array12 = obj_to_array_contiguous_allow_conversion(obj4,
-      NPY_DOUBLE,
-      &is_new_object12);
-    if (!array12 || !require_dimensions(array12, 1) ||
-      !require_size(array12, size, 1)) SWIG_fail;
-    arg12 = (double*) array_data(array12);
-    arg13 = (int) array_size(array12,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array14 = obj_to_array_contiguous_allow_conversion(obj5,
-      NPY_DOUBLE,
-      &is_new_object14);
-    if (!array14 || !require_dimensions(array14, 1) ||
-      !require_size(array14, size, 1)) SWIG_fail;
-    arg14 = (double*) array_data(array14);
-    arg15 = (int) array_size(array14,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array16 = obj_to_array_contiguous_allow_conversion(obj6,
-      NPY_DOUBLE,
-      &is_new_object16);
-    if (!array16 || !require_dimensions(array16, 1) ||
-      !require_size(array16, size, 1)) SWIG_fail;
-    arg16 = (double*) array_data(array16);
-    arg17 = (int) array_size(array16,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array18 = obj_to_array_contiguous_allow_conversion(obj7,
-      NPY_DOUBLE,
-      &is_new_object18);
-    if (!array18 || !require_dimensions(array18, 1) ||
-      !require_size(array18, size, 1)) SWIG_fail;
-    arg18 = (double*) array_data(array18);
-    arg19 = (int) array_size(array18,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array20 = obj_to_array_contiguous_allow_conversion(obj8,
-      NPY_DOUBLE,
-      &is_new_object20);
-    if (!array20 || !require_dimensions(array20, 1) ||
-      !require_size(array20, size, 1)) SWIG_fail;
-    arg20 = (double*) array_data(array20);
-    arg21 = (int) array_size(array20,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array22 = obj_to_array_contiguous_allow_conversion(obj9,
-      NPY_DOUBLE,
-      &is_new_object22);
-    if (!array22 || !require_dimensions(array22, 1) ||
-      !require_size(array22, size, 1)) SWIG_fail;
-    arg22 = (double*) array_data(array22);
-    arg23 = (int) array_size(array22,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array24 = obj_to_array_contiguous_allow_conversion(obj10,
-      NPY_DOUBLE,
-      &is_new_object24);
-    if (!array24 || !require_dimensions(array24, 1) ||
-      !require_size(array24, size, 1)) SWIG_fail;
-    arg24 = (double*) array_data(array24);
-    arg25 = (int) array_size(array24,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array26 = obj_to_array_contiguous_allow_conversion(obj11,
-      NPY_DOUBLE,
-      &is_new_object26);
-    if (!array26 || !require_dimensions(array26, 1) ||
-      !require_size(array26, size, 1)) SWIG_fail;
-    arg26 = (double*) array_data(array26);
-    arg27 = (int) array_size(array26,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array28 = obj_to_array_contiguous_allow_conversion(obj12,
-      NPY_DOUBLE,
-      &is_new_object28);
-    if (!array28 || !require_dimensions(array28, 1) ||
-      !require_size(array28, size, 1)) SWIG_fail;
-    arg28 = (double*) array_data(array28);
-    arg29 = (int) array_size(array28,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array30 = obj_to_array_contiguous_allow_conversion(obj13,
-      NPY_DOUBLE,
-      &is_new_object30);
-    if (!array30 || !require_dimensions(array30, 1) ||
-      !require_size(array30, size, 1)) SWIG_fail;
-    arg30 = (double*) array_data(array30);
-    arg31 = (int) array_size(array30,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array32 = obj_to_array_contiguous_allow_conversion(obj14,
-      NPY_DOUBLE,
-      &is_new_object32);
-    if (!array32 || !require_dimensions(array32, 1) ||
-      !require_size(array32, size, 1)) SWIG_fail;
-    arg32 = (double*) array_data(array32);
-    arg33 = (int) array_size(array32,0);
-  }
-  RSgpuCalcOnPoints(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15,arg16,arg17,arg18,arg19,arg20,arg21,arg22,arg23,arg24,arg25,arg26,arg27,arg28,arg29,arg30,arg31,arg32,arg33);
-  resultobj = SWIG_Py_Void();
-  {
-    if (is_new_object10 && array10)
-    {
-      Py_DECREF(array10); 
-    }
-  }
-  {
-    if (is_new_object12 && array12)
-    {
-      Py_DECREF(array12); 
-    }
-  }
-  {
-    if (is_new_object14 && array14)
-    {
-      Py_DECREF(array14); 
-    }
-  }
-  {
-    if (is_new_object16 && array16)
-    {
-      Py_DECREF(array16); 
-    }
-  }
-  {
-    if (is_new_object18 && array18)
-    {
-      Py_DECREF(array18); 
-    }
-  }
-  {
-    if (is_new_object20 && array20)
-    {
-      Py_DECREF(array20); 
-    }
-  }
-  {
-    if (is_new_object22 && array22)
-    {
-      Py_DECREF(array22); 
-    }
-  }
-  {
-    if (is_new_object24 && array24)
-    {
-      Py_DECREF(array24); 
-    }
-  }
-  {
-    if (is_new_object26 && array26)
-    {
-      Py_DECREF(array26); 
-    }
-  }
-  {
-    if (is_new_object28 && array28)
-    {
-      Py_DECREF(array28); 
-    }
-  }
-  {
-    if (is_new_object30 && array30)
-    {
-      Py_DECREF(array30); 
-    }
-  }
-  {
-    if (is_new_object32 && array32)
-    {
-      Py_DECREF(array32); 
+      Py_DECREF(array33); 
     }
   }
   return resultobj;
 fail:
   {
-    if (is_new_object10 && array10)
+    if (is_new_object11 && array11)
     {
-      Py_DECREF(array10); 
+      Py_DECREF(array11); 
     }
   }
   {
-    if (is_new_object12 && array12)
+    if (is_new_object13 && array13)
     {
-      Py_DECREF(array12); 
+      Py_DECREF(array13); 
     }
   }
   {
-    if (is_new_object14 && array14)
+    if (is_new_object15 && array15)
     {
-      Py_DECREF(array14); 
+      Py_DECREF(array15); 
     }
   }
   {
-    if (is_new_object16 && array16)
+    if (is_new_object17 && array17)
     {
-      Py_DECREF(array16); 
+      Py_DECREF(array17); 
     }
   }
   {
-    if (is_new_object18 && array18)
+    if (is_new_object19 && array19)
     {
-      Py_DECREF(array18); 
+      Py_DECREF(array19); 
     }
   }
   {
-    if (is_new_object20 && array20)
+    if (is_new_object21 && array21)
     {
-      Py_DECREF(array20); 
+      Py_DECREF(array21); 
     }
   }
   {
-    if (is_new_object22 && array22)
+    if (is_new_object23 && array23)
     {
-      Py_DECREF(array22); 
+      Py_DECREF(array23); 
     }
   }
   {
-    if (is_new_object24 && array24)
+    if (is_new_object25 && array25)
     {
-      Py_DECREF(array24); 
+      Py_DECREF(array25); 
     }
   }
   {
-    if (is_new_object26 && array26)
+    if (is_new_object27 && array27)
     {
-      Py_DECREF(array26); 
+      Py_DECREF(array27); 
     }
   }
   {
-    if (is_new_object28 && array28)
+    if (is_new_object29 && array29)
     {
-      Py_DECREF(array28); 
+      Py_DECREF(array29); 
     }
   }
   {
-    if (is_new_object30 && array30)
+    if (is_new_object31 && array31)
     {
-      Py_DECREF(array30); 
+      Py_DECREF(array31); 
     }
   }
   {
-    if (is_new_object32 && array32)
+    if (is_new_object33 && array33)
     {
-      Py_DECREF(array32); 
+      Py_DECREF(array33); 
     }
   }
   return NULL;
@@ -5526,100 +5574,15 @@ fail:
 
 SWIGINTERN PyObject *_wrap_RSgpuCalcOnPoints(PyObject *self, PyObject *args) {
   int argc;
-  PyObject *argv[17] = {
+  PyObject *argv[18] = {
     0
   };
   int ii;
   
   if (!PyTuple_Check(args)) SWIG_fail;
   argc = args ? (int)PyObject_Length(args) : 0;
-  for (ii = 0; (ii < 16) && (ii < argc); ii++) {
+  for (ii = 0; (ii < 17) && (ii < argc); ii++) {
     argv[ii] = PyTuple_GET_ITEM(args,ii);
-  }
-  if (argc == 15) {
-    int _v;
-    {
-      int res = SWIG_AsVal_double(argv[0], NULL);
-      _v = SWIG_CheckState(res);
-    }
-    if (_v) {
-      {
-        _v = is_array(argv[1]) && PyArray_EquivTypenums(array_type(argv[1]),
-          NPY_DOUBLE);
-      }
-      if (_v) {
-        {
-          _v = is_array(argv[2]) && PyArray_EquivTypenums(array_type(argv[2]),
-            NPY_DOUBLE);
-        }
-        if (_v) {
-          {
-            _v = is_array(argv[3]) || PySequence_Check(argv[3]);
-          }
-          if (_v) {
-            {
-              _v = is_array(argv[4]) || PySequence_Check(argv[4]);
-            }
-            if (_v) {
-              {
-                _v = is_array(argv[5]) || PySequence_Check(argv[5]);
-              }
-              if (_v) {
-                {
-                  _v = is_array(argv[6]) || PySequence_Check(argv[6]);
-                }
-                if (_v) {
-                  {
-                    _v = is_array(argv[7]) || PySequence_Check(argv[7]);
-                  }
-                  if (_v) {
-                    {
-                      _v = is_array(argv[8]) || PySequence_Check(argv[8]);
-                    }
-                    if (_v) {
-                      {
-                        _v = is_array(argv[9]) || PySequence_Check(argv[9]);
-                      }
-                      if (_v) {
-                        {
-                          _v = is_array(argv[10]) || PySequence_Check(argv[10]);
-                        }
-                        if (_v) {
-                          {
-                            _v = is_array(argv[11]) || PySequence_Check(argv[11]);
-                          }
-                          if (_v) {
-                            {
-                              _v = is_array(argv[12]) || PySequence_Check(argv[12]);
-                            }
-                            if (_v) {
-                              {
-                                _v = is_array(argv[13]) || PySequence_Check(argv[13]);
-                              }
-                              if (_v) {
-                                {
-                                  _v = is_array(argv[14]) || PySequence_Check(argv[14]);
-                                }
-                                if (_v) {
-                                  if (argc <= 15) {
-                                    return _wrap_RSgpuCalcOnPoints__SWIG_1(self, args);
-                                  }
-                                  return _wrap_RSgpuCalcOnPoints__SWIG_1(self, args);
-                                }
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
   }
   if (argc == 16) {
     int _v;
@@ -5629,8 +5592,8 @@ SWIGINTERN PyObject *_wrap_RSgpuCalcOnPoints(PyObject *self, PyObject *args) {
     }
     if (_v) {
       {
-        _v = is_array(argv[1]) && PyArray_EquivTypenums(array_type(argv[1]),
-          NPY_DOUBLE);
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
       }
       if (_v) {
         {
@@ -5639,7 +5602,8 @@ SWIGINTERN PyObject *_wrap_RSgpuCalcOnPoints(PyObject *self, PyObject *args) {
         }
         if (_v) {
           {
-            _v = is_array(argv[3]) || PySequence_Check(argv[3]);
+            _v = is_array(argv[3]) && PyArray_EquivTypenums(array_type(argv[3]),
+              NPY_DOUBLE);
           }
           if (_v) {
             {
@@ -5687,11 +5651,107 @@ SWIGINTERN PyObject *_wrap_RSgpuCalcOnPoints(PyObject *self, PyObject *args) {
                                 }
                                 if (_v) {
                                   {
-                                    int res = SWIG_AsVal_int(argv[15], NULL);
-                                    _v = SWIG_CheckState(res);
+                                    _v = is_array(argv[15]) || PySequence_Check(argv[15]);
                                   }
                                   if (_v) {
-                                    return _wrap_RSgpuCalcOnPoints__SWIG_0(self, args);
+                                    if (argc <= 16) {
+                                      return _wrap_RSgpuCalcOnPoints__SWIG_1(self, args);
+                                    }
+                                    return _wrap_RSgpuCalcOnPoints__SWIG_1(self, args);
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  if (argc == 17) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          _v = is_array(argv[2]) && PyArray_EquivTypenums(array_type(argv[2]),
+            NPY_DOUBLE);
+        }
+        if (_v) {
+          {
+            _v = is_array(argv[3]) && PyArray_EquivTypenums(array_type(argv[3]),
+              NPY_DOUBLE);
+          }
+          if (_v) {
+            {
+              _v = is_array(argv[4]) || PySequence_Check(argv[4]);
+            }
+            if (_v) {
+              {
+                _v = is_array(argv[5]) || PySequence_Check(argv[5]);
+              }
+              if (_v) {
+                {
+                  _v = is_array(argv[6]) || PySequence_Check(argv[6]);
+                }
+                if (_v) {
+                  {
+                    _v = is_array(argv[7]) || PySequence_Check(argv[7]);
+                  }
+                  if (_v) {
+                    {
+                      _v = is_array(argv[8]) || PySequence_Check(argv[8]);
+                    }
+                    if (_v) {
+                      {
+                        _v = is_array(argv[9]) || PySequence_Check(argv[9]);
+                      }
+                      if (_v) {
+                        {
+                          _v = is_array(argv[10]) || PySequence_Check(argv[10]);
+                        }
+                        if (_v) {
+                          {
+                            _v = is_array(argv[11]) || PySequence_Check(argv[11]);
+                          }
+                          if (_v) {
+                            {
+                              _v = is_array(argv[12]) || PySequence_Check(argv[12]);
+                            }
+                            if (_v) {
+                              {
+                                _v = is_array(argv[13]) || PySequence_Check(argv[13]);
+                              }
+                              if (_v) {
+                                {
+                                  _v = is_array(argv[14]) || PySequence_Check(argv[14]);
+                                }
+                                if (_v) {
+                                  {
+                                    _v = is_array(argv[15]) || PySequence_Check(argv[15]);
+                                  }
+                                  if (_v) {
+                                    {
+                                      int res = SWIG_AsVal_int(argv[16], NULL);
+                                      _v = SWIG_CheckState(res);
+                                    }
+                                    if (_v) {
+                                      return _wrap_RSgpuCalcOnPoints__SWIG_0(self, args);
+                                    }
                                   }
                                 }
                               }
@@ -5713,8 +5773,8 @@ SWIGINTERN PyObject *_wrap_RSgpuCalcOnPoints(PyObject *self, PyObject *args) {
 fail:
   SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'RSgpuCalcOnPoints'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    RSgpuCalcOnPoints(double,gpureal *,int,int,int,gpureal *,int,int,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,int)\n"
-    "    RSgpuCalcOnPoints(double,gpureal *,int,int,int,gpureal *,int,int,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int)\n");
+    "    RSgpuCalcOnPoints(double,double,gpureal *,int,int,int,gpureal *,int,int,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,int)\n"
+    "    RSgpuCalcOnPoints(double,double,gpureal *,int,int,int,gpureal *,int,int,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int)\n");
   return 0;
 }
 
@@ -5722,67 +5782,480 @@ fail:
 SWIGINTERN PyObject *_wrap_RSgpuCalcOnPoints1D__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   double arg1 ;
-  gpureal *arg2 = (gpureal *) 0 ;
-  int arg3 ;
-  gpureal *arg4 = (gpureal *) 0 ;
-  int arg5 ;
-  gpureal *arg6 = (gpureal *) 0 ;
-  int arg7 ;
-  gpureal *arg8 = (gpureal *) 0 ;
-  int arg9 ;
-  gpureal *arg10 = (gpureal *) 0 ;
-  int arg11 ;
-  gpureal *arg12 = (gpureal *) 0 ;
-  int arg13 ;
-  gpureal *arg14 = (gpureal *) 0 ;
-  int arg15 ;
-  gpureal *arg16 = (gpureal *) 0 ;
-  int arg17 ;
-  gpureal *arg18 = (gpureal *) 0 ;
-  int arg19 ;
-  gpureal *arg20 = (gpureal *) 0 ;
-  int arg21 ;
-  gpureal *arg22 = (gpureal *) 0 ;
-  int arg23 ;
-  gpureal *arg24 = (gpureal *) 0 ;
-  int arg25 ;
-  gpureal *arg26 = (gpureal *) 0 ;
-  int arg27 ;
-  gpureal *arg28 = (gpureal *) 0 ;
-  int arg29 ;
+  double arg2 ;
+  gpureal *arg3 = (gpureal *) 0 ;
+  int arg4 ;
+  gpureal *arg5 = (gpureal *) 0 ;
+  int arg6 ;
+  gpureal *arg7 = (gpureal *) 0 ;
+  int arg8 ;
+  gpureal *arg9 = (gpureal *) 0 ;
+  int arg10 ;
+  gpureal *arg11 = (gpureal *) 0 ;
+  int arg12 ;
+  gpureal *arg13 = (gpureal *) 0 ;
+  int arg14 ;
+  gpureal *arg15 = (gpureal *) 0 ;
+  int arg16 ;
+  gpureal *arg17 = (gpureal *) 0 ;
+  int arg18 ;
+  gpureal *arg19 = (gpureal *) 0 ;
+  int arg20 ;
+  gpureal *arg21 = (gpureal *) 0 ;
+  int arg22 ;
+  gpureal *arg23 = (gpureal *) 0 ;
+  int arg24 ;
+  gpureal *arg25 = (gpureal *) 0 ;
+  int arg26 ;
+  gpureal *arg27 = (gpureal *) 0 ;
+  int arg28 ;
+  gpureal *arg29 = (gpureal *) 0 ;
+  int arg30 ;
+  int arg31 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  PyArrayObject *array3 = NULL ;
+  int i3 = 1 ;
+  PyArrayObject *array5 = NULL ;
+  int i5 = 1 ;
+  PyArrayObject *array7 = NULL ;
+  int is_new_object7 = 0 ;
+  PyArrayObject *array9 = NULL ;
+  int is_new_object9 = 0 ;
+  PyArrayObject *array11 = NULL ;
+  int is_new_object11 = 0 ;
+  PyArrayObject *array13 = NULL ;
+  int is_new_object13 = 0 ;
+  PyArrayObject *array15 = NULL ;
+  int is_new_object15 = 0 ;
+  PyArrayObject *array17 = NULL ;
+  int is_new_object17 = 0 ;
+  PyArrayObject *array19 = NULL ;
+  int is_new_object19 = 0 ;
+  PyArrayObject *array21 = NULL ;
+  int is_new_object21 = 0 ;
+  PyArrayObject *array23 = NULL ;
+  int is_new_object23 = 0 ;
+  PyArrayObject *array25 = NULL ;
+  int is_new_object25 = 0 ;
+  PyArrayObject *array27 = NULL ;
+  int is_new_object27 = 0 ;
+  PyArrayObject *array29 = NULL ;
+  int is_new_object29 = 0 ;
+  int val31 ;
+  int ecode31 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  PyObject * obj4 = 0 ;
+  PyObject * obj5 = 0 ;
+  PyObject * obj6 = 0 ;
+  PyObject * obj7 = 0 ;
+  PyObject * obj8 = 0 ;
+  PyObject * obj9 = 0 ;
+  PyObject * obj10 = 0 ;
+  PyObject * obj11 = 0 ;
+  PyObject * obj12 = 0 ;
+  PyObject * obj13 = 0 ;
+  PyObject * obj14 = 0 ;
+  PyObject * obj15 = 0 ;
+  PyObject * obj16 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOOOOOOOOOOOOOOO:RSgpuCalcOnPoints1D",&obj0,&obj1,&obj2,&obj3,&obj4,&obj5,&obj6,&obj7,&obj8,&obj9,&obj10,&obj11,&obj12,&obj13,&obj14,&obj15,&obj16)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "RSgpuCalcOnPoints1D" "', argument " "1"" of type '" "double""'");
+  } 
+  arg1 = static_cast< double >(val1);
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "RSgpuCalcOnPoints1D" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  {
+    array3 = obj_to_array_no_conversion(obj2, NPY_DOUBLE);
+    if (!array3 || !require_dimensions(array3,1) || !require_contiguous(array3)
+      || !require_native(array3)) SWIG_fail;
+    arg3 = (double*) array_data(array3);
+    arg4 = 1;
+    for (i3=0; i3 < array_numdims(array3); ++i3) arg4 *= array_size(array3,i3);
+  }
+  {
+    array5 = obj_to_array_no_conversion(obj3, NPY_DOUBLE);
+    if (!array5 || !require_dimensions(array5,1) || !require_contiguous(array5)
+      || !require_native(array5)) SWIG_fail;
+    arg5 = (double*) array_data(array5);
+    arg6 = 1;
+    for (i5=0; i5 < array_numdims(array5); ++i5) arg6 *= array_size(array5,i5);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array7 = obj_to_array_contiguous_allow_conversion(obj4,
+      NPY_DOUBLE,
+      &is_new_object7);
+    if (!array7 || !require_dimensions(array7, 1) ||
+      !require_size(array7, size, 1)) SWIG_fail;
+    arg7 = (double*) array_data(array7);
+    arg8 = (int) array_size(array7,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array9 = obj_to_array_contiguous_allow_conversion(obj5,
+      NPY_DOUBLE,
+      &is_new_object9);
+    if (!array9 || !require_dimensions(array9, 1) ||
+      !require_size(array9, size, 1)) SWIG_fail;
+    arg9 = (double*) array_data(array9);
+    arg10 = (int) array_size(array9,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array11 = obj_to_array_contiguous_allow_conversion(obj6,
+      NPY_DOUBLE,
+      &is_new_object11);
+    if (!array11 || !require_dimensions(array11, 1) ||
+      !require_size(array11, size, 1)) SWIG_fail;
+    arg11 = (double*) array_data(array11);
+    arg12 = (int) array_size(array11,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array13 = obj_to_array_contiguous_allow_conversion(obj7,
+      NPY_DOUBLE,
+      &is_new_object13);
+    if (!array13 || !require_dimensions(array13, 1) ||
+      !require_size(array13, size, 1)) SWIG_fail;
+    arg13 = (double*) array_data(array13);
+    arg14 = (int) array_size(array13,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array15 = obj_to_array_contiguous_allow_conversion(obj8,
+      NPY_DOUBLE,
+      &is_new_object15);
+    if (!array15 || !require_dimensions(array15, 1) ||
+      !require_size(array15, size, 1)) SWIG_fail;
+    arg15 = (double*) array_data(array15);
+    arg16 = (int) array_size(array15,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array17 = obj_to_array_contiguous_allow_conversion(obj9,
+      NPY_DOUBLE,
+      &is_new_object17);
+    if (!array17 || !require_dimensions(array17, 1) ||
+      !require_size(array17, size, 1)) SWIG_fail;
+    arg17 = (double*) array_data(array17);
+    arg18 = (int) array_size(array17,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array19 = obj_to_array_contiguous_allow_conversion(obj10,
+      NPY_DOUBLE,
+      &is_new_object19);
+    if (!array19 || !require_dimensions(array19, 1) ||
+      !require_size(array19, size, 1)) SWIG_fail;
+    arg19 = (double*) array_data(array19);
+    arg20 = (int) array_size(array19,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array21 = obj_to_array_contiguous_allow_conversion(obj11,
+      NPY_DOUBLE,
+      &is_new_object21);
+    if (!array21 || !require_dimensions(array21, 1) ||
+      !require_size(array21, size, 1)) SWIG_fail;
+    arg21 = (double*) array_data(array21);
+    arg22 = (int) array_size(array21,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array23 = obj_to_array_contiguous_allow_conversion(obj12,
+      NPY_DOUBLE,
+      &is_new_object23);
+    if (!array23 || !require_dimensions(array23, 1) ||
+      !require_size(array23, size, 1)) SWIG_fail;
+    arg23 = (double*) array_data(array23);
+    arg24 = (int) array_size(array23,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array25 = obj_to_array_contiguous_allow_conversion(obj13,
+      NPY_DOUBLE,
+      &is_new_object25);
+    if (!array25 || !require_dimensions(array25, 1) ||
+      !require_size(array25, size, 1)) SWIG_fail;
+    arg25 = (double*) array_data(array25);
+    arg26 = (int) array_size(array25,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array27 = obj_to_array_contiguous_allow_conversion(obj14,
+      NPY_DOUBLE,
+      &is_new_object27);
+    if (!array27 || !require_dimensions(array27, 1) ||
+      !require_size(array27, size, 1)) SWIG_fail;
+    arg27 = (double*) array_data(array27);
+    arg28 = (int) array_size(array27,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array29 = obj_to_array_contiguous_allow_conversion(obj15,
+      NPY_DOUBLE,
+      &is_new_object29);
+    if (!array29 || !require_dimensions(array29, 1) ||
+      !require_size(array29, size, 1)) SWIG_fail;
+    arg29 = (double*) array_data(array29);
+    arg30 = (int) array_size(array29,0);
+  }
+  ecode31 = SWIG_AsVal_int(obj16, &val31);
+  if (!SWIG_IsOK(ecode31)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode31), "in method '" "RSgpuCalcOnPoints1D" "', argument " "31"" of type '" "int""'");
+  } 
+  arg31 = static_cast< int >(val31);
+  RSgpuCalcOnPoints1D(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15,arg16,arg17,arg18,arg19,arg20,arg21,arg22,arg23,arg24,arg25,arg26,arg27,arg28,arg29,arg30,arg31);
+  resultobj = SWIG_Py_Void();
+  {
+    if (is_new_object7 && array7)
+    {
+      Py_DECREF(array7); 
+    }
+  }
+  {
+    if (is_new_object9 && array9)
+    {
+      Py_DECREF(array9); 
+    }
+  }
+  {
+    if (is_new_object11 && array11)
+    {
+      Py_DECREF(array11); 
+    }
+  }
+  {
+    if (is_new_object13 && array13)
+    {
+      Py_DECREF(array13); 
+    }
+  }
+  {
+    if (is_new_object15 && array15)
+    {
+      Py_DECREF(array15); 
+    }
+  }
+  {
+    if (is_new_object17 && array17)
+    {
+      Py_DECREF(array17); 
+    }
+  }
+  {
+    if (is_new_object19 && array19)
+    {
+      Py_DECREF(array19); 
+    }
+  }
+  {
+    if (is_new_object21 && array21)
+    {
+      Py_DECREF(array21); 
+    }
+  }
+  {
+    if (is_new_object23 && array23)
+    {
+      Py_DECREF(array23); 
+    }
+  }
+  {
+    if (is_new_object25 && array25)
+    {
+      Py_DECREF(array25); 
+    }
+  }
+  {
+    if (is_new_object27 && array27)
+    {
+      Py_DECREF(array27); 
+    }
+  }
+  {
+    if (is_new_object29 && array29)
+    {
+      Py_DECREF(array29); 
+    }
+  }
+  return resultobj;
+fail:
+  {
+    if (is_new_object7 && array7)
+    {
+      Py_DECREF(array7); 
+    }
+  }
+  {
+    if (is_new_object9 && array9)
+    {
+      Py_DECREF(array9); 
+    }
+  }
+  {
+    if (is_new_object11 && array11)
+    {
+      Py_DECREF(array11); 
+    }
+  }
+  {
+    if (is_new_object13 && array13)
+    {
+      Py_DECREF(array13); 
+    }
+  }
+  {
+    if (is_new_object15 && array15)
+    {
+      Py_DECREF(array15); 
+    }
+  }
+  {
+    if (is_new_object17 && array17)
+    {
+      Py_DECREF(array17); 
+    }
+  }
+  {
+    if (is_new_object19 && array19)
+    {
+      Py_DECREF(array19); 
+    }
+  }
+  {
+    if (is_new_object21 && array21)
+    {
+      Py_DECREF(array21); 
+    }
+  }
+  {
+    if (is_new_object23 && array23)
+    {
+      Py_DECREF(array23); 
+    }
+  }
+  {
+    if (is_new_object25 && array25)
+    {
+      Py_DECREF(array25); 
+    }
+  }
+  {
+    if (is_new_object27 && array27)
+    {
+      Py_DECREF(array27); 
+    }
+  }
+  {
+    if (is_new_object29 && array29)
+    {
+      Py_DECREF(array29); 
+    }
+  }
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_RSgpuCalcOnPoints1D__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  double arg1 ;
+  double arg2 ;
+  gpureal *arg3 = (gpureal *) 0 ;
+  int arg4 ;
+  gpureal *arg5 = (gpureal *) 0 ;
+  int arg6 ;
+  gpureal *arg7 = (gpureal *) 0 ;
+  int arg8 ;
+  gpureal *arg9 = (gpureal *) 0 ;
+  int arg10 ;
+  gpureal *arg11 = (gpureal *) 0 ;
+  int arg12 ;
+  gpureal *arg13 = (gpureal *) 0 ;
+  int arg14 ;
+  gpureal *arg15 = (gpureal *) 0 ;
+  int arg16 ;
+  gpureal *arg17 = (gpureal *) 0 ;
+  int arg18 ;
+  gpureal *arg19 = (gpureal *) 0 ;
+  int arg20 ;
+  gpureal *arg21 = (gpureal *) 0 ;
+  int arg22 ;
+  gpureal *arg23 = (gpureal *) 0 ;
+  int arg24 ;
+  gpureal *arg25 = (gpureal *) 0 ;
+  int arg26 ;
+  gpureal *arg27 = (gpureal *) 0 ;
+  int arg28 ;
+  gpureal *arg29 = (gpureal *) 0 ;
   int arg30 ;
   double val1 ;
   int ecode1 = 0 ;
-  PyArrayObject *array2 = NULL ;
-  int i2 = 1 ;
-  PyArrayObject *array4 = NULL ;
-  int i4 = 1 ;
-  PyArrayObject *array6 = NULL ;
-  int is_new_object6 = 0 ;
-  PyArrayObject *array8 = NULL ;
-  int is_new_object8 = 0 ;
-  PyArrayObject *array10 = NULL ;
-  int is_new_object10 = 0 ;
-  PyArrayObject *array12 = NULL ;
-  int is_new_object12 = 0 ;
-  PyArrayObject *array14 = NULL ;
-  int is_new_object14 = 0 ;
-  PyArrayObject *array16 = NULL ;
-  int is_new_object16 = 0 ;
-  PyArrayObject *array18 = NULL ;
-  int is_new_object18 = 0 ;
-  PyArrayObject *array20 = NULL ;
-  int is_new_object20 = 0 ;
-  PyArrayObject *array22 = NULL ;
-  int is_new_object22 = 0 ;
-  PyArrayObject *array24 = NULL ;
-  int is_new_object24 = 0 ;
-  PyArrayObject *array26 = NULL ;
-  int is_new_object26 = 0 ;
-  PyArrayObject *array28 = NULL ;
-  int is_new_object28 = 0 ;
-  int val30 ;
-  int ecode30 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  PyArrayObject *array3 = NULL ;
+  int i3 = 1 ;
+  PyArrayObject *array5 = NULL ;
+  int i5 = 1 ;
+  PyArrayObject *array7 = NULL ;
+  int is_new_object7 = 0 ;
+  PyArrayObject *array9 = NULL ;
+  int is_new_object9 = 0 ;
+  PyArrayObject *array11 = NULL ;
+  int is_new_object11 = 0 ;
+  PyArrayObject *array13 = NULL ;
+  int is_new_object13 = 0 ;
+  PyArrayObject *array15 = NULL ;
+  int is_new_object15 = 0 ;
+  PyArrayObject *array17 = NULL ;
+  int is_new_object17 = 0 ;
+  PyArrayObject *array19 = NULL ;
+  int is_new_object19 = 0 ;
+  PyArrayObject *array21 = NULL ;
+  int is_new_object21 = 0 ;
+  PyArrayObject *array23 = NULL ;
+  int is_new_object23 = 0 ;
+  PyArrayObject *array25 = NULL ;
+  int is_new_object25 = 0 ;
+  PyArrayObject *array27 = NULL ;
+  int is_new_object27 = 0 ;
+  PyArrayObject *array29 = NULL ;
+  int is_new_object29 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   PyObject * obj2 = 0 ;
@@ -5806,712 +6279,317 @@ SWIGINTERN PyObject *_wrap_RSgpuCalcOnPoints1D__SWIG_0(PyObject *SWIGUNUSEDPARM(
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "RSgpuCalcOnPoints1D" "', argument " "1"" of type '" "double""'");
   } 
   arg1 = static_cast< double >(val1);
-  {
-    array2 = obj_to_array_no_conversion(obj1, NPY_DOUBLE);
-    if (!array2 || !require_dimensions(array2,1) || !require_contiguous(array2)
-      || !require_native(array2)) SWIG_fail;
-    arg2 = (double*) array_data(array2);
-    arg3 = 1;
-    for (i2=0; i2 < array_numdims(array2); ++i2) arg3 *= array_size(array2,i2);
-  }
-  {
-    array4 = obj_to_array_no_conversion(obj2, NPY_DOUBLE);
-    if (!array4 || !require_dimensions(array4,1) || !require_contiguous(array4)
-      || !require_native(array4)) SWIG_fail;
-    arg4 = (double*) array_data(array4);
-    arg5 = 1;
-    for (i4=0; i4 < array_numdims(array4); ++i4) arg5 *= array_size(array4,i4);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array6 = obj_to_array_contiguous_allow_conversion(obj3,
-      NPY_DOUBLE,
-      &is_new_object6);
-    if (!array6 || !require_dimensions(array6, 1) ||
-      !require_size(array6, size, 1)) SWIG_fail;
-    arg6 = (double*) array_data(array6);
-    arg7 = (int) array_size(array6,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array8 = obj_to_array_contiguous_allow_conversion(obj4,
-      NPY_DOUBLE,
-      &is_new_object8);
-    if (!array8 || !require_dimensions(array8, 1) ||
-      !require_size(array8, size, 1)) SWIG_fail;
-    arg8 = (double*) array_data(array8);
-    arg9 = (int) array_size(array8,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array10 = obj_to_array_contiguous_allow_conversion(obj5,
-      NPY_DOUBLE,
-      &is_new_object10);
-    if (!array10 || !require_dimensions(array10, 1) ||
-      !require_size(array10, size, 1)) SWIG_fail;
-    arg10 = (double*) array_data(array10);
-    arg11 = (int) array_size(array10,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array12 = obj_to_array_contiguous_allow_conversion(obj6,
-      NPY_DOUBLE,
-      &is_new_object12);
-    if (!array12 || !require_dimensions(array12, 1) ||
-      !require_size(array12, size, 1)) SWIG_fail;
-    arg12 = (double*) array_data(array12);
-    arg13 = (int) array_size(array12,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array14 = obj_to_array_contiguous_allow_conversion(obj7,
-      NPY_DOUBLE,
-      &is_new_object14);
-    if (!array14 || !require_dimensions(array14, 1) ||
-      !require_size(array14, size, 1)) SWIG_fail;
-    arg14 = (double*) array_data(array14);
-    arg15 = (int) array_size(array14,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array16 = obj_to_array_contiguous_allow_conversion(obj8,
-      NPY_DOUBLE,
-      &is_new_object16);
-    if (!array16 || !require_dimensions(array16, 1) ||
-      !require_size(array16, size, 1)) SWIG_fail;
-    arg16 = (double*) array_data(array16);
-    arg17 = (int) array_size(array16,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array18 = obj_to_array_contiguous_allow_conversion(obj9,
-      NPY_DOUBLE,
-      &is_new_object18);
-    if (!array18 || !require_dimensions(array18, 1) ||
-      !require_size(array18, size, 1)) SWIG_fail;
-    arg18 = (double*) array_data(array18);
-    arg19 = (int) array_size(array18,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array20 = obj_to_array_contiguous_allow_conversion(obj10,
-      NPY_DOUBLE,
-      &is_new_object20);
-    if (!array20 || !require_dimensions(array20, 1) ||
-      !require_size(array20, size, 1)) SWIG_fail;
-    arg20 = (double*) array_data(array20);
-    arg21 = (int) array_size(array20,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array22 = obj_to_array_contiguous_allow_conversion(obj11,
-      NPY_DOUBLE,
-      &is_new_object22);
-    if (!array22 || !require_dimensions(array22, 1) ||
-      !require_size(array22, size, 1)) SWIG_fail;
-    arg22 = (double*) array_data(array22);
-    arg23 = (int) array_size(array22,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array24 = obj_to_array_contiguous_allow_conversion(obj12,
-      NPY_DOUBLE,
-      &is_new_object24);
-    if (!array24 || !require_dimensions(array24, 1) ||
-      !require_size(array24, size, 1)) SWIG_fail;
-    arg24 = (double*) array_data(array24);
-    arg25 = (int) array_size(array24,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array26 = obj_to_array_contiguous_allow_conversion(obj13,
-      NPY_DOUBLE,
-      &is_new_object26);
-    if (!array26 || !require_dimensions(array26, 1) ||
-      !require_size(array26, size, 1)) SWIG_fail;
-    arg26 = (double*) array_data(array26);
-    arg27 = (int) array_size(array26,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array28 = obj_to_array_contiguous_allow_conversion(obj14,
-      NPY_DOUBLE,
-      &is_new_object28);
-    if (!array28 || !require_dimensions(array28, 1) ||
-      !require_size(array28, size, 1)) SWIG_fail;
-    arg28 = (double*) array_data(array28);
-    arg29 = (int) array_size(array28,0);
-  }
-  ecode30 = SWIG_AsVal_int(obj15, &val30);
-  if (!SWIG_IsOK(ecode30)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode30), "in method '" "RSgpuCalcOnPoints1D" "', argument " "30"" of type '" "int""'");
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "RSgpuCalcOnPoints1D" "', argument " "2"" of type '" "double""'");
   } 
-  arg30 = static_cast< int >(val30);
+  arg2 = static_cast< double >(val2);
+  {
+    array3 = obj_to_array_no_conversion(obj2, NPY_DOUBLE);
+    if (!array3 || !require_dimensions(array3,1) || !require_contiguous(array3)
+      || !require_native(array3)) SWIG_fail;
+    arg3 = (double*) array_data(array3);
+    arg4 = 1;
+    for (i3=0; i3 < array_numdims(array3); ++i3) arg4 *= array_size(array3,i3);
+  }
+  {
+    array5 = obj_to_array_no_conversion(obj3, NPY_DOUBLE);
+    if (!array5 || !require_dimensions(array5,1) || !require_contiguous(array5)
+      || !require_native(array5)) SWIG_fail;
+    arg5 = (double*) array_data(array5);
+    arg6 = 1;
+    for (i5=0; i5 < array_numdims(array5); ++i5) arg6 *= array_size(array5,i5);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array7 = obj_to_array_contiguous_allow_conversion(obj4,
+      NPY_DOUBLE,
+      &is_new_object7);
+    if (!array7 || !require_dimensions(array7, 1) ||
+      !require_size(array7, size, 1)) SWIG_fail;
+    arg7 = (double*) array_data(array7);
+    arg8 = (int) array_size(array7,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array9 = obj_to_array_contiguous_allow_conversion(obj5,
+      NPY_DOUBLE,
+      &is_new_object9);
+    if (!array9 || !require_dimensions(array9, 1) ||
+      !require_size(array9, size, 1)) SWIG_fail;
+    arg9 = (double*) array_data(array9);
+    arg10 = (int) array_size(array9,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array11 = obj_to_array_contiguous_allow_conversion(obj6,
+      NPY_DOUBLE,
+      &is_new_object11);
+    if (!array11 || !require_dimensions(array11, 1) ||
+      !require_size(array11, size, 1)) SWIG_fail;
+    arg11 = (double*) array_data(array11);
+    arg12 = (int) array_size(array11,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array13 = obj_to_array_contiguous_allow_conversion(obj7,
+      NPY_DOUBLE,
+      &is_new_object13);
+    if (!array13 || !require_dimensions(array13, 1) ||
+      !require_size(array13, size, 1)) SWIG_fail;
+    arg13 = (double*) array_data(array13);
+    arg14 = (int) array_size(array13,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array15 = obj_to_array_contiguous_allow_conversion(obj8,
+      NPY_DOUBLE,
+      &is_new_object15);
+    if (!array15 || !require_dimensions(array15, 1) ||
+      !require_size(array15, size, 1)) SWIG_fail;
+    arg15 = (double*) array_data(array15);
+    arg16 = (int) array_size(array15,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array17 = obj_to_array_contiguous_allow_conversion(obj9,
+      NPY_DOUBLE,
+      &is_new_object17);
+    if (!array17 || !require_dimensions(array17, 1) ||
+      !require_size(array17, size, 1)) SWIG_fail;
+    arg17 = (double*) array_data(array17);
+    arg18 = (int) array_size(array17,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array19 = obj_to_array_contiguous_allow_conversion(obj10,
+      NPY_DOUBLE,
+      &is_new_object19);
+    if (!array19 || !require_dimensions(array19, 1) ||
+      !require_size(array19, size, 1)) SWIG_fail;
+    arg19 = (double*) array_data(array19);
+    arg20 = (int) array_size(array19,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array21 = obj_to_array_contiguous_allow_conversion(obj11,
+      NPY_DOUBLE,
+      &is_new_object21);
+    if (!array21 || !require_dimensions(array21, 1) ||
+      !require_size(array21, size, 1)) SWIG_fail;
+    arg21 = (double*) array_data(array21);
+    arg22 = (int) array_size(array21,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array23 = obj_to_array_contiguous_allow_conversion(obj12,
+      NPY_DOUBLE,
+      &is_new_object23);
+    if (!array23 || !require_dimensions(array23, 1) ||
+      !require_size(array23, size, 1)) SWIG_fail;
+    arg23 = (double*) array_data(array23);
+    arg24 = (int) array_size(array23,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array25 = obj_to_array_contiguous_allow_conversion(obj13,
+      NPY_DOUBLE,
+      &is_new_object25);
+    if (!array25 || !require_dimensions(array25, 1) ||
+      !require_size(array25, size, 1)) SWIG_fail;
+    arg25 = (double*) array_data(array25);
+    arg26 = (int) array_size(array25,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array27 = obj_to_array_contiguous_allow_conversion(obj14,
+      NPY_DOUBLE,
+      &is_new_object27);
+    if (!array27 || !require_dimensions(array27, 1) ||
+      !require_size(array27, size, 1)) SWIG_fail;
+    arg27 = (double*) array_data(array27);
+    arg28 = (int) array_size(array27,0);
+  }
+  {
+    npy_intp size[1] = {
+      -1 
+    };
+    array29 = obj_to_array_contiguous_allow_conversion(obj15,
+      NPY_DOUBLE,
+      &is_new_object29);
+    if (!array29 || !require_dimensions(array29, 1) ||
+      !require_size(array29, size, 1)) SWIG_fail;
+    arg29 = (double*) array_data(array29);
+    arg30 = (int) array_size(array29,0);
+  }
   RSgpuCalcOnPoints1D(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15,arg16,arg17,arg18,arg19,arg20,arg21,arg22,arg23,arg24,arg25,arg26,arg27,arg28,arg29,arg30);
   resultobj = SWIG_Py_Void();
   {
-    if (is_new_object6 && array6)
+    if (is_new_object7 && array7)
     {
-      Py_DECREF(array6); 
+      Py_DECREF(array7); 
     }
   }
   {
-    if (is_new_object8 && array8)
+    if (is_new_object9 && array9)
     {
-      Py_DECREF(array8); 
+      Py_DECREF(array9); 
     }
   }
   {
-    if (is_new_object10 && array10)
+    if (is_new_object11 && array11)
     {
-      Py_DECREF(array10); 
+      Py_DECREF(array11); 
     }
   }
   {
-    if (is_new_object12 && array12)
+    if (is_new_object13 && array13)
     {
-      Py_DECREF(array12); 
+      Py_DECREF(array13); 
     }
   }
   {
-    if (is_new_object14 && array14)
+    if (is_new_object15 && array15)
     {
-      Py_DECREF(array14); 
+      Py_DECREF(array15); 
     }
   }
   {
-    if (is_new_object16 && array16)
+    if (is_new_object17 && array17)
     {
-      Py_DECREF(array16); 
+      Py_DECREF(array17); 
     }
   }
   {
-    if (is_new_object18 && array18)
+    if (is_new_object19 && array19)
     {
-      Py_DECREF(array18); 
+      Py_DECREF(array19); 
     }
   }
   {
-    if (is_new_object20 && array20)
+    if (is_new_object21 && array21)
     {
-      Py_DECREF(array20); 
+      Py_DECREF(array21); 
     }
   }
   {
-    if (is_new_object22 && array22)
+    if (is_new_object23 && array23)
     {
-      Py_DECREF(array22); 
+      Py_DECREF(array23); 
     }
   }
   {
-    if (is_new_object24 && array24)
+    if (is_new_object25 && array25)
     {
-      Py_DECREF(array24); 
+      Py_DECREF(array25); 
     }
   }
   {
-    if (is_new_object26 && array26)
+    if (is_new_object27 && array27)
     {
-      Py_DECREF(array26); 
+      Py_DECREF(array27); 
     }
   }
   {
-    if (is_new_object28 && array28)
+    if (is_new_object29 && array29)
     {
-      Py_DECREF(array28); 
-    }
-  }
-  return resultobj;
-fail:
-  {
-    if (is_new_object6 && array6)
-    {
-      Py_DECREF(array6); 
-    }
-  }
-  {
-    if (is_new_object8 && array8)
-    {
-      Py_DECREF(array8); 
-    }
-  }
-  {
-    if (is_new_object10 && array10)
-    {
-      Py_DECREF(array10); 
-    }
-  }
-  {
-    if (is_new_object12 && array12)
-    {
-      Py_DECREF(array12); 
-    }
-  }
-  {
-    if (is_new_object14 && array14)
-    {
-      Py_DECREF(array14); 
-    }
-  }
-  {
-    if (is_new_object16 && array16)
-    {
-      Py_DECREF(array16); 
-    }
-  }
-  {
-    if (is_new_object18 && array18)
-    {
-      Py_DECREF(array18); 
-    }
-  }
-  {
-    if (is_new_object20 && array20)
-    {
-      Py_DECREF(array20); 
-    }
-  }
-  {
-    if (is_new_object22 && array22)
-    {
-      Py_DECREF(array22); 
-    }
-  }
-  {
-    if (is_new_object24 && array24)
-    {
-      Py_DECREF(array24); 
-    }
-  }
-  {
-    if (is_new_object26 && array26)
-    {
-      Py_DECREF(array26); 
-    }
-  }
-  {
-    if (is_new_object28 && array28)
-    {
-      Py_DECREF(array28); 
-    }
-  }
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_RSgpuCalcOnPoints1D__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  double arg1 ;
-  gpureal *arg2 = (gpureal *) 0 ;
-  int arg3 ;
-  gpureal *arg4 = (gpureal *) 0 ;
-  int arg5 ;
-  gpureal *arg6 = (gpureal *) 0 ;
-  int arg7 ;
-  gpureal *arg8 = (gpureal *) 0 ;
-  int arg9 ;
-  gpureal *arg10 = (gpureal *) 0 ;
-  int arg11 ;
-  gpureal *arg12 = (gpureal *) 0 ;
-  int arg13 ;
-  gpureal *arg14 = (gpureal *) 0 ;
-  int arg15 ;
-  gpureal *arg16 = (gpureal *) 0 ;
-  int arg17 ;
-  gpureal *arg18 = (gpureal *) 0 ;
-  int arg19 ;
-  gpureal *arg20 = (gpureal *) 0 ;
-  int arg21 ;
-  gpureal *arg22 = (gpureal *) 0 ;
-  int arg23 ;
-  gpureal *arg24 = (gpureal *) 0 ;
-  int arg25 ;
-  gpureal *arg26 = (gpureal *) 0 ;
-  int arg27 ;
-  gpureal *arg28 = (gpureal *) 0 ;
-  int arg29 ;
-  double val1 ;
-  int ecode1 = 0 ;
-  PyArrayObject *array2 = NULL ;
-  int i2 = 1 ;
-  PyArrayObject *array4 = NULL ;
-  int i4 = 1 ;
-  PyArrayObject *array6 = NULL ;
-  int is_new_object6 = 0 ;
-  PyArrayObject *array8 = NULL ;
-  int is_new_object8 = 0 ;
-  PyArrayObject *array10 = NULL ;
-  int is_new_object10 = 0 ;
-  PyArrayObject *array12 = NULL ;
-  int is_new_object12 = 0 ;
-  PyArrayObject *array14 = NULL ;
-  int is_new_object14 = 0 ;
-  PyArrayObject *array16 = NULL ;
-  int is_new_object16 = 0 ;
-  PyArrayObject *array18 = NULL ;
-  int is_new_object18 = 0 ;
-  PyArrayObject *array20 = NULL ;
-  int is_new_object20 = 0 ;
-  PyArrayObject *array22 = NULL ;
-  int is_new_object22 = 0 ;
-  PyArrayObject *array24 = NULL ;
-  int is_new_object24 = 0 ;
-  PyArrayObject *array26 = NULL ;
-  int is_new_object26 = 0 ;
-  PyArrayObject *array28 = NULL ;
-  int is_new_object28 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  PyObject * obj3 = 0 ;
-  PyObject * obj4 = 0 ;
-  PyObject * obj5 = 0 ;
-  PyObject * obj6 = 0 ;
-  PyObject * obj7 = 0 ;
-  PyObject * obj8 = 0 ;
-  PyObject * obj9 = 0 ;
-  PyObject * obj10 = 0 ;
-  PyObject * obj11 = 0 ;
-  PyObject * obj12 = 0 ;
-  PyObject * obj13 = 0 ;
-  PyObject * obj14 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOOOOOOOOOOOOOO:RSgpuCalcOnPoints1D",&obj0,&obj1,&obj2,&obj3,&obj4,&obj5,&obj6,&obj7,&obj8,&obj9,&obj10,&obj11,&obj12,&obj13,&obj14)) SWIG_fail;
-  ecode1 = SWIG_AsVal_double(obj0, &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "RSgpuCalcOnPoints1D" "', argument " "1"" of type '" "double""'");
-  } 
-  arg1 = static_cast< double >(val1);
-  {
-    array2 = obj_to_array_no_conversion(obj1, NPY_DOUBLE);
-    if (!array2 || !require_dimensions(array2,1) || !require_contiguous(array2)
-      || !require_native(array2)) SWIG_fail;
-    arg2 = (double*) array_data(array2);
-    arg3 = 1;
-    for (i2=0; i2 < array_numdims(array2); ++i2) arg3 *= array_size(array2,i2);
-  }
-  {
-    array4 = obj_to_array_no_conversion(obj2, NPY_DOUBLE);
-    if (!array4 || !require_dimensions(array4,1) || !require_contiguous(array4)
-      || !require_native(array4)) SWIG_fail;
-    arg4 = (double*) array_data(array4);
-    arg5 = 1;
-    for (i4=0; i4 < array_numdims(array4); ++i4) arg5 *= array_size(array4,i4);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array6 = obj_to_array_contiguous_allow_conversion(obj3,
-      NPY_DOUBLE,
-      &is_new_object6);
-    if (!array6 || !require_dimensions(array6, 1) ||
-      !require_size(array6, size, 1)) SWIG_fail;
-    arg6 = (double*) array_data(array6);
-    arg7 = (int) array_size(array6,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array8 = obj_to_array_contiguous_allow_conversion(obj4,
-      NPY_DOUBLE,
-      &is_new_object8);
-    if (!array8 || !require_dimensions(array8, 1) ||
-      !require_size(array8, size, 1)) SWIG_fail;
-    arg8 = (double*) array_data(array8);
-    arg9 = (int) array_size(array8,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array10 = obj_to_array_contiguous_allow_conversion(obj5,
-      NPY_DOUBLE,
-      &is_new_object10);
-    if (!array10 || !require_dimensions(array10, 1) ||
-      !require_size(array10, size, 1)) SWIG_fail;
-    arg10 = (double*) array_data(array10);
-    arg11 = (int) array_size(array10,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array12 = obj_to_array_contiguous_allow_conversion(obj6,
-      NPY_DOUBLE,
-      &is_new_object12);
-    if (!array12 || !require_dimensions(array12, 1) ||
-      !require_size(array12, size, 1)) SWIG_fail;
-    arg12 = (double*) array_data(array12);
-    arg13 = (int) array_size(array12,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array14 = obj_to_array_contiguous_allow_conversion(obj7,
-      NPY_DOUBLE,
-      &is_new_object14);
-    if (!array14 || !require_dimensions(array14, 1) ||
-      !require_size(array14, size, 1)) SWIG_fail;
-    arg14 = (double*) array_data(array14);
-    arg15 = (int) array_size(array14,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array16 = obj_to_array_contiguous_allow_conversion(obj8,
-      NPY_DOUBLE,
-      &is_new_object16);
-    if (!array16 || !require_dimensions(array16, 1) ||
-      !require_size(array16, size, 1)) SWIG_fail;
-    arg16 = (double*) array_data(array16);
-    arg17 = (int) array_size(array16,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array18 = obj_to_array_contiguous_allow_conversion(obj9,
-      NPY_DOUBLE,
-      &is_new_object18);
-    if (!array18 || !require_dimensions(array18, 1) ||
-      !require_size(array18, size, 1)) SWIG_fail;
-    arg18 = (double*) array_data(array18);
-    arg19 = (int) array_size(array18,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array20 = obj_to_array_contiguous_allow_conversion(obj10,
-      NPY_DOUBLE,
-      &is_new_object20);
-    if (!array20 || !require_dimensions(array20, 1) ||
-      !require_size(array20, size, 1)) SWIG_fail;
-    arg20 = (double*) array_data(array20);
-    arg21 = (int) array_size(array20,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array22 = obj_to_array_contiguous_allow_conversion(obj11,
-      NPY_DOUBLE,
-      &is_new_object22);
-    if (!array22 || !require_dimensions(array22, 1) ||
-      !require_size(array22, size, 1)) SWIG_fail;
-    arg22 = (double*) array_data(array22);
-    arg23 = (int) array_size(array22,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array24 = obj_to_array_contiguous_allow_conversion(obj12,
-      NPY_DOUBLE,
-      &is_new_object24);
-    if (!array24 || !require_dimensions(array24, 1) ||
-      !require_size(array24, size, 1)) SWIG_fail;
-    arg24 = (double*) array_data(array24);
-    arg25 = (int) array_size(array24,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array26 = obj_to_array_contiguous_allow_conversion(obj13,
-      NPY_DOUBLE,
-      &is_new_object26);
-    if (!array26 || !require_dimensions(array26, 1) ||
-      !require_size(array26, size, 1)) SWIG_fail;
-    arg26 = (double*) array_data(array26);
-    arg27 = (int) array_size(array26,0);
-  }
-  {
-    npy_intp size[1] = {
-      -1 
-    };
-    array28 = obj_to_array_contiguous_allow_conversion(obj14,
-      NPY_DOUBLE,
-      &is_new_object28);
-    if (!array28 || !require_dimensions(array28, 1) ||
-      !require_size(array28, size, 1)) SWIG_fail;
-    arg28 = (double*) array_data(array28);
-    arg29 = (int) array_size(array28,0);
-  }
-  RSgpuCalcOnPoints1D(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15,arg16,arg17,arg18,arg19,arg20,arg21,arg22,arg23,arg24,arg25,arg26,arg27,arg28,arg29);
-  resultobj = SWIG_Py_Void();
-  {
-    if (is_new_object6 && array6)
-    {
-      Py_DECREF(array6); 
-    }
-  }
-  {
-    if (is_new_object8 && array8)
-    {
-      Py_DECREF(array8); 
-    }
-  }
-  {
-    if (is_new_object10 && array10)
-    {
-      Py_DECREF(array10); 
-    }
-  }
-  {
-    if (is_new_object12 && array12)
-    {
-      Py_DECREF(array12); 
-    }
-  }
-  {
-    if (is_new_object14 && array14)
-    {
-      Py_DECREF(array14); 
-    }
-  }
-  {
-    if (is_new_object16 && array16)
-    {
-      Py_DECREF(array16); 
-    }
-  }
-  {
-    if (is_new_object18 && array18)
-    {
-      Py_DECREF(array18); 
-    }
-  }
-  {
-    if (is_new_object20 && array20)
-    {
-      Py_DECREF(array20); 
-    }
-  }
-  {
-    if (is_new_object22 && array22)
-    {
-      Py_DECREF(array22); 
-    }
-  }
-  {
-    if (is_new_object24 && array24)
-    {
-      Py_DECREF(array24); 
-    }
-  }
-  {
-    if (is_new_object26 && array26)
-    {
-      Py_DECREF(array26); 
-    }
-  }
-  {
-    if (is_new_object28 && array28)
-    {
-      Py_DECREF(array28); 
+      Py_DECREF(array29); 
     }
   }
   return resultobj;
 fail:
   {
-    if (is_new_object6 && array6)
+    if (is_new_object7 && array7)
     {
-      Py_DECREF(array6); 
+      Py_DECREF(array7); 
     }
   }
   {
-    if (is_new_object8 && array8)
+    if (is_new_object9 && array9)
     {
-      Py_DECREF(array8); 
+      Py_DECREF(array9); 
     }
   }
   {
-    if (is_new_object10 && array10)
+    if (is_new_object11 && array11)
     {
-      Py_DECREF(array10); 
+      Py_DECREF(array11); 
     }
   }
   {
-    if (is_new_object12 && array12)
+    if (is_new_object13 && array13)
     {
-      Py_DECREF(array12); 
+      Py_DECREF(array13); 
     }
   }
   {
-    if (is_new_object14 && array14)
+    if (is_new_object15 && array15)
     {
-      Py_DECREF(array14); 
+      Py_DECREF(array15); 
     }
   }
   {
-    if (is_new_object16 && array16)
+    if (is_new_object17 && array17)
     {
-      Py_DECREF(array16); 
+      Py_DECREF(array17); 
     }
   }
   {
-    if (is_new_object18 && array18)
+    if (is_new_object19 && array19)
     {
-      Py_DECREF(array18); 
+      Py_DECREF(array19); 
     }
   }
   {
-    if (is_new_object20 && array20)
+    if (is_new_object21 && array21)
     {
-      Py_DECREF(array20); 
+      Py_DECREF(array21); 
     }
   }
   {
-    if (is_new_object22 && array22)
+    if (is_new_object23 && array23)
     {
-      Py_DECREF(array22); 
+      Py_DECREF(array23); 
     }
   }
   {
-    if (is_new_object24 && array24)
+    if (is_new_object25 && array25)
     {
-      Py_DECREF(array24); 
+      Py_DECREF(array25); 
     }
   }
   {
-    if (is_new_object26 && array26)
+    if (is_new_object27 && array27)
     {
-      Py_DECREF(array26); 
+      Py_DECREF(array27); 
     }
   }
   {
-    if (is_new_object28 && array28)
+    if (is_new_object29 && array29)
     {
-      Py_DECREF(array28); 
+      Py_DECREF(array29); 
     }
   }
   return NULL;
@@ -6520,100 +6598,15 @@ fail:
 
 SWIGINTERN PyObject *_wrap_RSgpuCalcOnPoints1D(PyObject *self, PyObject *args) {
   int argc;
-  PyObject *argv[17] = {
+  PyObject *argv[18] = {
     0
   };
   int ii;
   
   if (!PyTuple_Check(args)) SWIG_fail;
   argc = args ? (int)PyObject_Length(args) : 0;
-  for (ii = 0; (ii < 16) && (ii < argc); ii++) {
+  for (ii = 0; (ii < 17) && (ii < argc); ii++) {
     argv[ii] = PyTuple_GET_ITEM(args,ii);
-  }
-  if (argc == 15) {
-    int _v;
-    {
-      int res = SWIG_AsVal_double(argv[0], NULL);
-      _v = SWIG_CheckState(res);
-    }
-    if (_v) {
-      {
-        _v = is_array(argv[1]) && PyArray_EquivTypenums(array_type(argv[1]),
-          NPY_DOUBLE);
-      }
-      if (_v) {
-        {
-          _v = is_array(argv[2]) && PyArray_EquivTypenums(array_type(argv[2]),
-            NPY_DOUBLE);
-        }
-        if (_v) {
-          {
-            _v = is_array(argv[3]) || PySequence_Check(argv[3]);
-          }
-          if (_v) {
-            {
-              _v = is_array(argv[4]) || PySequence_Check(argv[4]);
-            }
-            if (_v) {
-              {
-                _v = is_array(argv[5]) || PySequence_Check(argv[5]);
-              }
-              if (_v) {
-                {
-                  _v = is_array(argv[6]) || PySequence_Check(argv[6]);
-                }
-                if (_v) {
-                  {
-                    _v = is_array(argv[7]) || PySequence_Check(argv[7]);
-                  }
-                  if (_v) {
-                    {
-                      _v = is_array(argv[8]) || PySequence_Check(argv[8]);
-                    }
-                    if (_v) {
-                      {
-                        _v = is_array(argv[9]) || PySequence_Check(argv[9]);
-                      }
-                      if (_v) {
-                        {
-                          _v = is_array(argv[10]) || PySequence_Check(argv[10]);
-                        }
-                        if (_v) {
-                          {
-                            _v = is_array(argv[11]) || PySequence_Check(argv[11]);
-                          }
-                          if (_v) {
-                            {
-                              _v = is_array(argv[12]) || PySequence_Check(argv[12]);
-                            }
-                            if (_v) {
-                              {
-                                _v = is_array(argv[13]) || PySequence_Check(argv[13]);
-                              }
-                              if (_v) {
-                                {
-                                  _v = is_array(argv[14]) || PySequence_Check(argv[14]);
-                                }
-                                if (_v) {
-                                  if (argc <= 15) {
-                                    return _wrap_RSgpuCalcOnPoints1D__SWIG_1(self, args);
-                                  }
-                                  return _wrap_RSgpuCalcOnPoints1D__SWIG_1(self, args);
-                                }
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
   }
   if (argc == 16) {
     int _v;
@@ -6623,8 +6616,8 @@ SWIGINTERN PyObject *_wrap_RSgpuCalcOnPoints1D(PyObject *self, PyObject *args) {
     }
     if (_v) {
       {
-        _v = is_array(argv[1]) && PyArray_EquivTypenums(array_type(argv[1]),
-          NPY_DOUBLE);
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
       }
       if (_v) {
         {
@@ -6633,7 +6626,8 @@ SWIGINTERN PyObject *_wrap_RSgpuCalcOnPoints1D(PyObject *self, PyObject *args) {
         }
         if (_v) {
           {
-            _v = is_array(argv[3]) || PySequence_Check(argv[3]);
+            _v = is_array(argv[3]) && PyArray_EquivTypenums(array_type(argv[3]),
+              NPY_DOUBLE);
           }
           if (_v) {
             {
@@ -6681,11 +6675,107 @@ SWIGINTERN PyObject *_wrap_RSgpuCalcOnPoints1D(PyObject *self, PyObject *args) {
                                 }
                                 if (_v) {
                                   {
-                                    int res = SWIG_AsVal_int(argv[15], NULL);
-                                    _v = SWIG_CheckState(res);
+                                    _v = is_array(argv[15]) || PySequence_Check(argv[15]);
                                   }
                                   if (_v) {
-                                    return _wrap_RSgpuCalcOnPoints1D__SWIG_0(self, args);
+                                    if (argc <= 16) {
+                                      return _wrap_RSgpuCalcOnPoints1D__SWIG_1(self, args);
+                                    }
+                                    return _wrap_RSgpuCalcOnPoints1D__SWIG_1(self, args);
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  if (argc == 17) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          _v = is_array(argv[2]) && PyArray_EquivTypenums(array_type(argv[2]),
+            NPY_DOUBLE);
+        }
+        if (_v) {
+          {
+            _v = is_array(argv[3]) && PyArray_EquivTypenums(array_type(argv[3]),
+              NPY_DOUBLE);
+          }
+          if (_v) {
+            {
+              _v = is_array(argv[4]) || PySequence_Check(argv[4]);
+            }
+            if (_v) {
+              {
+                _v = is_array(argv[5]) || PySequence_Check(argv[5]);
+              }
+              if (_v) {
+                {
+                  _v = is_array(argv[6]) || PySequence_Check(argv[6]);
+                }
+                if (_v) {
+                  {
+                    _v = is_array(argv[7]) || PySequence_Check(argv[7]);
+                  }
+                  if (_v) {
+                    {
+                      _v = is_array(argv[8]) || PySequence_Check(argv[8]);
+                    }
+                    if (_v) {
+                      {
+                        _v = is_array(argv[9]) || PySequence_Check(argv[9]);
+                      }
+                      if (_v) {
+                        {
+                          _v = is_array(argv[10]) || PySequence_Check(argv[10]);
+                        }
+                        if (_v) {
+                          {
+                            _v = is_array(argv[11]) || PySequence_Check(argv[11]);
+                          }
+                          if (_v) {
+                            {
+                              _v = is_array(argv[12]) || PySequence_Check(argv[12]);
+                            }
+                            if (_v) {
+                              {
+                                _v = is_array(argv[13]) || PySequence_Check(argv[13]);
+                              }
+                              if (_v) {
+                                {
+                                  _v = is_array(argv[14]) || PySequence_Check(argv[14]);
+                                }
+                                if (_v) {
+                                  {
+                                    _v = is_array(argv[15]) || PySequence_Check(argv[15]);
+                                  }
+                                  if (_v) {
+                                    {
+                                      int res = SWIG_AsVal_int(argv[16], NULL);
+                                      _v = SWIG_CheckState(res);
+                                    }
+                                    if (_v) {
+                                      return _wrap_RSgpuCalcOnPoints1D__SWIG_0(self, args);
+                                    }
                                   }
                                 }
                               }
@@ -6707,8 +6797,8 @@ SWIGINTERN PyObject *_wrap_RSgpuCalcOnPoints1D(PyObject *self, PyObject *args) {
 fail:
   SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'RSgpuCalcOnPoints1D'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    RSgpuCalcOnPoints1D(double,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,int)\n"
-    "    RSgpuCalcOnPoints1D(double,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int)\n");
+    "    RSgpuCalcOnPoints1D(double,double,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,int)\n"
+    "    RSgpuCalcOnPoints1D(double,double,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int,gpureal *,int)\n");
   return 0;
 }
 
