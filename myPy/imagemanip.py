@@ -29,7 +29,7 @@ def rescale(inArray,newmin=0.0,newmax=1.0,vmin=None,vmax=None,trunc=False):
     return newim
 
 
-def fwhm1D( X, Y, pp_mode=False, quantile=0.5 ):
+def fwhm1D( X, Y, pp_mode=False, quantile=0.5, check_nan=True, retval=False ):
     """
     X- monotonically increasing array with position of Y function values.    
     
@@ -38,9 +38,20 @@ def fwhm1D( X, Y, pp_mode=False, quantile=0.5 ):
     
     Quantile=0.5 (full-width half-max) by default. Set to any value between 0 and 1.
     
+    retval to return the function value at the given quantile.
     """
+    
+    Y=Y.copy()
+    
+    if check_nan:
+        InMin = np.min(~np.isnan(Y))
+        Y[np.isnan(Y)]=InMin
+    else:
+        InMin = np.min(Y)
+    
+    
     if pp_mode:
-        Y -= np.min(Y)
+        Y -= InMin
 
     maxj=np.argmax(Y)
     Ymax=Y[maxj]
@@ -66,8 +77,14 @@ def fwhm1D( X, Y, pp_mode=False, quantile=0.5 ):
     interpolatedHiPoint = x1 + (quantile - f1)*(x2-x1) / (f2-f1);
     
     value = interpolatedHiPoint - interpolatedLowPoint
-    
-    return (value, interpolatedLowPoint, interpolatedHiPoint)
+     
+    if retval:
+        funcval = quantile*Ymax
+        if pp_mode:
+            funcval += InMin
+        return (value, interpolatedLowPoint, interpolatedHiPoint, funcval)
+    else:
+        return (value, interpolatedLowPoint, interpolatedHiPoint)
 
 #######
 # Function: get1DshiftFilter
