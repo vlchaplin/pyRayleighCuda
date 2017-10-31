@@ -4,6 +4,13 @@ import numpy as np;
 
 from math import *;
 
+def logistic(x, sigma=1.0):
+    """
+    1.0 / (1 + np.exp(-x/sigma))
+    """
+    
+    return 1.0 / (1 + np.exp(-x/sigma))
+    
     
 def rescale(v, scalefunc=None, vmin=None, vmax=None, newmin=0.0,newmax=1.0, trunc=True):
     """
@@ -33,7 +40,7 @@ def rescale(v, scalefunc=None, vmin=None, vmax=None, newmin=0.0,newmax=1.0, trun
 
     if trunc:
         img[img<a]=a
-        imb[img>b]=b
+        img[img>b]=b
     
     return img
     
