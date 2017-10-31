@@ -4,30 +4,39 @@ import numpy as np;
 
 from math import *;
 
-def rescale(inArray,newmin=0.0,newmax=1.0,vmin=None,vmax=None,trunc=False):
+    
+def rescale(v, scalefunc=None, vmin=None, vmax=None, newmin=0.0,newmax=1.0, trunc=True):
     """
-    Rescale input array values to the range [newmin, newmax]
+    Rescale input array values 'v' to the range [newmin, newmax]
     Keywords & defaults: newmin=0.0, newmin=1.0
-        vmin=  The value in input array that will be mapped to newmin. Default=min(inArray)
-        vmax=  The value in input array that will be mapped to newmax. Default=max(inArray)
+    
+        scalefunc = A function which maps input values to [0,1.0]. By default a direct linear mapping is used.
+                    If using 'scalefunc', vmin and vmax are ignored.
+        
+        vmin=  The value in input array that will be mapped to newmin. Default=min(v)
+        vmax=  The value in input array that will be mapped to newmax. Default=max(v)
         trunc=  If true, truncate the output range. Values less than newmin will be set to newmin. Likewise for newmax.
     """
-    oldmin = np.min(inArray)
-    oldmax = np.max(inArray)
-    
-    if vmin is None:
-        vmin = oldmin
-    if vmax is None:
-        vmax = oldmax
-        
-    newim = (inArray - vmin)*(newmax - newmin) / (vmax - vmin) + newmin
-    
-    if trunc:
-        newim[newim < newmin] = newmin
-        newim[newim > newmax] = newmax
-        
-    return newim
+    a=newmin
+    b=newmax
 
+    if vmin is None:
+        vmin=v.min()
+    if vmax is None:
+        vmax=v.max()
+
+    if scalefunc is None:
+        scaled = (v-vmin) / (vmax - vmin)
+    else:
+        scaled = scalefunc(v)
+    img = (b-a)*scaled + a
+
+    if trunc:
+        img[img<a]=a
+        imb[img>b]=b
+    
+    return img
+    
 
 def fwhm1D( X, Y, pp_mode=False, quantile=0.5, check_nan=True, retval=False ):
     """
