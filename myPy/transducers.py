@@ -6,12 +6,42 @@ import numpy as np
 import sys
 
 try:
-    sys.path.append('C:\\Users\\Vandiver\\Documents\\HiFU\\code\\CUDA\\RSgpu\\Release')
     import RSgpuPySwig
 except ImportError:
     print('RSgpuPySwig module not loaded, so _cuda functions are not available.')
 
 def get_focused_element_vals(kwavenum, xyzVecs, focalPoints, focalPvals, L1renorm=None, L2renorm=None, AlternatePhases=False):
+    """
+    Computes amplitude and phases of elements targeting the desired focus or multi-focus pattern,
+    and returns a vector of complex numbers representing the array encoding. Output can be passed
+    to calc_pressure_* routines in the uamp argument for steered/multi-focus beams.
+    
+    Implements solution given in:
+    Ebbini and Cain, IEEE Trans. Ultrason. Ferroelectr. Freq. Control, vol. 36, no. 5, pp. 540–8, Jan. 1989.
+    
+    Output:
+    uamp - numpy array of N complex amplitudes.
+    
+    Inputs:
+    kwavenum is the real or complex-valued wave number, 2pi/lambda. It should be in 
+                physical units consistent with xyzVecs (eg if xyzVecs is in mm, kwavenum is 1/mm).
+                
+    xyzVecs is an Nx3 set of element positions that comprise the array (numpy array).
+    focalPoints is an Mx3 set of desired foci (array-like).
+    focalPvals is a length-M set of the relative pressure values at each focus (arbitrary units).
+    
+    Keywords:
+    L1renorm = scalar value to re-normalize the array. Output will the given L1-norm (for amplitude-matched output).
+                e.g., uamp = L1renorm*uamp / sum(abs(uamp))
+                
+    L2renorm = scalar value to re-normalize output to have a given L2-norm, for power-matched output.
+                e.g., uamp = L2renorm*uamp / sqrt(sum(abs(uamp)**2))
+    
+    AlternatePhases = boolean value. Multiplies successive foci in focalPvals by exp(1j*pi). An alternating
+                pi offset was shown to reduce axial lobes near the mulit-focal HIFU zone by
+                Partanen et al. Med. Phys., vol. 40, no. 1, Jan. 2013.
+    
+    """
 
     M = len(focalPvals)
     N = len(xyzVecs)
@@ -42,7 +72,23 @@ def get_focused_element_vals(kwavenum, xyzVecs, focalPoints, focalPvals, L1renor
 
 
 def new_stipled_spherecap_array(sphereRadius, capDiam, nn):
-
+    """
+    Creates a spherical cap with at most 'nn' points, approximately evenly distributed on the cap.
+    The actual number of points is <= nn, depending on the fit on the given sphere.
+    
+    The output spherical cap opens along the +z axis, the central most element at (0,0,0), and sphere
+    center at (0,0,sphereRadius).
+    
+    
+    Outputs:
+    (uxyz, N) = new_stipled_...()
+    uxyz - Nx3 positions.
+    N number of points placed (N <= nn).
+    
+    Inputs:
+    sphereRadius is the sphere's radius.
+    capDiam is the diameter at the opening face of the cap.
+    """
 
     nr=0
     nk=0
@@ -184,13 +230,13 @@ def calc_pressure_profile(kwavenum, upos, uamp, vecs, unormals=None, alpha=None)
 
 def calc_pressure_field(kwavenum, upos, uamp, xarray, yarray, zarray, unormals=None, alpha=None):
     """
-    Return Rayleigh-Sommerfield calculation over the ndgrid formed from the Cartesian product space of {xarray x yarray x zarray}
+    Return Rayleigh-Sommerfield calculation over the ndgrid formed from the Cartesian product space {xarray x yarray x zarray}
     Returns complex pressure field with dimensions Nx x Ny x Nz.
  
-    Computed pressure P[i,j,k] corresponds to that at position x,y,z={xarray[i], yarray[j], zarray[k]}
+    Computed pressures P[i,j,k] correspond to positions x,y,z={xarray[i], yarray[j], zarray[k]}
     
     INPUTS:
-    kwavenum - The real-valued wave number, 2*pi / lambda, where lambda is in the same distance units as xarray, yarray, ...
+    kwavenum - The real-part of wave number, 2*pi / lambda, where lambda is in the same distance units as xarray, yarray, ...
                 For example if the xarray is in mm, kwavenum should have units radians / mm.
                 
     upos - N x 3 numpy array of the x,y,z positions of each source point. 

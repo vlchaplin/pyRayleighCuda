@@ -88,7 +88,23 @@ def new_randomized_spherecap_array(sphereRadius, capDiam, N, elementDiam=0.0, it
 
     
 def new_stipled_spherecap_array(sphereRadius, capDiam, nn):
-
+    """
+    Creates a spherical cap with at most 'nn' points, approximately evenly distributed on the cap.
+    The actual number of points is <= nn, depending on the fit on the given sphere.
+    
+    The output spherical cap opens along the +z axis, the central most element at (0,0,0), and sphere
+    center at (0,0,sphereRadius).
+    
+    
+    Outputs:
+    (uxyz, N) = new_stipled_...()
+    uxyz - Nx3 positions.
+    N number of points placed (N <= nn).
+    
+    Inputs:
+    sphereRadius is the sphere's radius.
+    capDiam is the diameter at the opening face of the cap.
+    """
 
     nr=0
     nk=0
@@ -177,7 +193,10 @@ def translate3vecs(inputVecs, delta, overwrite=False):
     return newvecs
 
 def getRotZYZarray(az, ayp, azpp, translationColumn=None):
-
+    """
+    Returns an Euler rotation matrix with input angles following the Z-Y-Z convention.
+        
+    """
     if translationColumn is not None:
         R = numpy.zeros([4,4])
         R[:,3] = translationColumn
