@@ -1,55 +1,35 @@
-#!/usr/bin/env python3
 
-import numpy
+import numpy as np
 import re;
 import csv;
 
 from math import sin,asin, cos,acos,pi,floor
 
-def readNDI_csv(filename, nmax=None, startcol=0):
-    csvfile=open(filename)
-    reader=csv.reader(csvfile)
-    text=list(reader)
-    csvfile.close()
-
-    if re.search( 'Tools', text[0][0]):
-        text.pop(0)
-
-    if nmax is not None:
-        text = text[0:nmax]
-
-    err = np.array( list(map( lambda x: x[startcol + 12], text )), dtype='float')
-    txyz = np.array( list(map( lambda x: x[startcol + 9:startcol + 12], text )), dtype='float')
-    q0xyz = np.array( list(map( lambda x: x[startcol + 5:startcol + 9], text )), dtype='float')
-
-    return (q0xyz, txyz, err)
-
 def mag(vec,axis=-1):
     """
     Return L2-norm of vector along the specified axis.
     """
-    return numpy.sqrt(numpy.sum(vec**2,axis=axis))
+    return np.sqrt(np.sum(vec**2,axis=axis))
     
 def normalize(vec,axis=-1):
-    return numpy.apply_along_axis(lambda x: x / numpy.sqrt(numpy.sum(x**2)), axis, vec.copy() )
+    return np.apply_along_axis(lambda x: x / np.sqrt(np.sum(x**2)), axis, vec.copy() )
     
 def new_randomized_spherecap_array(sphereRadius, capDiam, N, elementDiam=0.0, iterations=1000):
     """
-    Create a spherical cap of N sources that have randomized locations, 
-    and constrained such that elements of width 'elementDiam' do not overlap.
+    Create a spherical cap of N sources that have randomized locations.
     The resulting cap starts at the origin and opens/extends along the +z axis.
 
     The optional elementDiam is a number >=0. The default is to treat each source as a point source.
-
+    Placement is constrained such that circular elements of width 'elementDiam' do not overlap.
     """
 
-    ucenters = numpy.zeros([N,3]);
+    ucenters = np.zeros([N,3]);
     Dsquared =elementDiam**2;
     k=0
     annular_opening = asin(0.5*capDiam/sphereRadius );
 
-    ThetaInterval = numpy.array([0.0, annular_opening])
-    PhiInterval = numpy.array([0, 2*pi])
+    ThetaInterval = np.array([0.0, annular_opening])
+    PhiInterval = np.array([0, 2*pi])
     
     theta_r = ThetaInterval[1]-ThetaInterval[0]
     phi_r = PhiInterval[1]-PhiInterval[0]
@@ -58,10 +38,10 @@ def new_randomized_spherecap_array(sphereRadius, capDiam, N, elementDiam=0.0, it
 
         iter+=1
         #take a random point
-        theta=numpy.random.ranf()*theta_r + ThetaInterval[0]
-        phi=numpy.random.ranf()*phi_r + PhiInterval[0]
+        theta=np.random.ranf()*theta_r + ThetaInterval[0]
+        phi=np.random.ranf()*phi_r + PhiInterval[0]
 
-        uxyz = sphereRadius*numpy.array([ numpy.cos(phi)*numpy.sin(theta), numpy.sin(phi)*numpy.sin(theta), 1-numpy.cos(theta) ]);
+        uxyz = sphereRadius*np.array([ np.cos(phi)*np.sin(theta), np.sin(phi)*np.sin(theta), 1-np.cos(theta) ]);
 
         if k==0:
             ucenters[k] = uxyz;
@@ -69,7 +49,7 @@ def new_randomized_spherecap_array(sphereRadius, capDiam, N, elementDiam=0.0, it
             continue;
 
         #Check if the distance from the current uxyz point conflicts with any of the previously added points.
-        distancesSq = numpy.sum( (uxyz - ucenters[0:(k-1)])**2, axis=-1)
+        distancesSq = np.sum( (uxyz - ucenters[0:(k-1)])**2, axis=-1)
 
         conflicts = sum(distancesSq <= Dsquared);
 
@@ -86,7 +66,6 @@ def new_randomized_spherecap_array(sphereRadius, capDiam, N, elementDiam=0.0, it
 
     return ucenters
 
-    
 def new_stipled_spherecap_array(sphereRadius, capDiam, nn):
     """
     Creates a spherical cap with at most 'nn' points, approximately evenly distributed on the cap.
@@ -128,14 +107,14 @@ def new_stipled_spherecap_array(sphereRadius, capDiam, nn):
 
     nn=sum(nphi)
 
-    uxyz=numpy.zeros([nn,3],dtype=numpy.float64)
+    uxyz=np.zeros([nn,3],dtype=np.float64)
     n=0
     for i in range(0,nr):
         theta=i*dth
         dphi=2*pi/nphi[i]
         for j in range(0,nphi[i]):
             phi = dphi*j
-            uxyz[n,:] = sphereRadius*numpy.array( [sin(theta)*cos(phi) , sin(theta)*sin(phi), 1-cos(theta)] )
+            uxyz[n,:] = sphereRadius*np.array( [sin(theta)*cos(phi) , sin(theta)*sin(phi), 1-cos(theta)] )
             n+=1
 
 
@@ -185,7 +164,7 @@ def translate3vecs(inputVecs, delta, overwrite=False):
     if overwrite:
         newvecs = inputVecs
     else:
-        newvecs = numpy.zeros([N,3])
+        newvecs = np.zeros([N,3])
 
     for n in range(0,N):
         newvecs[n] = inputVecs[n] + delta
@@ -198,10 +177,10 @@ def getRotZYZarray(az, ayp, azpp, translationColumn=None):
         
     """
     if translationColumn is not None:
-        R = numpy.zeros([4,4])
+        R = np.zeros([4,4])
         R[:,3] = translationColumn
     else:
-        R = numpy.zeros([3,3])
+        R = np.zeros([3,3])
 
     c1 = cos(az)
     s1 = sin(az)
@@ -222,12 +201,12 @@ def cart2sphere(x,y,z):
     Theta is polar angle. Angles returned in radians
     """
 
-    r = numpy.sqrt( x**2 + y**2 + z**2 )
-    theta = numpy.arccos(z/r)
-    phi = numpy.arctan2(y,x)
+    r = np.sqrt( x**2 + y**2 + z**2 )
+    theta = np.arccos(z/r)
+    phi = np.arctan2(y,x)
 
-    if type(r)==numpy.ndarray:
-        gimbles=numpy.abs(r) < 1e-12
+    if type(r)==np.ndarray:
+        gimbles=np.abs(r) < 1e-12
         theta[gimbles]=0.0
     elif abs(r) < 1e-12:
         theta=0.0
@@ -245,7 +224,7 @@ def cart2sphere_deg(x,y,z):
     return (r,theta*rtod,phi*rtod)
 
 def rot(matrix,v):
-    u=numpy.array(list(map ( lambda vec: matrix.dot(vec), v)))
+    u=np.array(list(map ( lambda vec: matrix.dot(vec), v)))
     return u
 
 def rotate_mesh_volume(Rotmat, mxx, myy, mzz, rotxx=None, rotyy=None, rotzz=None, translate=[0.0,0.0,0.0], squeeze=True):
@@ -268,13 +247,13 @@ def rotate_mesh_volume(Rotmat, mxx, myy, mzz, rotxx=None, rotyy=None, rotzz=None
     translate = 3-element array or list to apply after rotation
     """
     if rotxx is None:
-        rotxx = numpy.zeros_like(mxx)
+        rotxx = np.zeros_like(mxx)
     if rotyy is None:
-        rotyy = numpy.zeros_like(mxx)
+        rotyy = np.zeros_like(mxx)
     if rotzz is None:
-        rotzz = numpy.zeros_like(mxx)
+        rotzz = np.zeros_like(mxx)
 
-    if not( type(mzz)==list or type(mzz)==numpy.ndarray) :
+    if not( type(mzz)==list or type(mzz)==np.ndarray) :
         mzz=[mzz]
 
 
@@ -290,7 +269,7 @@ def rotate_mesh_volume(Rotmat, mxx, myy, mzz, rotxx=None, rotyy=None, rotzz=None
             rotxx.flat[i], rotyy.flat[i], rotzz.flat[i] = Rotmat.dot( [ mxx.flat[i], myy.flat[i], mzz.flat[i] ] ) + translate
 
     if squeeze:
-        return tuple(map(numpy.squeeze, (rotxx,rotyy,rotzz) ))
+        return tuple(map(np.squeeze, (rotxx,rotyy,rotzz) ))
     else:
         return (rotxx,rotyy,rotzz)
 
@@ -302,22 +281,22 @@ def ring(d,n, z=0.0, rot=0):
         n - number of points equi-spaced on the ring perimeter
     """
     dphi = 2.0*pi/n;
-    phis = numpy.arange(0.0,2*pi,dphi) + rot
-    vecs = numpy.zeros([n,3]);
+    phis = np.arange(0.0,2*pi,dphi) + rot
+    vecs = np.zeros([n,3]);
     r=d/2;
 
-    vecs[:,0] = r*numpy.cos(phis);
-    vecs[:,1] = r*numpy.sin(phis);
+    vecs[:,0] = r*np.cos(phis);
+    vecs[:,1] = r*np.sin(phis);
     vecs[:,2] = z;
 
     return (vecs, r)
 
 def equilateral_tri(d, z=0.0):
     h=d*sin(pi/3);
-    return (numpy.array([[-d/2, -h/2, z], [d/2, -h/2, z], [0, h/2, z] ]), h)
+    return (np.array([[-d/2, -h/2, z], [d/2, -h/2, z], [0, h/2, z] ]), h)
 
 def cross(d, z=0.0):
-    return numpy.array([[0,0,z], [d, 0, z], [0, d, z], [-d, 0, z], [0, -d, z] ])
+    return np.array([[0,0,z], [d, 0, z], [0, d, z], [-d, 0, z], [0, -d, z] ])
 
 
 def inSphere(x,y,z,r=0.005):
@@ -325,14 +304,14 @@ def inSphere(x,y,z,r=0.005):
     Determine wether point (x,y,z) lies in the ellipsoid specified by r= and centered on the origin.
     Returns boolean
     """
-    return numpy.sqrt(x**2 + y**2 + z**2)<=r
+    return np.sqrt(x**2 + y**2 + z**2)<=r
 
 def inEllipse(x,y,z,a=0.005,b=0.005,c=0.005):
     """
     Determine wether point (x,y,z) lies in the ellipsoid specified by (a=,b=,c=) and centered on the origin.
     Returns boolean
     """
-    return numpy.sqrt((x/a)**2 + (y/b)**2 + (z/c)**2)<=1.0
+    return np.sqrt((x/a)**2 + (y/b)**2 + (z/c)**2)<=1.0
 
 def inCuboid(x,y,z,xw,yw,zw):
     """
@@ -341,7 +320,7 @@ def inCuboid(x,y,z,xw,yw,zw):
     """
 
     #return ( x>=-xw/2.0 and x<=xw/2.0 and y>=-yw/2.0 and y<=yw/2.0 and  z>=-zw/2.0 and z<=zw/2.0 )
-    return numpy.logical_and( x>=-xw/2.0, x<=xw/2.0, numpy.logical_and( y>=-yw/2.0, y<=yw/2.0 , numpy.logical_and( z>=-zw/2.0, z<=zw/2.0 ) ) )
+    return np.logical_and( x>=-xw/2.0, x<=xw/2.0, np.logical_and( y>=-yw/2.0, y<=yw/2.0 , np.logical_and( z>=-zw/2.0, z<=zw/2.0 ) ) )
 
 def inCuboidBounds(x,y,z,xr=None,yr=None,zr=None):
     """
@@ -350,29 +329,29 @@ def inCuboidBounds(x,y,z,xr=None,yr=None,zr=None):
     """
 
     if xr is not None:
-        xsel = numpy.logical_and( x>=xr[0], x<=xr[1] )
+        xsel = np.logical_and( x>=xr[0], x<=xr[1] )
     else:
         xsel = True
 
     if yr is not None:
-        ysel = numpy.logical_and( y>=yr[0], y<=yr[1] )
+        ysel = np.logical_and( y>=yr[0], y<=yr[1] )
     else:
         ysel = True
 
     if zr is not None:
-        zsel = numpy.logical_and( z>=zr[0], z<=zr[1] )
+        zsel = np.logical_and( z>=zr[0], z<=zr[1] )
     else:
         zsel = True
 
     #return ( x>=-xw/2.0 and x<=xw/2.0 and y>=-yw/2.0 and y<=yw/2.0 and  z>=-zw/2.0 and z<=zw/2.0 )
-    return numpy.logical_and( xsel, numpy.logical_and(ysel , zsel) )
+    return np.logical_and( xsel, np.logical_and(ysel , zsel) )
 
 def roiGen(focalPattern, isContainedFunc, gxp, gyp, gzp):
     """
     focalPattern is an (m x 3) array
     """
     nf = len(focalPattern)
-    mask=numpy.zeros_like(gxp,dtype=bool)
+    mask=np.zeros_like(gxp,dtype=bool)
     for i in range(0,nf):
-        mask= numpy.logical_or( mask, isContainedFunc(gxp - focalPattern[i][0], gyp - focalPattern[i][1], gzp - focalPattern[i][2]) )
+        mask= np.logical_or( mask, isContainedFunc(gxp - focalPattern[i][0], gyp - focalPattern[i][1], gzp - focalPattern[i][2]) )
     return mask

@@ -70,63 +70,7 @@ def get_focused_element_vals(kwavenum, xyzVecs, focalPoints, focalPvals, L1renor
 
     return uopt
 
-
-def new_stipled_spherecap_array(sphereRadius, capDiam, nn):
-    """
-    Creates a spherical cap with at most 'nn' points, approximately evenly distributed on the cap.
-    The actual number of points is <= nn, depending on the fit on the given sphere.
-    
-    The output spherical cap opens along the +z axis, the central most element at (0,0,0), and sphere
-    center at (0,0,sphereRadius).
-    
-    
-    Outputs:
-    (uxyz, N) = new_stipled_...()
-    uxyz - Nx3 positions.
-    N number of points placed (N <= nn).
-    
-    Inputs:
-    sphereRadius is the sphere's radius.
-    capDiam is the diameter at the opening face of the cap.
-    """
-
-    nr=0
-    nk=0
-    nb=0
-    while(nk < nn):
-        nr+=1
-        nb=nk
-        nk = sum( map( lambda j: floor((2*pi)*j), range(0,nr) ) ) + nr
-
-    nr-=1
-
-
-    maxtheta = asin( (capDiam/2.0)/sphereRadius )
-
-    if nr > 1:
-        dth = maxtheta / (nr-1)
-        nphi = list(map(lambda x:1+floor( x*2*pi), range(0,nr)))
-    else:
-        dth=0
-        nphi=[1]
-
-    nn=sum(nphi)
-
-    uxyz=np.zeros([nn,3],dtype=np.float64)
-    n=0
-    for i in range(0,nr):
-        theta=i*dth
-        dphi=2*pi/nphi[i]
-        for j in range(0,nphi[i]):
-            phi = dphi*j
-            uxyz[n,:] = sphereRadius*np.array( [sin(theta)*cos(phi) , sin(theta)*sin(phi), 1-cos(theta)] )
-            n+=1
-
-
-
-    return [uxyz  , nn]
-
-def subsample_transducer_array( upos, diam, Nmax, unormvecs=None, ROC=None, arrays_to_grow=None ):
+def subsample_transducer_array( upos, diam, Nmax, unormvecs=None, ROC=None, arrays_to_grow=None, randomized=True, iterations=1000 ):
     """
     ( newxyz, ns, returnSet ) = subsample_transducer_array(...)
 
@@ -152,8 +96,11 @@ def subsample_transducer_array( upos, diam, Nmax, unormvecs=None, ROC=None, arra
         #this essentially makes it a flat element
         ROC=1e9*diam
 
-
-    diskxyz, ns = new_stipled_spherecap_array(ROC,diam,Nmax)
+    if randomized:
+        diskxyz = geom.new_randomized_spherecap_array(ROC, diam, Nmax, iterations=iterations)
+        ns = Nmax
+    else:
+        diskxyz, ns = new_stipled_spherecap_array(ROC,diam,Nmax)
 
     returnSet=[]
     for vec_i in range(0,Nvecs):
@@ -285,7 +232,7 @@ def calc_pressure_field(kwavenum, upos, uamp, xarray, yarray, zarray, unormals=N
     return P
 
 
-def calc_pressure_field_cuda(kwavenum, upos, unormals, uamp, xarray, yarray, zarray, gpublocks=0,subsampN=None, subsampDiam=None, ROC=None, alpha=0.0):
+def calc_pressure_field_cuda(kwavenum, upos, unormals, uamp, xarray, yarray, zarray, gpublocks=0,subsampN=None, subsampDiam=None, ROC=None, alpha=0.0, **kwargs):
     """
     Same as calc_pressure_field() but use the CUDA-enabled version compiled in the RSgpuPySwig libary.
 
@@ -300,13 +247,15 @@ def calc_pressure_field_cuda(kwavenum, upos, unormals, uamp, xarray, yarray, zar
     See calc_pressure_field() for detailed arguments description.
     
     * Optional Keywords to automatically subsample the array into circular elements:
+    Additional keywords can be passed- see subsample_transducer_array() docstring for info.
     
     subsampN =   An integer value describing the max. number equi-spaced points to fit on an subsampDiam.
     subsampDiam = The approximate diameter of the array element.
     ROC =  If specified, makes each element conform to a spherical surface with the given ROC (radius). If None, uses a flat element.
     gpublocks = Number of CUDA blocks to allocate. By default this is determined from input size, though it is likely sub-optimal.
     
-    These are passed as inputs to subsample_transducer_array()
+    These are passed as inputs to subsample_transducer_array().
+
     
     """
 
@@ -334,7 +283,8 @@ def calc_pressure_field_cuda(kwavenum, upos, unormals, uamp, xarray, yarray, zar
     if subsampN is not None and subsampDiam is not None:
 
         ( vxyz, ns, (ure,uim,unormals,coeffs) )=subsample_transducer_array(upos, subsampDiam, subsampN,
-                                                                 unormvecs=unormals, ROC=ROC, arrays_to_grow=[ure,uim,unormals,coeffs])
+                                                                 unormvecs=unormals, ROC=ROC, 
+                                                                 arrays_to_grow=[ure,uim,unormals,coeffs], **kwargs)
         upos=vxyz
         coeffs/=ns
 
@@ -345,7 +295,7 @@ def calc_pressure_field_cuda(kwavenum, upos, unormals, uamp, xarray, yarray, zar
     return Pre + 1j*Pim
 
 
-def calc_pressure_profile_cuda(kwavenum, upos, unormals, uamp, xvalues, yvalues, zvalues, gpublocks=0,subsampN=None, subsampDiam=None, ROC=None, alpha=0.0):
+def calc_pressure_profile_cuda(kwavenum, upos, unormals, uamp, xvalues, yvalues, zvalues, gpublocks=0,subsampN=None, subsampDiam=None, ROC=None, alpha=0.0, **kwargs):
     """
     Same as calc_pressure_profile() but use the CUDA-enabled version compiled in the RSgpuPySwig libary.
 
@@ -386,7 +336,8 @@ def calc_pressure_profile_cuda(kwavenum, upos, unormals, uamp, xvalues, yvalues,
     if subsampN is not None and subsampDiam is not None:
 
         ( vxyz, ns, (ure,uim,unormals,coeffs) )=subsample_transducer_array(upos, subsampDiam, subsampN,
-                                                                 unormvecs=unormals, ROC=ROC, arrays_to_grow=[ure,uim,unormals,coeffs])
+                                                                 unormvecs=unormals, ROC=ROC, 
+                                                                 arrays_to_grow=[ure,uim,unormals,coeffs], **kwargs)
         upos=vxyz
         coeffs/=ns
 
@@ -398,7 +349,7 @@ def calc_pressure_profile_cuda(kwavenum, upos, unormals, uamp, xvalues, yvalues,
     return Pre + 1j*Pim
 
 
-def calc_pressure_mesh3D_cuda(kwavenum, upos, unormals, uamp, mxxx, myyy, mzzz, gpublocks=0,subsampN=None, subsampDiam=None, ROC=None, alpha=0.0):
+def calc_pressure_mesh3D_cuda(kwavenum, upos, unormals, uamp, mxxx, myyy, mzzz, gpublocks=0,subsampN=None, subsampDiam=None, ROC=None, alpha=0.0, **kwargs):
     """
     Same method used in calc_pressure_profile_cuda, except input coorinates are in equally-shaped 3D arrays, similar to those returned by meshgrid.
     The returned pressure has the same shape.  Computed pressure P[i,j,k] corresponds to that at position x,y,z={mxxx[i,j,k], myyy[i,j,k], mzzz[i,j,k]}
@@ -450,7 +401,8 @@ def calc_pressure_mesh3D_cuda(kwavenum, upos, unormals, uamp, mxxx, myyy, mzzz, 
     if subsampN is not None and subsampDiam is not None:
 
         ( vxyz, ns, (ure,uim,unormals,coeffs) )=subsample_transducer_array(upos, subsampDiam, subsampN,
-                                                                 unormvecs=unormals, ROC=ROC, arrays_to_grow=[ure,uim,unormals,coeffs])
+                                                                 unormvecs=unormals, ROC=ROC, 
+                                                                 arrays_to_grow=[ure,uim,unormals,coeffs], **kwargs)
         upos=vxyz
         coeffs/=ns
 
