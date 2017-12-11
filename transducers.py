@@ -232,7 +232,7 @@ def calc_pressure_field(kwavenum, upos, uamp, xarray, yarray, zarray, unormals=N
     return P
 
 
-def calc_pressure_field_cuda(kwavenum, upos, unormals, uamp, xarray, yarray, zarray, gpublocks=0,subsampN=None, subsampDiam=None, ROC=None, alpha=0.0, **kwargs):
+def calc_pressure_field_cuda(kwavenum, upos, uamp, xarray, yarray, zarray, unormals=None, gpublocks=0,subsampN=None, subsampDiam=None, ROC=None, alpha=0.0, **kwargs):
     """
     Same as calc_pressure_field() but use the CUDA-enabled version compiled in the RSgpuPySwig libary.
 
@@ -264,7 +264,8 @@ def calc_pressure_field_cuda(kwavenum, upos, unormals, uamp, xarray, yarray, zar
     except NameError:
         print('RSgpuPySwig module not loaded, so _cuda functions are not available.')
         return
-
+    if unormals is None:
+        raise ValueError('unormals must be given')
     nx = len(xarray)
     ny = len(yarray)
     nz = len(zarray)
@@ -295,7 +296,7 @@ def calc_pressure_field_cuda(kwavenum, upos, unormals, uamp, xarray, yarray, zar
     return Pre + 1j*Pim
 
 
-def calc_pressure_profile_cuda(kwavenum, upos, unormals, uamp, xvalues, yvalues, zvalues, gpublocks=0,subsampN=None, subsampDiam=None, ROC=None, alpha=0.0, **kwargs):
+def calc_pressure_profile_cuda(kwavenum, upos, uamp, xvalues, yvalues, zvalues, unormals=None,gpublocks=0,subsampN=None, subsampDiam=None, ROC=None, alpha=0.0, **kwargs):
     """
     Same as calc_pressure_profile() but use the CUDA-enabled version compiled in the RSgpuPySwig libary.
 
@@ -315,6 +316,9 @@ def calc_pressure_profile_cuda(kwavenum, upos, unormals, uamp, xvalues, yvalues,
         print('RSgpuPySwig module not loaded, so _cuda functions are not available.')
         return
 
+    if unormals is None:
+        raise ValueError('unormals must be given')
+        
     nx = len(xvalues)
     ny = len(yvalues)
     nz = len(zvalues)
@@ -349,7 +353,7 @@ def calc_pressure_profile_cuda(kwavenum, upos, unormals, uamp, xvalues, yvalues,
     return Pre + 1j*Pim
 
 
-def calc_pressure_mesh3D_cuda(kwavenum, upos, unormals, uamp, mxxx, myyy, mzzz, gpublocks=0,subsampN=None, subsampDiam=None, ROC=None, alpha=0.0, **kwargs):
+def calc_pressure_mesh3D_cuda(kwavenum, upos, uamp, mxxx, myyy, mzzz, unormals=None, gpublocks=0,subsampN=None, subsampDiam=None, ROC=None, alpha=0.0, **kwargs):
     """
     Same method used in calc_pressure_profile_cuda, except input coorinates are in equally-shaped 3D arrays, similar to those returned by meshgrid.
     The returned pressure has the same shape.  Computed pressure P[i,j,k] corresponds to that at position x,y,z={mxxx[i,j,k], myyy[i,j,k], mzzz[i,j,k]}
@@ -379,6 +383,9 @@ def calc_pressure_mesh3D_cuda(kwavenum, upos, unormals, uamp, mxxx, myyy, mzzz, 
     except NameError:
         print('RSgpuPySwig module not loaded, so _cuda functions are not available.')
         return
+        
+    if unormals is None:
+        raise ValueError('unormals must be given')
 
     nx = np.product(mxxx.shape)
     ny = np.product(myyy.shape)
