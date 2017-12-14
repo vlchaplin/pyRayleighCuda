@@ -14,13 +14,19 @@ def mag(vec,axis=-1):
 def normalize(vec,axis=-1):
     return np.apply_along_axis(lambda x: x / np.sqrt(np.sum(x**2)), axis, vec.copy() )
     
-def new_randomized_spherecap_array(sphereRadius, capDiam, N, elementDiam=0.0, iterations=1000):
+def new_randomized_spherecap_array(sphereRadius, capDiam, N, elementDiam=0.0, iterations=1000, preplace=0, verbose=True):
     """
     Create a spherical cap of N sources that have randomized locations.
     The resulting cap starts at the origin and opens/extends along the +z axis.
 
     The optional elementDiam is a number >=0. The default is to treat each source as a point source.
-    Placement is constrained such that circular elements of width 'elementDiam' do not overlap.
+    Placement is constrained such that circular elements of width 'elementDiam' do not overlap, and  
+    elements don't go past the capDiam boundary.
+    
+    preplace=nn : allows pre-placing a few elements at regular positions along the extreme boundary of the cap.
+                  This can help with convergence for arrays near the maximal packing regime.
+                  No effect of elementDiam is zero.
+    
     """
 
     ucenters = np.zeros([N,3]);
@@ -31,17 +37,34 @@ def new_randomized_spherecap_array(sphereRadius, capDiam, N, elementDiam=0.0, it
     ThetaInterval = np.array([0.0, annular_opening])
     PhiInterval = np.array([0, 2*pi])
     
-    theta_r = ThetaInterval[1]-ThetaInterval[0]
+    EdgeMarginAngle = asin( 0.5*elementDiam/sphereRadius  );
+    
+    theta_r = ThetaInterval[1]-ThetaInterval[0] - EdgeMarginAngle
     phi_r = PhiInterval[1]-PhiInterval[0]
     iter=0
+    
+    if preplace is not None and preplace>0:
+        theta = theta_r + ThetaInterval[0];
+        for pp in range(preplace):
+            phi = (pp/preplace)*phi_r + PhiInterval[0];
+            uxyz = sphereRadius*np.array([ np.cos(phi)*np.sin(theta), np.sin(phi)*np.sin(theta), 1-np.cos(theta) ])
+            ucenters[k] = uxyz
+            k+=1
+        
+        distancesSq = np.sum( (uxyz - ucenters[0:k])**2, axis=-1)
+        conflicts = np.sum(distancesSq <= Dsquared)
+        
+        if iter==iterations:
+            raise ValueError("Overlap constraint violated during pre-placement. Either reduce preplace= or elementDiam= values" )
+ 
     while(k<N and iter<iterations):
-
+  
         iter+=1
         #take a random point
         theta=np.random.ranf()*theta_r + ThetaInterval[0]
         phi=np.random.ranf()*phi_r + PhiInterval[0]
 
-        uxyz = sphereRadius*np.array([ np.cos(phi)*np.sin(theta), np.sin(phi)*np.sin(theta), 1-np.cos(theta) ]);
+        uxyz = sphereRadius*np.array([ np.cos(phi)*np.sin(theta), np.sin(phi)*np.sin(theta), 1-np.cos(theta) ])
 
         if k==0:
             ucenters[k] = uxyz;
@@ -49,9 +72,10 @@ def new_randomized_spherecap_array(sphereRadius, capDiam, N, elementDiam=0.0, it
             continue;
 
         #Check if the distance from the current uxyz point conflicts with any of the previously added points.
-        distancesSq = np.sum( (uxyz - ucenters[0:(k-1)])**2, axis=-1)
+        #The 0:k operation in python selects elements 0 to k-1.)
+        distancesSq = np.sum( (uxyz - ucenters[0:k])**2, axis=-1)
 
-        conflicts = sum(distancesSq <= Dsquared);
+        conflicts = np.sum(distancesSq <= Dsquared);
 
         if conflicts > 0:
             continue;
@@ -60,6 +84,9 @@ def new_randomized_spherecap_array(sphereRadius, capDiam, N, elementDiam=0.0, it
         #if no conflicts, add this position to the list
         ucenters[k] = uxyz;
         k=k+1;
+        
+        if verbose:
+            print("\r%d / %d"%(k,N), end='', flush=True)
         
     if iter==iterations:
         raise RuntimeWarning("Max iterations reached before filling array (completed %d / %d)." %(k,N))
