@@ -14,7 +14,7 @@ def mag(vec,axis=-1):
 def normalize(vec,axis=-1):
     return np.apply_along_axis(lambda x: x / np.sqrt(np.sum(x**2)), axis, vec.copy() )
     
-def new_randomized_spherecap_array(sphereRadius, capDiam, N, elementDiam=0.0, iterations=1000, preplace=0, verbose=True):
+def new_randomized_spherecap_array(sphereRadius, capDiam, N, elementDiam=0.0, iterations=1000, preplace=0, append=None, verbose=True):
     """
     Create a spherical cap of N sources that have randomized locations.
     The resulting cap starts at the origin and opens/extends along the +z axis.
@@ -26,18 +26,29 @@ def new_randomized_spherecap_array(sphereRadius, capDiam, N, elementDiam=0.0, it
     preplace=nn : allows pre-placing a few elements at regular positions along the extreme boundary of the cap.
                   This can help with convergence for arrays near the maximal packing regime.
                   No effect of elementDiam is zero.
+                  
+    append = array([N, 3]) : append new random array to an existing Nx3 set of elements. Assumes all elements have the same diameter
     
     """
 
-    ucenters = np.zeros([N,3]);
+    if append is not None:
+        
+        k = len(append)
+        ucenters = np.zeros([k+N,3])
+        ucenters[0:k] = append
+        N = k+N
+    else:
+        k=0
+        ucenters = np.zeros([N,3]);
+        
     Dsquared =elementDiam**2;
-    k=0
-    annular_opening = asin(0.5*capDiam/sphereRadius );
+    
+    annular_opening = np.arcsin(0.5*capDiam/sphereRadius );
 
     ThetaInterval = np.array([0.0, annular_opening])
-    PhiInterval = np.array([0, 2*pi])
+    PhiInterval = np.array([0, 2*np.pi])
     
-    EdgeMarginAngle = asin( 0.5*elementDiam/sphereRadius  );
+    EdgeMarginAngle = np.arcsin( 0.5*elementDiam/sphereRadius  );
     
     theta_r = ThetaInterval[1]-ThetaInterval[0] - EdgeMarginAngle
     phi_r = PhiInterval[1]-PhiInterval[0]
