@@ -100,7 +100,7 @@ def subsample_transducer_array( upos, diam, Nmax, unormvecs=None, ROC=None, arra
         diskxyz = geom.new_randomized_spherecap_array(ROC, diam, Nmax, iterations=iterations)
         ns = Nmax
     else:
-        diskxyz, ns = new_stipled_spherecap_array(ROC,diam,Nmax)
+        diskxyz, ns = geom.new_stipled_spherecap_array(ROC,diam,Nmax)
 
     returnSet=[]
     for vec_i in range(0,Nvecs):
