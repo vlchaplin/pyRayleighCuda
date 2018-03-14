@@ -69,7 +69,7 @@ def new_stipled_spherecap_array(sphereRadius, capDiam, nn):
 
     return [uxyz  , nn]
     
-def new_randomized_spherecap_array(sphereRadius, capDiam, N, elementDiam=0.0, iterations=1000, preplace=0, append=None, verbose=True, decorr=0):
+def new_randomized_spherecap_array(sphereRadius, capDiam, N, elementDiam=0.0, iterations=1000, preplace=0, append=None, verbose=True, decorr=0, throw=True):
     """
     Create a spherical cap of N sources that have randomized locations.
     The resulting cap starts at the origin and opens/extends along the +z axis.
@@ -84,7 +84,9 @@ def new_randomized_spherecap_array(sphereRadius, capDiam, N, elementDiam=0.0, it
                   This can help with convergence for arrays near the maximal packing regime.
                   No effect of elementDiam is zero.
                   
-    append = array([N, 3]) : append new random array to an existing Nx3 set of elements. Assumes all elements have the same diameter
+    append = array([N, 3]) : append new random array to an existing Nx3 set of elements. The input elements are assumed to lie on the same spherical cap.
+    
+    elementDiam = scalar or vector of length N with the diameter of each element. If append= is used and elementDiam is a vector, the first M elements of diams 
     
     """
 
@@ -174,7 +176,11 @@ def new_randomized_spherecap_array(sphereRadius, capDiam, N, elementDiam=0.0, it
             print("\r%d / %d"%(k,N), end='', flush=True)
         
     if iter==iterations:
-        raise RuntimeWarning("Max iterations reached before filling array (completed %d / %d)." %(k,N))
+        if throw:
+            raise RuntimeWarning("Max iterations reached before filling array (completed %d / %d)." %(k,N))
+        else:
+            print( "Max iterations reached before filling array (completed %d / %d). Returning partial list. " %(k,N))
+            return ucenters[:k] + [0,0,sphereRadius]
 
     return ucenters + [0,0,sphereRadius]
 
