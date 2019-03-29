@@ -1,5 +1,5 @@
 # pyRayleighCuda
-Vandiver Chaplin, vlchaplin@gmail.com
+Authored by Vandiver Chaplin
 
 Python Rayleigh-Sommerfeld integral for acoustics, with optional CUDA GPU implementation. 
 
